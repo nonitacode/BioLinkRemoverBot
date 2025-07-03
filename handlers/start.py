@@ -19,7 +19,7 @@ def init(app):
         )
 
         buttons = InlineKeyboardMarkup([
-            [InlineKeyboardButton("➕ Add to Group", url="https://t.me/LinkScanBot?startgroup=true")],
+            [InlineKeyboardButton("➕ Add to Group", url="https://t.me/BioLinkRemoverBot?startgroup=true")],
             [InlineKeyboardButton("🛠 Updates", url="https://t.me/GrayBots"),
              InlineKeyboardButton("💬 Support", url="https://t.me/GrayBots")]
         ])
