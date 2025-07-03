@@ -1,7 +1,5 @@
-aiofiles
-aiohttp
-apscheduler
-asyncio
+python-dotenv
 pyrogram==2.0.106
-tgcrypto
-pymongo
+tgcrypto==1.2.5
+pymongo[srv]==4.6.2
+dnspython==2.4.2
