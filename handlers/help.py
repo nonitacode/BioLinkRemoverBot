@@ -6,7 +6,7 @@ def init(app):
     @app.on_message(filters.command("help"))
     async def help_cmd(_, message: Message):
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("➕ Add Me To Group", url=f"https://t.me/{BOT_NAME}?startgroup=true")],
+            [InlineKeyboardButton("➕ Add Me To Group", url=f"https://t.me/BioLinkRemoverBot?startgroup=true")],
             [InlineKeyboardButton("🛠 Support", url="https://t.me/GrayBots")]
         ])
 
