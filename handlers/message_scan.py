@@ -1,12 +1,12 @@
 from pyrogram import filters
 from pyrogram.types import Message
+from pyrogram.handlers import MessageHandler
 from config import MAX_VIOLATIONS
 from database.mongo import is_whitelisted
 
 violations = {}
 
-@filters.group & filters.text
-def link_checker(client, message: Message):
+def _link_checker(client, message: Message):
     user_id = message.from_user.id
     chat_id = message.chat.id
     text = message.text.lower()
@@ -29,3 +29,6 @@ def link_checker(client, message: Message):
                 message.reply(f"🔇 {message.from_user.mention} muted for repeated link posting.")
             except:
                 pass
+
+# Export as valid MessageHandler for main.py
+link_checker = MessageHandler(_link_checker, filters.group & filters.text)
