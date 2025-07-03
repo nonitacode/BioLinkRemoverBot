@@ -17,12 +17,12 @@ async def start_handler(client: Client, message: Message):
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("📖 Help", callback_data="help_menu")],
             [
-                InlineKeyboardButton("👨‍💻 Owner", url="https://t.me/YourUsername"),
-                InlineKeyboardButton("🛠 Support", url="https://t.me/YourSupportGroup")
+                InlineKeyboardButton("👨‍💻 Owner", url="https://t.me/Nikchil"),
+                InlineKeyboardButton("🛠 Support", url="https://t.me/GrayBotSupport")
             ],
             [
-                InlineKeyboardButton("📢 Updates", url="https://t.me/YourUpdateChannel"),
-                InlineKeyboardButton("💻 GitHub", url="https://github.com/YourRepo/BioLinkScan")
+                InlineKeyboardButton("📢 Updates", url="https://t.me/GrayBots"),
+                InlineKeyboardButton("💻 GitHub", url="https://github.com/Nikchil/LinkScanBot")
             ]
         ])
     )
