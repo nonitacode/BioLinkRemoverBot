@@ -55,3 +55,7 @@ def restore_old_violations(chat_id, user_id):
     if doc:
         violations_col.replace_one({"_id": key}, doc, upsert=True)
         backup_col.delete_one({"_id": key})
+
+def get_last_warn(chat_id, user_id):
+    key = f"{chat_id}:{user_id}"
+    return warn_cache_col.find_one({"_id": key})
