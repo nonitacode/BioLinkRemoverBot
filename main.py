@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
-from config import API_ID, API_HASH, BOT_TOKEN, MONGO_URI
+from config import API_ID, API_HASH, BOT_TOKEN, MONGO_URL
 from handlers.start import start_handler, callback_handler
 from handlers.help import help_handler
 from handlers.admin import stats_handler
