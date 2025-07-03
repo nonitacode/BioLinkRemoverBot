@@ -1,3 +1,7 @@
+aiofiles
+aiohttp
+apscheduler
+asyncio
 pyrogram==2.0.106
 tgcrypto
 pymongo
