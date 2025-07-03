@@ -1,14 +1,9 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from database.mongo import chats
+from pyrogram.handlers import MessageHandler
 
-@filters.command("settings")
 def settings_cmd(client, message: Message):
-    if "on" in message.text.lower():
-        chats.update_one({"chat_id": message.chat.id}, {"$set": {"scan_enabled": True}}, upsert=True)
-        message.reply("✅ Link scanning enabled.")
-    elif "off" in message.text.lower():
-        chats.update_one({"chat_id": message.chat.id}, {"$set": {"scan_enabled": False}}, upsert=True)
-        message.reply("❌ Link scanning disabled.")
-    else:
-        message.reply("Use `/settings on` or `/settings off`.")
+    message.reply_text("⚙️ Settings feature coming soon...")  # Placeholder response
+
+# Export handler object
+settings_handler = MessageHandler(settings_cmd, filters.command("settings") & filters.group)
