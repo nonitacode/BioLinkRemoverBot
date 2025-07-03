@@ -18,7 +18,7 @@ def init(app):
         user_id = user.id
 
         try:
-            # Skip if user is OWNER_ID
+            # Skip if OWNER
             if user_id == OWNER_ID:
                 await app.send_message(
                     LOG_CHANNEL,
@@ -27,31 +27,36 @@ def init(app):
                 remove_user_record(user_id)
                 return
 
-            # Check if user is admin or creator
+            # Check member status (admin/creator)
             member = await app.get_chat_member(chat_id, user_id)
+
             await app.send_message(
                 LOG_CHANNEL,
-                f"👥 Member status check:
-👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>
-📌 Status: <b>{member.status}</b>"
+                f"👥 Member status check:\n"
+                f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                f"📌 Status: <b>{member.status}</b>"
             )
 
             if member.status in ("administrator", "creator"):
                 remove_user_record(user_id)
                 await app.send_message(
                     LOG_CHANNEL,
-                    f"✅ Skipped scan and removed violations for admin: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
+                    f"✅ Skipped scan and cleared violations for admin: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
                 )
                 return
+
         except Exception as e:
             print(f"[!] Failed to get member status: {e}")
             return
 
+        # Skip if whitelisted
         if is_whitelisted(user_id):
             return
 
         try:
             identity_text = user.username or ""
+
+            # Check bio
             try:
                 user_chat = await app.get_chat(user_id)
                 if hasattr(user_chat, "bio") and user_chat.bio:
@@ -59,6 +64,7 @@ def init(app):
             except Exception as e:
                 print(f"[!] Failed to get bio: {e}")
 
+            # If any link or @username is detected
             if contains_link(identity_text):
                 await message.delete()
                 count = increment_violations(user_id)
@@ -66,6 +72,7 @@ def init(app):
                 limit = config['warn_limit']
                 mode = config['punishment_mode']
 
+                # Log violation
                 await app.send_message(
                     LOG_CHANNEL,
                     f"🚨 <b>Violation Detected</b>\n"
@@ -76,6 +83,7 @@ def init(app):
                     f"📝 <b>Message:</b> <code>{message.text[:100]}</code>"
                 )
 
+                # Take action if limit exceeded
                 if count >= limit:
                     if mode == "mute":
                         await message.chat.restrict_member(user_id, ChatPermissions(can_send_messages=False))
