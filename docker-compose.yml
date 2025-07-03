@@ -1,6 +1,6 @@
 version: '3'
 services:
-  linkscanbot:
+  biolinkremoverbot:
     build: .
     restart: unless-stopped
     environment:
