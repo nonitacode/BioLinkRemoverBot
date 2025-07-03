@@ -1,22 +1,17 @@
-from pyrogram import Client, filters
+from pyrogram import Client
 from pyrogram.types import Message
 
-@Client.on_message(filters.command("help"))
-async def help_command(client: Client, message: Message):
-    text = """
-**🛡️ LinkScanBot Help Guide**
-
-📌 Commands:
-- `/help` — Show this help message
-- `/settings` — Configure bot settings
-- `/about` — About the bot and stats
-- `/broadcast [text]` — Send message to all users (admin only)
-
-🧠 How to use:
-- Just add this bot to your group.
-- It will auto-scan all messages and bios for suspicious links.
-- Configure with `/settings` if you're admin.
-
-Need more help? Contact: @YourSupportUsername
-"""
-    await message.reply_text(text, quote=True)
+async def help_handler(client: Client, message: Message):
+    await message.reply_text(
+        "**📚 Help - LinkScanBot**\n\n"
+        "🛡 **Auto Monitoring:**\n"
+        "• Scans all messages & bios for malicious links\n"
+        "• Deletes, bans or mutes users automatically\n\n"
+        "👑 **Admin Tools:**\n"
+        "• /stats or /about – Check bot's group stats\n\n"
+        "✅ **Whitelisting:**\n"
+        "• Bot respects whitelisted users/groups\n\n"
+        "📁 **Inline Buttons:**\n"
+        "• Help menus with step-by-step guidance\n\n"
+        "For questions, contact bot owner."
+    )
