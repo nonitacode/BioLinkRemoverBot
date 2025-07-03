@@ -1,10 +1,16 @@
 from pyrogram import filters
 from pyrogram.types import Message, ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton
 from config import LOG_CHANNEL, OWNER_ID
-from database.core import is_whitelisted, increment_violations, remove_user_record
+from database.core import (
+    is_whitelisted,
+    increment_violations,
+    remove_user_record,
+    get_last_warn,
+    set_last_warn,
+    delete_last_warn
+)
 from database.config import get_config
 from utils.filters import contains_link
-
 
 def init(app):
     @app.on_message(filters.group & filters.text)
@@ -18,18 +24,16 @@ def init(app):
         user_id = user.id
 
         try:
-            # Skip if OWNER
             if user_id == OWNER_ID:
                 await app.send_message(
                     LOG_CHANNEL,
                     f"👑 Skipped moderation for bot owner: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
                 )
                 remove_user_record(user_id)
+                delete_last_warn(chat_id, user_id)
                 return
 
-            # Check member status (admin/creator)
             member = await app.get_chat_member(chat_id, user_id)
-
             await app.send_message(
                 LOG_CHANNEL,
                 f"👥 Member status check:\n"
@@ -39,6 +43,7 @@ def init(app):
 
             if member.status in ("administrator", "creator"):
                 remove_user_record(user_id)
+                delete_last_warn(chat_id, user_id)
                 await app.send_message(
                     LOG_CHANNEL,
                     f"✅ Skipped scan and cleared violations for admin: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
@@ -49,14 +54,11 @@ def init(app):
             print(f"[!] Failed to get member status: {e}")
             return
 
-        # Skip if whitelisted
         if is_whitelisted(user_id):
             return
 
         try:
             identity_text = user.username or ""
-
-            # Check bio
             try:
                 user_chat = await app.get_chat(user_id)
                 if hasattr(user_chat, "bio") and user_chat.bio:
@@ -64,7 +66,6 @@ def init(app):
             except Exception as e:
                 print(f"[!] Failed to get bio: {e}")
 
-            # If any link or @username is detected
             if contains_link(identity_text):
                 await message.delete()
                 count = increment_violations(user_id)
@@ -72,7 +73,6 @@ def init(app):
                 limit = config['warn_limit']
                 mode = config['punishment_mode']
 
-                # Log violation
                 await app.send_message(
                     LOG_CHANNEL,
                     f"🚨 <b>Violation Detected</b>\n"
@@ -83,12 +83,13 @@ def init(app):
                     f"📝 <b>Message:</b> <code>{message.text[:100]}</code>"
                 )
 
-                # Take action if limit exceeded
                 if count >= limit:
                     if mode == "mute":
                         await message.chat.restrict_member(user_id, ChatPermissions(can_send_messages=False))
                     elif mode == "ban":
                         await message.chat.ban_member(user_id)
+
+                    delete_last_warn(chat_id, user_id)
 
                     keyboard = InlineKeyboardMarkup([
                         [InlineKeyboardButton("🔓 Unmute User", callback_data=f"unmute:{user_id}")]
@@ -104,7 +105,15 @@ def init(app):
                         quote=True
                     )
                 else:
-                    await message.reply(
+                    # Delete old warning message
+                    old_warn_id = get_last_warn(chat_id, user_id)
+                    if old_warn_id:
+                        try:
+                            await app.delete_messages(chat_id, old_warn_id)
+                        except:
+                            pass
+
+                    warn_msg = await message.reply(
                         f"⚠️ <b>Warning Issued</b>\n"
                         f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
                         f"⚠️ <b>Violation:</b> Detected link or @username in profile.\n"
@@ -112,6 +121,7 @@ def init(app):
                         f"🛑 Please remove links from your profile to avoid restrictions.",
                         quote=True
                     )
+                    set_last_warn(chat_id, user_id, warn_msg.id)
 
         except Exception as e:
             print(f"[!] Identity check failed for user {user_id}: {e}")
