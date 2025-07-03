@@ -1,21 +1,15 @@
-from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram import Client, filters
+from pyrogram.types import Message
 
-@filters.command("start")
-def start_command(client, message: Message):
-    user = message.from_user.first_name
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🛠 Help & Commands", callback_data="show_help")]
-    ])
-    message.reply_text(
-        f"👋 Hello {user}!\n\nI'm your anti-spam guardian bot 🛡️\n\nI can:\n• Auto-delete links & usernames\n• Scan bios for threats\n• Auto-mute spammers\n• Whitelist trusted members\n• Broadcast to users/groups\n\nUse the button below to explore all features.👇",
-        reply_markup=keyboard
-    )
-
-@client.on_callback_query(filters.regex("show_help"))
-def handle_start_help(client, callback):
-    from handlers.help import help_command_buttons
-    callback.message.edit(
-        "🛠 Choose a command to view help:",
-        reply_markup=help_command_buttons()
+@Client.on_message(filters.command("start"))
+async def start_command(client: Client, message: Message):
+    await message.reply_text(
+        "**👋 Welcome to LinkScanBot!**\n\n"
+        "I'm here to protect your group by scanning messages and bios for suspicious links.\n\n"
+        "**Commands:**\n"
+        "- `/help` – Show help\n"
+        "- `/settings` – Configure bot\n"
+        "- `/about` – Bot info and stats\n\n"
+        "Add me to your group and make me admin to get started.",
+        reply_markup=None  # You can add buttons here if you like
     )
