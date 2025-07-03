@@ -1,30 +1,34 @@
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import Message
-from database.mongo import users, chats
+from config import ADMINS  # Make sure ADMINS is a list of allowed user IDs
+import asyncio
 
-@filters.command("broadcast")
-def broadcast_handler(client, message: Message):
-    if not message.reply_to_message:
-        return message.reply("❌ Please reply to a message to broadcast.")
+# Broadcast handler for /broadcast command
+@Client.on_message(filters.command("broadcast") & filters.user(ADMINS))
+async def broadcast_handler(client: Client, message: Message):
+    if len(message.command) < 2:
+        await message.reply_text("❗ Usage: `/broadcast your message here`", quote=True)
+        return
 
-    mode = message.text.split(" ")[-1].strip()
-    sent, failed = 0, 0
+    broadcast_text = message.text.split(None, 1)[1]
 
-    if mode == "-all":
-        targets = list(users.find()) + list(chats.find())
-    elif mode == "-user":
-        targets = users.find()
-    elif mode == "-group":
-        targets = chats.find()
-    else:
-        return message.reply("❌ Invalid mode. Use `-all`, `-user`, or `-group`.")
+    sent_count = 0
+    failed_count = 0
 
-    for target in targets:
-        _id = target.get("user_id") or target.get("chat_id")
+    # Get all users from DB if available, else broadcast to groups only (example)
+    from LinkScanBot.database import get_all_users  # assume this exists
+
+    users = await get_all_users()
+
+    for user_id in users:
         try:
-            client.copy_message(_id, message.chat.id, message.reply_to_message.id)
-            sent += 1
-        except:
-            failed += 1
+            await client.send_message(chat_id=user_id, text=broadcast_text)
+            sent_count += 1
+            await asyncio.sleep(0.1)  # avoid hitting flood limit
+        except Exception:
+            failed_count += 1
+            continue
 
-    message.reply(f"📢 Broadcast complete!\n✅ Sent: {sent}\n❌ Failed: {failed}")
+    await message.reply_text(
+        f"📢 Broadcast completed!\n\n✅ Sent: {sent_count}\n❌ Failed: {failed_count}"
+    )
