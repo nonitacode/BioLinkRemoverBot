@@ -1,17 +1,14 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from database.mongo import set_group_setting
+from database.mongo import chats
 
-@filters.command("settings") & filters.user(lambda _, __, m: m.from_user and m.from_user.is_chat_admin)
+@filters.command("settings")
 def settings_cmd(client, message: Message):
-    chat_id = message.chat.id
-    args = message.text.split()
-
-    if len(args) == 2:
-        if args[1] in ["on", "off"]:
-            set_group_setting(chat_id, "enabled", args[1] == "on")
-            message.reply(f"⚙ Link scanning turned {'ON' if args[1] == 'on' else 'OFF'}.")
-        else:
-            message.reply("Usage: /settings [on|off]")
+    if "on" in message.text.lower():
+        chats.update_one({"chat_id": message.chat.id}, {"$set": {"scan_enabled": True}}, upsert=True)
+        message.reply("✅ Link scanning enabled.")
+    elif "off" in message.text.lower():
+        chats.update_one({"chat_id": message.chat.id}, {"$set": {"scan_enabled": False}}, upsert=True)
+        message.reply("❌ Link scanning disabled.")
     else:
-        message.reply("Usage: /settings [on|off]")
+        message.reply("Use `/settings on` or `/settings off`.")
