@@ -1,16 +1,12 @@
-import logging
-from pyrogram import Client
-from pyrogram.types import Message
-import handlers  # imports all handler modules
-from config import API_ID, API_HASH, BOT_TOKEN
+from pyrogram import Client, filters
+from pyrogram.handlers import MessageHandler, CallbackQueryHandler
+from config import API_ID, API_HASH, BOT_TOKEN, MONGO_URI
+from handlers.start import start_handler, callback_handler
+from handlers.help import help_handler
+from handlers.admin import stats_handler
+from handlers.scanner import scan_links
+from utils.db import init_db
 
-# Enable logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-LOGGER = logging.getLogger(__name__)
-
-# Initialize bot client
 app = Client(
     "LinkScanBot",
     api_id=API_ID,
@@ -18,19 +14,15 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-# Load all handlers via import (decorators already attached)
-from handlers import (
-    message_scan,
-    join_scan,
-    admin_commands,
-    settings,
-    broadcast,
-    help,
-    start,
-    about_stats
-)
+# Initialize database
+init_db(MONGO_URI)
 
-# Start the bot
-if __name__ == "__main__":
-    LOGGER.info("🚀 LinkScanBot is starting...")
-    app.run()
+# Register handlers
+app.add_handler(MessageHandler(start_handler, filters.command("start")))
+app.add_handler(MessageHandler(help_handler, filters.command("help")))
+app.add_handler(MessageHandler(stats_handler, filters.command(["stats", "about"])))
+app.add_handler(CallbackQueryHandler(callback_handler))
+app.add_handler(MessageHandler(scan_links, filters.text | filters.caption))
+
+print("Bot is running...")
+app.run()
