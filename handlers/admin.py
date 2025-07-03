@@ -2,7 +2,15 @@ from pyrogram import filters
 from pyrogram.types import Message, CallbackQuery, ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton
 from config import OWNER_ID
 from utils.sudo import is_sudo
-from database.core import get_all_whitelist
+from database.core import (
+    get_all_whitelist,
+    add_to_whitelist,
+    remove_from_whitelist,
+    remove_user_record,
+    delete_last_warn,
+    save_old_violations,
+    restore_old_violations
+)
 from database.config import get_config, set_warn_limit, set_punishment_mode
 
 
@@ -13,8 +21,8 @@ def init(app):
             return await message.reply("🚫 You are not authorized to use this.")
         await message.reply("🏓 <b>Pong!</b> Bot is alive and responding.")
 
-    @app.on_message(filters.command("freelist"))
-    async def freelist(_, message: Message):
+    @app.on_message(filters.command("allowlist"))
+    async def allowlist(_, message: Message):
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 Only the bot owner can use this.")
         wl = get_all_whitelist()
@@ -40,6 +48,67 @@ def init(app):
                 failed += 1
 
         await message.reply(f"📣 <b>Broadcast Completed</b>\n✅ Sent: {sent}\n❌ Failed: {failed}")
+
+    @app.on_message(filters.command("allow") & filters.group)
+    async def allow_user(_, message: Message):
+        if not is_sudo(message.from_user.id):
+            return await message.reply("🚫 You are not authorized.")
+
+        user = None
+        chat_id = message.chat.id
+
+        if message.reply_to_message:
+            user = message.reply_to_message.from_user
+        elif len(message.command) > 1:
+            user_input = message.command[1]
+            try:
+                user = await app.get_users(user_input)
+            except Exception:
+                return await message.reply("❌ Invalid username or user ID.")
+        else:
+            return await message.reply("ℹ️ Reply to a message or provide a username/user ID.")
+
+        user_id = user.id
+
+        save_old_violations(chat_id, user_id)
+        add_to_whitelist(user_id)
+        remove_user_record(user_id)
+        delete_last_warn(chat_id, user_id)
+
+        await message.reply(
+            f"✅ <b>User Allowed</b>\n"
+            f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a> has been whitelisted and violations saved.",
+            quote=True
+        )
+
+    @app.on_message(filters.command("remove") & filters.group)
+    async def remove_user(_, message: Message):
+        if not is_sudo(message.from_user.id):
+            return await message.reply("🚫 You are not authorized.")
+
+        user = None
+
+        if message.reply_to_message:
+            user = message.reply_to_message.from_user
+        elif len(message.command) > 1:
+            user_input = message.command[1]
+            try:
+                user = await app.get_users(user_input)
+            except Exception:
+                return await message.reply("❌ Invalid username or user ID.")
+        else:
+            return await message.reply("ℹ️ Reply to a message or provide a username/user ID.")
+
+        user_id = user.id
+
+        remove_from_whitelist(user_id)
+        restore_old_violations(message.chat.id, user_id)
+
+        await message.reply(
+            f"🚫 <b>User Removed from Whitelist</b>\n"
+            f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a> will now be moderated again.",
+            quote=True
+        )
 
     @app.on_message(filters.command("config") & filters.group)
     async def config_command(_, message: Message):
@@ -95,7 +164,7 @@ def init(app):
         await cb.message.delete()
         await config_command(client, cb.message)
 
-    @app.on_callback_query(filters.regex(r"^unmute:(\d+)$"))
+    @app.on_callback_query(filters.regex(r"^unmute:(\\d+)$"))
     async def handle_unmute_callback(client, callback_query: CallbackQuery):
         user_id = int(callback_query.data.split(":")[1])
         chat_id = callback_query.message.chat.id
