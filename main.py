@@ -9,7 +9,7 @@ app = Client("LinkScanBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKE
 app.add_handler(message_scan.link_checker)
 app.add_handler(join_scan.bio_checker)
 app.add_handler(admin_commands.admin_cmds)
-app.add_handler(settings.settings_cmd)
+app.add_handler(settings.settings_handler)  # ✅ Correct
 app.add_handler(broadcast.broadcast_handler)
 app.add_handler(help.help_command)
 app.add_handler(help.help_callback)
