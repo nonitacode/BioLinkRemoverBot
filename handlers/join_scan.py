@@ -1,9 +1,9 @@
 from pyrogram import filters
 from pyrogram.types import Message
+from pyrogram.handlers import MessageHandler
 from database.mongo import is_whitelisted
 
-@filters.new_chat_members
-def bio_checker(client, message: Message):
+def _bio_checker(client, message: Message):
     for user in message.new_chat_members:
         bio = user.bio or ""
         username = user.username or ""
@@ -18,3 +18,6 @@ def bio_checker(client, message: Message):
                     message.reply_text(f"🚫 {user.mention} muted due to suspicious bio/username.")
                 except:
                     pass
+
+# Export as valid MessageHandler for main.py
+bio_checker = MessageHandler(_bio_checker, filters.new_chat_members)
