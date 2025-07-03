@@ -111,3 +111,36 @@ LOG_CHANNEL	Channel ID where violations will be logged (optional)
 
 📣 To send an announcement:
 /broadcast -all
+
+### 🔄 Updates & Support
+
+Stay updated with the latest features and improvements to Link Scan Bot:
+
+<p align="center">
+  <a href="https://telegram.me/GrayBotSupport">
+    <img src="https://img.shields.io/badge/Join-Support%20Group-blue?style=for-the-badge&logo=telegram">
+  </a>
+  <a href="https://telegram.me/GrayBots">
+    <img src="https://img.shields.io/badge/Join-Update%20Channel-blue?style=for-the-badge&logo=telegram">
+  </a>
+</p>
+
+---
+
+### 🤝 Contributing
+
+We welcome contributions to the Link Scan Bot project. If you'd like to contribute, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch with a meaningful name.
+3. Make your changes and commit them with a descriptive commit message.
+4. Open a pull request against our `main` branch.
+5. Our team will review your changes and provide feedback.
+
+For more details, reach out us on telegram.
+
+---
+
+### 📜 License
+
+This project is licensed under the MIT License. For morfe details, see the [LICENSE](LICENSE) file.
