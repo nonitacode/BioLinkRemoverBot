@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+.env.*
+bot.session
+*.sqlite3
+*.log
