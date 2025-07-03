@@ -21,7 +21,7 @@ async def start_handler(client: Client, message: Message):
             ],
             [
                 InlineKeyboardButton("📢 Updates", callback_data="open_updates"),
-                InlineKeyboardButton("💻 Source Code", url="https://github.com/YourRepo/BioLinkScan")
+                InlineKeyboardButton("💻 Source Code", url="https://github.com/Nikchil/LinkScanBot")
             ]
         ])
     )
