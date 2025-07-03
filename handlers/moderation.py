@@ -1,40 +1,40 @@
-from pyrogram.types import Message, ChatPermissions
 from pyrogram import filters
+from pyrogram.types import Message, ChatPermissions
 from utils.filters import contains_link
-from database.core import is_whitelisted, add_to_whitelist, remove_from_whitelist, increment_violations
+from database.core import (
+    is_whitelisted,
+    increment_violations,
+)
 from config import MAX_VIOLATIONS
 
 def init(app):
-    @app.on_message(filters.command("free"))
-    async def free_user(_, message: Message):
-        if message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            add_to_whitelist(user_id)
-            await message.reply(f"✅ <code>{user_id}</code> whitelisted.")
-
-    @app.on_message(filters.command("unfree"))
-    async def unfree_user(_, message: Message):
-        if message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            remove_from_whitelist(user_id)
-            await message.reply(f"❌ <code>{user_id}</code> removed from whitelist.")
-
     @app.on_message(filters.group & filters.text)
-    async def monitor_message(_, message: Message):
-        if message.from_user and is_whitelisted(message.from_user.id):
+    async def check_user_identity(_, message: Message):
+        user = message.from_user
+        chat_id = message.chat.id
+
+        if not user or user.is_bot:
             return
 
-        if contains_link(message.text):
-            try:
+        user_id = user.id
+
+        if is_whitelisted(user_id):
+            return
+
+        try:
+            user_info = await app.get_users(user_id)
+            identity_text = f"{user_info.username or ''} {user_info.bio or ''}"
+
+            if contains_link(identity_text):
                 await message.delete()
-                count = increment_violations(message.from_user.id)
+                count = increment_violations(user_id)
+
                 if count >= MAX_VIOLATIONS:
-                    await message.chat.ban_member(message.from_user.id)
-                    await message.reply(f"🚫 User banned for {count} violations.")
-                elif count == 2:
-                    await message.chat.restrict_member(message.from_user.id, ChatPermissions(can_send_messages=False))
-                    await message.reply("🔇 User muted due to repeated links.")
+                    await message.chat.restrict_member(user_id, ChatPermissions(can_send_messages=False))
+                    await message.reply(f"🚫 <b>User muted</b> due to {count} violations.")
                 else:
-                    await message.reply("⚠️ No links allowed here.")
-            except Exception as e:
-                print(f"Permission error: {e}")
+                    await message.reply(
+                        f"⚠️ <b>Warning {count}/{MAX_VIOLATIONS}:</b> Your profile contains links or usernames. Please remove them to avoid restrictions."
+                    )
+        except Exception as e:
+            await message.reply(f"⚠️ Could not check user bio.\n<code>{e}</code>")
