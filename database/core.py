@@ -59,3 +59,15 @@ def restore_old_violations(chat_id, user_id):
 def get_last_warn(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
     return warn_cache_col.find_one({"_id": key})
+
+def set_last_warn(chat_id, user_id, message_id):
+    key = f"{chat_id}:{user_id}"
+    warn_cache_col.update_one(
+        {"_id": key},
+        {"$set": {"_id": key, "message_id": message_id}},
+        upsert=True
+    )
+
+def delete_last_warn(chat_id, user_id):
+    key = f"{chat_id}:{user_id}"
+    warn_cache_col.delete_one({"_id": key})
