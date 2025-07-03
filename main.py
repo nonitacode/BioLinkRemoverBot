@@ -15,7 +15,7 @@ app = Client(
 )
 
 # Initialize database
-init_db(MONGO_URI)
+init_db(MONGO_URL)
 
 # Register handlers
 app.add_handler(MessageHandler(start_handler, filters.command("start")))
