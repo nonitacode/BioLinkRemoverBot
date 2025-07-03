@@ -1,120 +1,122 @@
-# 🔒 BioLinkRemoverBot
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Nikchil/BioLinkRemoverBot/refs/heads/main/assets/biolinkremoverbot.png" alt="Bio Link Remover Logo" width="250"/>
+</p>
 
-Telegram bot to auto-moderate groups by deleting messages with links or @usernames, detecting suspicious bios, and auto-punishing repeat offenders.
+<h1 align="center">🔒 BioLinkRemoverBot</h1>
+
+<p align="center">
+Telegram bot to <strong>auto-moderate groups</strong> by deleting messages with links or @usernames, detecting suspicious bios, and auto-punishing repeat offenders.
+</p>
+
+---
 
 ## ✨ Features
-- Delete messages containing links or usernames
-- Scan new user bios for spam
-- Auto-mute users after repeated violations
-- Whitelist system
-- Group-specific settings via `/settings`
-- Log violations to a channel
+
+- 🔗 Delete messages containing **links or usernames**
+- 👁 Scan new user bios for **spam content**
+- 🔇 Auto-mute users after repeated **violations**
+- ✅ Whitelist system for **trusted users**
+- ⚙️ Group-specific settings via `/settings`
+- 📝 Log violations to a **channel**
+
+---
 
 ## 🚀 Deploy Instructions
 
-1. **Upgrade & Update:**
-   ```bash
-   sudo apt-get update && sudo apt-get upgrade -y
-   ```
-2. **Clone the Repository**
-   ```bash
-   git clone https://github.com/Nikchil/BioLinkRemoverBot && cd BioLinkRemoverBot
-   ```
-3. **Install Requirements**
-   ```bash
-   pip3 install -U -r requirements.txt
-   ```
-4. **Create .env  with sample.env**
-   ```bash
-   cp sample.env .env
-   ```
-   - Edit .env with your vars
-5. **Editing Vars:**
-   ```bash
-   vi .env
-   ```
-   - Edit .env with your values.
-   - Press `I` button on keyboard to start editing.
-   - Press `Ctrl + C`  once you are done with editing vars and type `:wq` to save .env or `:qa` to exit editing.
-6. **Installing tmux**
-    ```bash
-    sudo apt install tmux -y && tmux
-    ```
-7. **Run the Bot**
-    ```bash
-    bash start
-    ```
-### 🛠 Commands & Usage
+### 1. 🔄 Upgrade & Update
+```bash
+sudo apt-get update && sudo apt-get upgrade -y
+```
 
-👮 Admin Commands
+### 2. 📥 Clone the Repository
+```bash
+git clone https://github.com/Nikchil/BioLinkRemoverBot && cd BioLinkRemoverBot
+```
 
-Command	Description
+### 3. 📦 Install Requirements
+```bash
+pip3 install -U -r requirements.txt
+```
 
-/allow - mention, User ID or (reply)	✅ Whitelist a user so they can post links or usernames
+### 4. ⚙️ Create `.env` File
+```bash
+cp sample.env .env
+```
+- Open `.env` and edit it with your values.
 
-/unwhitelist (reply)	❌ Remove user from whitelist
+### 5. 📝 Edit ENV Vars
+```bash
+vi .env
+```
+- Press `I` to start editing.
+- After changes: Press `Ctrl + C` and type `:wq` to save or `:qa` to quit.
 
-/settings on	🔒 Enable link scanning in the group
+### 6. 🔧 Install tmux
+```bash
+sudo apt install tmux -y && tmux
+```
 
-/settings off	🔓 Disable link scanning in the group
-
-/broadcast -all (reply)	📢 Send a message to all groups and users
-
-/broadcast -group (reply)	📣 Send a message to all groups only
-
-/broadcast -user (reply)	📬 Send a message to all users only
-
-
-> ⚠️ All commands must be used by group admins only.
-
-### 🤖 Bot Behavior
-
-Feature	Description
-
-🔗 Auto-delete links & usernames	Removes messages containing URLs or @usernames instantly
-
-👁 Bio scanner on join	Kicks/mutes users who have suspicious links/usernames in their bio
-
-🔇 Auto-mute repeat offenders	After MAX_VIOLATIONS (default: 3), user is auto-muted
-
-🧠 Smart permission check	Warns if the bot lacks delete/restrict permissions
-
-
+### 7. 🚀 Run the Bot
+```bash
+bash start
+```
 
 ---
 
-### ⚙️ Setup (ENV Variables)
+## 🛠 Commands & Usage
 
-Variable	Description
+### 👮 Admin Commands
 
-API_ID / API_HASH	Your Telegram API credentials
+| Command | Description |
+|--------|-------------|
+| `/allow` (mention, ID or reply) | ✅ Whitelist a user |
+| `/unwhitelist` (reply) | ❌ Remove from whitelist |
+| `/settings on` | 🔒 Enable link scanning |
+| `/settings off` | 🔓 Disable link scanning |
+| `/broadcast -all` (reply) | 📢 Send message to all groups/users |
+| `/broadcast -group` (reply) | 📣 Send to groups only |
+| `/broadcast -user` (reply) | 📬 Send to users only |
 
-BOT_TOKEN	Your bot token from BotFather
-
-MONGO_URL	MongoDB connection URL
-
-MAX_VIOLATIONS	Violations before auto-mute (default: 3)
-
-LOG_CHANNEL	Channel ID where violations will be logged (optional)
-
-
+> ⚠️ All commands are restricted to **group admins**.
 
 ---
 
-### 💬 Examples
+## 🤖 Bot Behavior
 
-✅ Reply to a spammer with:
-/whitelist
+| Feature | Description |
+|--------|-------------|
+| 🔗 Auto-delete links/usernames | Removes messages with links or `@usernames` |
+| 👁 Bio scanner | Kicks or mutes users with suspicious bio content |
+| 🔇 Auto-mute | After `MAX_VIOLATIONS` (default: 3) |
+| 🧠 Smart permission check | Warns if bot lacks delete/restrict permissions |
 
-🔇 To turn off link scan:
-/settings off
+---
 
-📣 To send an announcement:
-/broadcast -all
+## ⚙️ Setup (ENV Variables)
 
-### 🔄 Updates & Support
+| Variable | Description |
+|----------|-------------|
+| `API_ID` / `API_HASH` | Telegram API credentials |
+| `BOT_TOKEN` | Bot token from BotFather |
+| `MONGO_URL` | MongoDB connection string |
+| `MAX_VIOLATIONS` | Violations before mute (default: 3) |
+| `LOG_CHANNEL` | Log channel ID (optional) |
 
-Stay updated with the latest features and improvements to Link Scan Bot:
+---
+
+## 💬 Usage Examples
+
+```bash
+✅ /whitelist        → Reply to a spammer to whitelist
+🔇 /settings off     → Disable link scanning
+📣 /broadcast -all   → Send an announcement
+```
+
+---
+
+## 🔄 Updates & Support
+
+Stay updated with new features and releases:
 
 <p align="center">
   <a href="https://telegram.me/GrayBotSupport">
@@ -127,20 +129,23 @@ Stay updated with the latest features and improvements to Link Scan Bot:
 
 ---
 
-### 🤝 Contributing
+## 🤝 Contributing
 
-We welcome contributions to the Bio Link Remover Bot project. If you'd like to contribute, please follow these steps:
+We welcome all contributions to improve this bot!  
 
-1. Fork the repository.
-2. Create a new branch with a meaningful name.
-3. Make your changes and commit them with a descriptive commit message.
-4. Open a pull request against our `main` branch.
-5. Our team will review your changes and provide feedback.
+To contribute:
 
-For more details, reach out us on telegram.
+1. 🍴 Fork the repository  
+2. 🌿 Create a new branch  
+3. 💻 Make your changes  
+4. 📥 Commit with clear messages  
+5. 📤 Submit a pull request  
+
+For help, reach out via our support group on Telegram.
 
 ---
 
-### 📜 License
+## 📜 License
 
-This project is licensed under the MIT License. For morfe details, see the [LICENSE](LICENSE) file.
+This project is licensed under the **MIT License**.  
+See the [LICENSE](LICENSE) file for more information.
