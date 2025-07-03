@@ -1,4 +1,4 @@
-# 🔒 BioLinoRemoverBot
+# 🔒 BioLinkRemoverBot
 
 Telegram bot to auto-moderate groups by deleting messages with links or @usernames, detecting suspicious bios, and auto-punishing repeat offenders.
 
