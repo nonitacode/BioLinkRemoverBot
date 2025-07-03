@@ -10,106 +10,137 @@ from database.core import (
     delete_last_warn,
     save_old_violations,
     restore_old_violations,
-    refresh_memory_cache
+    refresh_memory_cache,
+    get_served_users,
+    get_served_chats,
+    add_served_user,
+    add_served_chat
 )
 from database.config import get_config, set_warn_limit, set_punishment_mode
+import time
+import asyncio
+from pyrogram.errors import FloodWait
+
+BROADCAST_STATUS = {
+    "active": False,
+    "sent": 0,
+    "failed": 0,
+    "total": 0,
+    "start_time": 0,
+    "users": 0,
+    "chats": 0,
+    "sent_users": 0,
+    "sent_chats": 0,
+    "mode": "",
+}
 
 def init(app):
+
     @app.on_message(filters.command("ping"))
     async def ping(_, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 You are not authorized to use this.")
-        await message.reply("🏓 <b>Pong!</b> Bot is alive and responding.")
-
-    @app.on_message(filters.command("allowlist"))
-    async def allowlist(_, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 Only the bot owner can use this.")
-        wl = get_all_whitelist()
-        text = "\n".join([f"• <code>{uid}</code>" for uid in wl]) or "⚠️ No whitelisted users."
-        await message.reply(f"✅ <b>Whitelisted Users:</b>\n{text}")
+        start = time.time()
+        sent = await message.reply("🏓 Pinging...")
+        end = time.time()
+        uptime = time.time() - start
+        await sent.edit_text(f"🏓 Pong! `{round((end - start) * 1000)}ms`")
 
     @app.on_message(filters.command("broadcast"))
-    async def broadcast(_, message: Message):
+    async def broadcast_command(client, message: Message):
         if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 Not allowed.")
-        if not message.reply_to_message:
-            return await message.reply("📢 Reply to a message to broadcast it.")
-        sent, failed = 0, 0
-        broadcast_chats = [message.chat.id]
-        for chat_id in broadcast_chats:
+            return await message.reply("🚫 Not authorized.")
+        cmd = message.text.lower()
+        mode = "forward" if "-forward" in cmd else "copy"
+
+        if "-all" in cmd:
+            users = await get_served_users()
+            chats = await get_served_chats()
+            target_users = [u["user_id"] for u in users]
+            target_chats = [c["chat_id"] for c in chats]
+        elif "-user" in cmd or "-users" in cmd:
+            users = await get_served_users()
+            target_users = [u["user_id"] for u in users]
+            target_chats = []
+        elif "-group" in cmd or "-chats" in cmd:
+            chats = await get_served_chats()
+            target_users = []
+            target_chats = [c["chat_id"] for c in chats]
+        else:
+            return await message.reply("Usage: /broadcast -all|-user|-group [-forward]")
+
+        if message.reply_to_message:
+            content = message.reply_to_message
+        else:
+            text = message.text
+            for part in ["/broadcast", "-forward", "-all", "-users", "-chats", "-user", "-group"]:
+                text = text.replace(part, "")
+            content = text.strip()
+            if not content:
+                return await message.reply("📝 Provide a message or reply to one.")
+
+        total = len(target_users) + len(target_chats)
+        BROADCAST_STATUS.update({
+            "active": True,
+            "sent": 0,
+            "failed": 0,
+            "total": total,
+            "start_time": time.time(),
+            "users": len(target_users),
+            "chats": len(target_chats),
+            "sent_users": 0,
+            "sent_chats": 0,
+            "mode": mode,
+        })
+
+        msg = await message.reply("📡 Broadcast started...")
+
+        async def deliver(chat_id):
             try:
-                await app.copy_message(chat_id, message.chat.id, message.reply_to_message.message_id)
-                sent += 1
-            except:
-                failed += 1
-        await message.reply(f"📣 <b>Broadcast Completed</b>\n✅ Sent: {sent}\n❌ Failed: {failed}")
+                if isinstance(content, str):
+                    await client.send_message(chat_id, content)
+                elif mode == "forward":
+                    await client.forward_messages(chat_id, message.chat.id, [content.id])
+                else:
+                    await content.copy(chat_id)
+                BROADCAST_STATUS["sent"] += 1
+            except FloodWait as e:
+                await asyncio.sleep(e.value)
+                return await deliver(chat_id)
+            except Exception:
+                BROADCAST_STATUS["failed"] += 1
 
-    @app.on_message(filters.command("config") & filters.group)
-    async def config_command(_, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 Only bot owner can use this.")
-        chat_id = message.chat.id
-        config = get_config(chat_id)
-        text = (
-            f"🛠️ <b>Group Configuration</b>\n\n"
-            f"⚠️ <b>Warn Limit:</b> {config['warn_limit']}\n"
-            f"🔨 <b>Punishment:</b> {config['punishment_mode'].capitalize()}\n\n"
-            f"Use the buttons below to update settings."
+        targets = target_users + target_chats
+        for i in range(0, total, 100):
+            batch = targets[i:i+100]
+            await asyncio.gather(*(deliver(cid) for cid in batch))
+            await asyncio.sleep(1)
+
+        elapsed = round(time.time() - BROADCAST_STATUS["start_time"])
+        await msg.edit_text(
+            f"✅ <b>Broadcast Complete</b>\n"
+            f"📦 Total: {total}\n"
+            f"✅ Sent: {BROADCAST_STATUS['sent']}\n"
+            f"❌ Failed: {BROADCAST_STATUS['failed']}\n"
+            f"⏱ Time: {elapsed}s"
         )
-        keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("➕ Increase Warn Limit", callback_data=f"cfg:warn_inc:{chat_id}")],
-            [InlineKeyboardButton("➖ Decrease Warn Limit", callback_data=f"cfg:warn_dec:{chat_id}")],
-            [InlineKeyboardButton("🔒 Set Punishment: Mute", callback_data="cfg:punish:mute")],
-            [InlineKeyboardButton("🚫 Set Punishment: Ban", callback_data="cfg:punish:ban")],
-            [InlineKeyboardButton("⚠️ Set Punishment: Warn Only", callback_data="cfg:punish:warn")]
-        ])
-        await message.reply(text, reply_markup=keyboard)
+        BROADCAST_STATUS["active"] = False
 
-    @app.on_callback_query(filters.regex(r"^cfg:(warn_inc|warn_dec):(-?\d+)$"))
-    async def update_warn_limit(client, cb: CallbackQuery):
-        action, chat_id = cb.data.split(":")[1:]
-        chat_id = int(chat_id)
-        if not is_sudo(cb.from_user.id):
-            return await cb.answer("❌ Not allowed.", show_alert=True)
-        config = get_config(chat_id)
-        current = config["warn_limit"]
-        new_limit = current + 1 if action == "warn_inc" else max(1, current - 1)
-        set_warn_limit(chat_id, new_limit)
-        await cb.answer(f"✅ Warn limit set to {new_limit}.", show_alert=True)
-        await cb.message.delete()
-        await config_command(client, cb.message)
-
-    @app.on_callback_query(filters.regex(r"^cfg:punish:(mute|ban|warn)$"))
-    async def update_punishment_mode(client, cb: CallbackQuery):
-        mode = cb.data.split(":")[2]
-        if not is_sudo(cb.from_user.id):
-            return await cb.answer("❌ Not allowed.", show_alert=True)
-        set_punishment_mode(cb.message.chat.id, mode)
-        await cb.answer(f"✅ Punishment mode set to: {mode.capitalize()}", show_alert=True)
-        await cb.message.delete()
-        await config_command(client, cb.message)
-
-    @app.on_callback_query(filters.regex(r"^unmute:(\d+)$"))
-    async def handle_unmute_callback(client, callback_query: CallbackQuery):
-        user_id = int(callback_query.data.split(":")[1])
-        chat_id = callback_query.message.chat.id
-        member = await client.get_chat_member(chat_id, callback_query.from_user.id)
-        if not (member.status in ("administrator", "creator") or callback_query.from_user.id == OWNER_ID):
-            return await callback_query.answer("🚫 Only admins can unmute this user.", show_alert=True)
-        await client.restrict_chat_member(chat_id, user_id, ChatPermissions(can_send_messages=True))
-        await callback_query.edit_message_text(
-            f"✅ <b>User Unmuted</b>\n"
-            f"👤 <a href='tg://user?id={user_id}'>Unmuted User</a>\n"
-            f"🛡️ Unmuted by <a href='tg://user?id={callback_query.from_user.id}'>{callback_query.from_user.first_name}</a>"
+    @app.on_message(filters.command("status"))
+    async def status_command(_, message: Message):
+        if not BROADCAST_STATUS["active"]:
+            return await message.reply("📡 No active broadcast.")
+        percent = round((BROADCAST_STATUS["sent"] + BROADCAST_STATUS["failed"]) / BROADCAST_STATUS["total"] * 100, 2)
+        await message.reply(
+            f"📊 Broadcast Progress:\n"
+            f"✅ Sent: {BROADCAST_STATUS['sent']}\n"
+            f"❌ Failed: {BROADCAST_STATUS['failed']}\n"
+            f"📦 Total: {BROADCAST_STATUS['total']}\n"
+            f"🔃 Progress: {percent}%"
         )
 
-    @app.on_message(filters.command(["admincache", "refresh"]))
-    async def refresh_admin_cache(_, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 You are not authorized to use this.")
-        try:
-            refresh_memory_cache()
-            await message.reply("🔁 <b>System Refreshed.</b>")
-        except Exception as e:
-            await message.reply(f"❌ Failed to refresh:\n<code>{e}</code>")
+    @app.on_message(filters.private & ~filters.service)
+    async def save_user(_, message: Message):
+        await add_served_user(message.from_user.id)
+
+    @app.on_chat_member_updated()
+    async def save_group(_, chat_member):
+        await add_served_chat(chat_member.chat.id)
