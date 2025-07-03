@@ -7,6 +7,8 @@ db = client.linkscan
 whitelist = db.whitelist
 violations = db.violations
 group_settings = db.settings
+users = db.users
+chats = db.chats
 
 def is_whitelisted(user_id: int, chat_id: int) -> bool:
     return whitelist.find_one({"user_id": user_id, "chat_id": chat_id}) is not None
@@ -43,3 +45,8 @@ def record_violation(bot, chat_id: int, user_id: int, message):
 
 def take_action(bot, chat_id: int, user_id: int):
     record_violation(bot, chat_id, user_id, message=None)
+
+def get_target_ids(mode: str):
+    group_ids = [c["chat_id"] for c in chats.find()] if mode in ["all", "group"] else []
+    user_ids = [u["user_id"] for u in users.find()] if mode in ["all", "user"] else []
+    return list(set(group_ids + user_ids))
