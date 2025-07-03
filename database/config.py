@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from config import MONGO_URL
 
 client = MongoClient(MONGO_URL)
-db = client.linkscanbot
+db = client.biolinkremoverbot
 config_col = db.config
 
 def get_config(chat_id):
