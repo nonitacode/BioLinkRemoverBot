@@ -1,19 +1,21 @@
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import Message
-from database.mongo import users, chats
 
-@filters.command("about")
-def about_handler(client, message: Message):
-    message.reply_text(
-        "🤖 *LinkScanBot*\n\nBuilt to secure your group from unwanted spam, links, and usernames.\n\nFeatures:\n• Auto-link deletion\n• Bio scan on joins\n• Auto-mute repeat offenders\n• Whitelist system\n• Broadcast to users/groups\n• Admin-only control",
-        parse_mode="markdown"
-    )
+@Client.on_message(filters.command("about"))
+async def about_handler(client: Client, message: Message):
+    text = """
+**🤖 About LinkScanBot**
 
-@filters.command("stats")
-def stats_handler(client, message: Message):
-    total_users = users.count_documents({})
-    total_groups = chats.count_documents({})
-    message.reply_text(
-        f"📊 *Stats*\n\n👤 Users: {total_users}\n👥 Groups: {total_groups}",
-        parse_mode="markdown"
-    )
+🔍 This bot scans messages and bios in real-time for malicious or suspicious links.
+
+📊 **Bot Features:**
+- Auto link scanning
+- Join checks for new users
+- Admin-only configuration
+- Broadcast support
+- Full logging
+
+👤 Developed by: [Your Name or Team]
+📎 Source Code: [GitHub or Repo Link]
+"""
+    await message.reply_text(text, quote=True)
