@@ -1,7 +1,7 @@
 from pyrogram import filters
 from pyrogram.types import Message, ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton
-from config import LOG_CHANNEL
-from database.core import is_whitelisted, increment_violations
+from config import LOG_CHANNEL, OWNER_ID
+from database.core import is_whitelisted, increment_violations, remove_user_record
 from database.config import get_config
 from utils.filters import contains_link
 
@@ -18,12 +18,29 @@ def init(app):
         user_id = user.id
 
         try:
-            # Skip scanning if user is admin or creator
-            member = await app.get_chat_member(chat_id, user_id)
-            if member.status in ("administrator", "creator"):
+            # Skip if user is OWNER_ID
+            if user_id == OWNER_ID:
                 await app.send_message(
                     LOG_CHANNEL,
-                    f"✅ Skipped scan for admin: <a href='tg://user?id={user_id}'>{user.first_name}</a> [{user_id}] in <code>{chat_id}</code>"
+                    f"👑 Skipped moderation for bot owner: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
+                )
+                remove_user_record(user_id)
+                return
+
+            # Check if user is admin or creator
+            member = await app.get_chat_member(chat_id, user_id)
+            await app.send_message(
+                LOG_CHANNEL,
+                f"👥 Member status check:
+👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>
+📌 Status: <b>{member.status}</b>"
+            )
+
+            if member.status in ("administrator", "creator"):
+                remove_user_record(user_id)
+                await app.send_message(
+                    LOG_CHANNEL,
+                    f"✅ Skipped scan and removed violations for admin: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
                 )
                 return
         except Exception as e:
@@ -49,7 +66,6 @@ def init(app):
                 limit = config['warn_limit']
                 mode = config['punishment_mode']
 
-                # Log the violation
                 await app.send_message(
                     LOG_CHANNEL,
                     f"🚨 <b>Violation Detected</b>\n"
@@ -66,7 +82,6 @@ def init(app):
                     elif mode == "ban":
                         await message.chat.ban_member(user_id)
 
-                    # Unmute button for admins
                     keyboard = InlineKeyboardMarkup([
                         [InlineKeyboardButton("🔓 Unmute User", callback_data=f"unmute:{user_id}")]
                     ])
