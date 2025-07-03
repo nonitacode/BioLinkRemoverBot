@@ -4,7 +4,7 @@ from config import MONGO_URL
 client = MongoClient(MONGO_URL)
 db = client.link_scan
 
-# MongoDB Collections
+# Collections
 whitelist_col = db.whitelist
 violations_col = db.violations
 config_col = db.config
@@ -13,13 +13,13 @@ backup_col = db.violation_backup
 users_col = db.served_users
 groups_col = db.served_chats
 
-# Memory cache dictionary
+# Memory cache
 memory_cache = {
     "whitelist": set(),
     "configs": {},
 }
 
-# Refresh cache (for /refresh or /admincache)
+# Cache refresh (used by /refresh)
 def refresh_memory_cache():
     memory_cache["whitelist"] = set(get_all_whitelist())
     memory_cache["configs"] = {
@@ -34,7 +34,7 @@ def refresh_memory_cache():
 def get_memory_config(chat_id):
     return memory_cache["configs"].get(chat_id, {"warn_limit": 3, "punishment_mode": "mute"})
 
-# Whitelist functions
+# Whitelist
 def is_whitelisted(user_id):
     return user_id in memory_cache["whitelist"]
 
@@ -49,7 +49,7 @@ def remove_from_whitelist(user_id):
 def get_all_whitelist():
     return [doc["_id"] for doc in whitelist_col.find()]
 
-# Violation tracking
+# Violations
 def increment_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
     return violations_col.find_one_and_update(
@@ -66,15 +66,7 @@ def remove_user_record(user_id):
     warn_cache_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
     backup_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
 
-# Warning cache
-def delete_last_warn(chat_id, user_id):
-    key = f"{chat_id}:{user_id}"
-    warn_cache_col.delete_one({"_id": key})
-
-def get_last_warn(chat_id, user_id):
-    key = f"{chat_id}:{user_id}"
-    return warn_cache_col.find_one({"_id": key})
-
+# Last warn message
 def set_last_warn(chat_id, user_id, message_id):
     key = f"{chat_id}:{user_id}"
     warn_cache_col.update_one(
@@ -83,7 +75,15 @@ def set_last_warn(chat_id, user_id, message_id):
         upsert=True
     )
 
-# Backup/Restore violations
+def get_last_warn(chat_id, user_id):
+    key = f"{chat_id}:{user_id}"
+    return warn_cache_col.find_one({"_id": key})
+
+def delete_last_warn(chat_id, user_id):
+    key = f"{chat_id}:{user_id}"
+    warn_cache_col.delete_one({"_id": key})
+
+# Backup/restore
 def save_old_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
     doc = violations_col.find_one({"_id": key})
@@ -97,7 +97,7 @@ def restore_old_violations(chat_id, user_id):
         violations_col.replace_one({"_id": key}, doc, upsert=True)
         backup_col.delete_one({"_id": key})
 
-# Broadcast utilities
+# Group/User storage for broadcast
 async def get_served_users():
     return list(users_col.find({}, {"_id": 0, "user_id": 1}))
 
