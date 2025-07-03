@@ -16,7 +16,7 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 MONGO_URL = getenv("MONGO_URL", None)
 
 # Bot Settings
-MAX_VIOLATIONS = int(getenv("MAX_VIOLATIONS", 3))  # Number of violations before action
+MAX_VIOLATIONS = int(getenv("MAX_VIOLATIONS", 5))  # Number of violations before action
 LOG_CHANNEL = int(getenv("LOG_CHANNEL", 0))        # Channel ID for logging actions
 
 # Bot Identity
