@@ -7,10 +7,12 @@ from database.core import (
     remove_user_record,
     get_last_warn,
     set_last_warn,
-    delete_last_warn
+    delete_last_warn,
+    get_memory_config
 )
-from database.config import get_config
 from utils.filters import contains_link
+from pyrogram.enums import ChatMemberStatus
+
 
 def init(app):
     @app.on_message(filters.group & filters.text)
@@ -25,29 +27,14 @@ def init(app):
 
         try:
             if user_id == OWNER_ID:
-                await app.send_message(
-                    LOG_CHANNEL,
-                    f"👑 Skipped moderation for bot owner: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
-                )
                 remove_user_record(user_id)
                 delete_last_warn(chat_id, user_id)
                 return
 
             member = await app.get_chat_member(chat_id, user_id)
-            await app.send_message(
-                LOG_CHANNEL,
-                f"👥 Member status check:\n"
-                f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
-                f"📌 Status: <b>{member.status}</b>"
-            )
-
-            if member.status in ("administrator", "creator"):
+            if member.status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER):
                 remove_user_record(user_id)
                 delete_last_warn(chat_id, user_id)
-                await app.send_message(
-                    LOG_CHANNEL,
-                    f"✅ Skipped scan and cleared violations for admin: <a href='tg://user?id={user_id}'>{user.first_name}</a>"
-                )
                 return
 
         except Exception as e:
@@ -68,20 +55,10 @@ def init(app):
 
             if contains_link(identity_text):
                 await message.delete()
-                count = increment_violations(user_id)
-                config = get_config(chat_id)
+                count = increment_violations(chat_id, user_id)
+                config = get_memory_config(chat_id)
                 limit = config['warn_limit']
                 mode = config['punishment_mode']
-
-                await app.send_message(
-                    LOG_CHANNEL,
-                    f"🚨 <b>Violation Detected</b>\n"
-                    f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a> [<code>{user_id}</code>]\n"
-                    f"🔗 <b>Bio/Username:</b> <code>{identity_text.strip()}</code>\n"
-                    f"⚠️ <b>Warnings:</b> {count}/{limit}\n"
-                    f"🗨 <b>Chat:</b> <code>{chat_id}</code>\n"
-                    f"📝 <b>Message:</b> <code>{message.text[:100]}</code>"
-                )
 
                 if count >= limit:
                     if mode == "mute":
@@ -104,12 +81,22 @@ def init(app):
                         reply_markup=keyboard,
                         quote=True
                     )
+
+                    if LOG_CHANNEL:
+                        await app.send_message(
+                            LOG_CHANNEL,
+                            f"🚨 <b>Auto Mute Triggered</b>\n"
+                            f"👤 User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                            f"🆔 User ID: <code>{user_id}</code>\n"
+                            f"📍 Group: <code>{chat_id}</code>\n"
+                            f"📛 Reason: Bio or username link\n"
+                            f"🚫 Violations: {count} / {limit}"
+                        )
                 else:
-                    # Delete old warning message
-                    old_warn_id = get_last_warn(chat_id, user_id)
-                    if old_warn_id:
+                    old_warn = get_last_warn(chat_id, user_id)
+                    if old_warn and "message_id" in old_warn:
                         try:
-                            await app.delete_messages(chat_id, old_warn_id)
+                            await app.delete_messages(chat_id, old_warn["message_id"])
                         except:
                             pass
 
@@ -122,6 +109,16 @@ def init(app):
                         quote=True
                     )
                     set_last_warn(chat_id, user_id, warn_msg.id)
+
+                    if LOG_CHANNEL:
+                        await app.send_message(
+                            LOG_CHANNEL,
+                            f"⚠️ <b>Warning Logged</b>\n"
+                            f"👤 User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                            f"🆔 User ID: <code>{user_id}</code>\n"
+                            f"📍 Group: <code>{chat_id}</code>\n"
+                            f"⚠️ Violations: {count} / {limit}"
+                        )
 
         except Exception as e:
             print(f"[!] Identity check failed for user {user_id}: {e}")
