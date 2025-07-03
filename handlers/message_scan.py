@@ -1,19 +1,31 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from filters.link_detector import is_link_message
-from database.mongo import is_whitelisted, record_violation, get_group_settings
+from config import MAX_VIOLATIONS
+from database.mongo import is_whitelisted
+
+violations = {}
 
 @filters.group & filters.text
 def link_checker(client, message: Message):
     user_id = message.from_user.id
     chat_id = message.chat.id
-    settings = get_group_settings(chat_id)
+    text = message.text.lower()
 
-    if not settings.get("enabled", True):
+    if is_whitelisted(chat_id, user_id):
         return
 
-    if is_link_message(message):
-        if not is_whitelisted(user_id, chat_id):
-            message.delete()
-            message.reply_text("🚫 Link or username detected and removed.", quote=False)
-            record_violation(client, chat_id, user_id, message)
+    if any(x in text for x in ["http", ".me", "t.me", "@", ".com"]):
+        try:
+            client.delete_messages(chat_id, message.id)
+        except:
+            return
+
+        key = f"{chat_id}:{user_id}"
+        violations[key] = violations.get(key, 0) + 1
+
+        if violations[key] >= MAX_VIOLATIONS:
+            try:
+                client.restrict_chat_member(chat_id, user_id, permissions={})
+                message.reply(f"🔇 {message.from_user.mention} muted for repeated link posting.")
+            except:
+                pass
