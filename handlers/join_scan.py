@@ -1,10 +1,20 @@
 from pyrogram import filters
-from pyrogram.types import ChatMemberUpdated
-from filters.link_detector import contains_link
-from database.mongo import take_action
+from pyrogram.types import Message
+from database.mongo import is_whitelisted
 
-@filters.chat_member_updated
-def bio_checker(client, update: ChatMemberUpdated):
-    user = update.new_chat_member.user
-    if user and contains_link(user.bio):
-        take_action(client, update.chat.id, user.id)
+@filters.new_chat_members
+def bio_checker(client, message: Message):
+    for user in message.new_chat_members:
+        bio = user.bio or ""
+        username = user.username or ""
+        if any(x in bio.lower() for x in ["http", ".me", "t.me", "@", ".com"]) or "@" in username:
+            if not is_whitelisted(message.chat.id, user.id):
+                try:
+                    client.restrict_chat_member(
+                        message.chat.id,
+                        user.id,
+                        permissions={}
+                    )
+                    message.reply_text(f"🚫 {user.mention} muted due to suspicious bio/username.")
+                except:
+                    pass
