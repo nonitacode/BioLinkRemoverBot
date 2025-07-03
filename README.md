@@ -51,11 +51,17 @@ Telegram bot to auto-moderate groups by deleting messages with links or @usernam
 Command	Description
 
 /whitelist (reply)	✅ Whitelist a user so they can post links or usernames
+
 /unwhitelist (reply)	❌ Remove user from whitelist
+
 /settings on	🔒 Enable link scanning in the group
+
 /settings off	🔓 Disable link scanning in the group
+
 /broadcast -all (reply)	📢 Send a message to all groups and users
+
 /broadcast -group (reply)	📣 Send a message to all groups only
+
 /broadcast -user (reply)	📬 Send a message to all users only
 
 
@@ -66,8 +72,11 @@ Command	Description
 Feature	Description
 
 🔗 Auto-delete links & usernames	Removes messages containing URLs or @usernames instantly
+
 👁 Bio scanner on join	Kicks/mutes users who have suspicious links/usernames in their bio
+
 🔇 Auto-mute repeat offenders	After MAX_VIOLATIONS (default: 3), user is auto-muted
+
 🧠 Smart permission check	Warns if the bot lacks delete/restrict permissions
 
 
@@ -79,9 +88,13 @@ Feature	Description
 Variable	Description
 
 API_ID / API_HASH	Your Telegram API credentials
+
 BOT_TOKEN	Your bot token from BotFather
+
 MONGO_URL	MongoDB connection URL
+
 MAX_VIOLATIONS	Violations before auto-mute (default: 3)
+
 LOG_CHANNEL	Channel ID where violations will be logged (optional)
 
 
