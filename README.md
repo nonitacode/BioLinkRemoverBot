@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Nikchil/BioLinkRemoverBot/refs/heads/main/assets/biolinkremoverbot.png" alt="Bio Link Remover Logo" width="250"/>
 </p>
@@ -5,23 +6,61 @@
 <h1 align="center">🔒 BioLinkRemoverBot</h1>
 
 <p align="center">
-Telegram bot to <strong>auto-moderate groups</strong> by deleting messages with links or @usernames, detecting suspicious bios, and auto-punishing repeat offenders.
+A smart and powerful Telegram bot to <strong>auto-moderate groups</strong> by detecting suspicious usernames or bios, removing promotional links, and punishing spammy users automatically.
 </p>
 
 ---
 
 ## ✨ Features
 
-- 🔗 Delete messages containing **links or usernames**
-- 👁 Scan new user bios for **spam content**
-- 🔇 Auto-mute users after repeated **violations**
-- ✅ Whitelist system for **trusted users**
-- ⚙️ Group-specific settings via `/settings`
-- 📝 Log violations to a **channel**
+- 🔗 Auto-delete **links or @usernames** from messages
+- 👁 Smart scan of **user bios** for spam, usernames, and links
+- 🧠 Auto-detect if user is an **admin or owner** and skip moderation
+- ⛔ Issue **warnings** and auto-apply punishments on repeated violations
+- 🔇 Auto-mute or ban users after configurable limits
+- ✅ `/allow` system to **whitelist trusted users**
+- ⚙️ Group-specific settings panel via `/config`
+- 📢 `/broadcast` to announce updates across all groups
+- 🧾 Violation logging to a **log channel**
+- 🔓 Inline **unmute buttons** for group admins
 
 ---
 
-## 🚀 Deploy Instructions
+## 🛠 Commands & Usage
+
+### 👑 Admin / Sudo Commands
+
+| Command           | Description |
+|-------------------|-------------|
+| `/ping`           | Check if bot is online (Sudo only) |
+| `/broadcast`      | Broadcast a replied message to all chats (Sudo only) |
+| `/allow <user>`   | Whitelist a user (mention, reply or ID) |
+| `/remove <user>`  | Remove user from whitelist |
+| `/allowlist`      | Show all allowed (whitelisted) users |
+| `/config`         | Group config panel for warn limit & punishment |
+| `/start`          | Show welcome message |
+| `/help`           | Show full bot usage guide |
+
+> ⚠️ Admins and owners are automatically whitelisted and not punished.
+
+---
+
+## 🤖 Bot Behavior
+
+| Feature               | Behavior |
+|-----------------------|----------|
+| 🔗 Link Detection     | Deletes any message with a URL or @username |
+| 👤 Bio Scanning       | Scans user bios on each message — warns if username/link found |
+| ⚠️ Warnings           | User gets warned up to set limit (default: 3) |
+| 🔇 Auto Mute          | After exceeding limit, the bot will mute or ban user |
+| ✅ Whitelist Bypass   | Whitelisted users are never warned or punished |
+| 🔒 Smart Admin Check  | Admins/owners are auto-freed from moderation |
+| 🧠 Violation Memory   | Tracks warnings via MongoDB and restores if user is removed from whitelist |
+| 🎛 Configurable       | All punishments and limits adjustable via inline `/config` menu |
+
+---
+
+## 💻 Deploy Instructions
 
 ### 1. 🔄 Upgrade & Update
 ```bash
@@ -38,92 +77,62 @@ git clone https://github.com/Nikchil/BioLinkRemoverBot && cd BioLinkRemoverBot
 pip3 install -U -r requirements.txt
 ```
 
-### 4. ⚙️ Create `.env` File
+### 4. ⚙️ Setup Environment
 ```bash
 cp sample.env .env
-```
-- Open `.env` and edit it with your values.
-
-### 5. 📝 Edit ENV Vars
-```bash
 vi .env
 ```
-- Press `I` to start editing.
-- After changes: Press `Ctrl + C` and type `:wq` to save or `:qa` to quit.
+- Add your `API_ID`, `API_HASH`, `BOT_TOKEN`, `MONGO_URL`, etc.
 
-### 6. 🔧 Install tmux
+### 5. ▶️ Run the Bot
 ```bash
-sudo apt install tmux -y && tmux
-```
-
-### 7. 🚀 Run the Bot
-```bash
+tmux
 bash start
 ```
 
 ---
 
-## 🛠 Commands & Usage
+## ⚙️ ENV Variables
 
-### 👮 Admin Commands
-
-| Command | Description |
-|--------|-------------|
-| `/allow` (mention, ID or reply) | ✅ Whitelist a user |
-| `/unwhitelist` (reply) | ❌ Remove from whitelist |
-| `/settings on` | 🔒 Enable link scanning |
-| `/settings off` | 🔓 Disable link scanning |
-| `/broadcast -all` (reply) | 📢 Send message to all groups/users |
-| `/broadcast -group` (reply) | 📣 Send to groups only |
-| `/broadcast -user` (reply) | 📬 Send to users only |
-
-> ⚠️ All commands are restricted to **group admins**.
+| Variable        | Description |
+|------------------|-------------|
+| `API_ID`         | Telegram API ID from [my.telegram.org](https://my.telegram.org) |
+| `API_HASH`       | Telegram API hash |
+| `BOT_TOKEN`      | Bot token from [@BotFather](https://t.me/BotFather) |
+| `MONGO_URL`      | MongoDB connection string |
+| `OWNER_ID`       | Telegram user ID of bot owner |
+| `MAX_VIOLATIONS` | Number of allowed violations before action |
+| `LOG_CHANNEL`    | Channel ID to log moderation actions |
 
 ---
 
-## 🤖 Bot Behavior
-
-| Feature | Description |
-|--------|-------------|
-| 🔗 Auto-delete links/usernames | Removes messages with links or `@usernames` |
-| 👁 Bio scanner | Kicks or mutes users with suspicious bio content |
-| 🔇 Auto-mute | After `MAX_VIOLATIONS` (default: 3) |
-| 🧠 Smart permission check | Warns if bot lacks delete/restrict permissions |
-
----
-
-## ⚙️ Setup (ENV Variables)
-
-| Variable | Description |
-|----------|-------------|
-| `API_ID` / `API_HASH` | Telegram API credentials |
-| `BOT_TOKEN` | Bot token from BotFather |
-| `MONGO_URL` | MongoDB connection string |
-| `MAX_VIOLATIONS` | Violations before mute (default: 3) |
-| `LOG_CHANNEL` | Log channel ID (optional) |
-
----
-
-## 💬 Usage Examples
+## 💬 Examples
 
 ```bash
-✅ /whitelist        → Reply to a spammer to whitelist
-🔇 /settings off     → Disable link scanning
-📣 /broadcast -all   → Send an announcement
+✅ /allow @user123      → Allow a user from moderation
+❌ /remove @user123     → Remove and re-apply old violations
+🔧 /config              → Inline settings panel
+📢 /broadcast (reply)   → Send message to all chats
 ```
 
 ---
 
-## 🔄 Updates & Support
+## 📌 Inline Features
 
-Stay updated with new features and releases:
+- ⚙️ **Warn Limit**: Increase/decrease per group
+- 🔨 **Punishment Type**: Ban, Mute, or Warn Only
+- 🔓 **Inline Unmute**: Admins can unmute directly from the warning
+
+---
+
+## 📡 Updates & Support
 
 <p align="center">
-  <a href="https://telegram.me/GrayBotSupport">
-    <img src="https://img.shields.io/badge/Join-Support%20Group-blue?style=for-the-badge&logo=telegram">
-  </a>
-  <a href="https://telegram.me/GrayBots">
+  <a href="https://t.me/GrayBots">
     <img src="https://img.shields.io/badge/Join-Update%20Channel-blue?style=for-the-badge&logo=telegram">
+  </a>
+  <a href="https://t.me/GrayBotSupport">
+    <img src="https://img.shields.io/badge/Join-Support%20Group-blue?style=for-the-badge&logo=telegram">
   </a>
 </p>
 
@@ -131,21 +140,19 @@ Stay updated with new features and releases:
 
 ## 🤝 Contributing
 
-We welcome all contributions to improve this bot!  
+We welcome all contributions to improve this bot.
 
-To contribute:
-
-1. 🍴 Fork the repository  
+1. 🍴 Fork the repo  
 2. 🌿 Create a new branch  
 3. 💻 Make your changes  
-4. 📥 Commit with clear messages  
-5. 📤 Submit a pull request  
+4. 📥 Commit clearly  
+5. 📤 Open a pull request  
 
-For help, reach out via our support group on Telegram.
+For help, ask in our support group.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.  
+Licensed under the **MIT License**.  
 See the [LICENSE](LICENSE) file for more information.
