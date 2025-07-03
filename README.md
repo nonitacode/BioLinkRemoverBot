@@ -1,4 +1,4 @@
-# 🔒 LinkScanBot
+# 🔒 BioLinoRemoverBot
 
 Telegram bot to auto-moderate groups by deleting messages with links or @usernames, detecting suspicious bios, and auto-punishing repeat offenders.
 
@@ -18,7 +18,7 @@ Telegram bot to auto-moderate groups by deleting messages with links or @usernam
    ```
 2. **Clone the Repository**
    ```bash
-   git clone https://github.com/Nikchil/LinkScanBot && cd LinkScanBot
+   git clone https://github.com/Nikchil/BioLinkRemoverBot && cd BioLinkRemoverBot
    ```
 3. **Install Requirements**
    ```bash
@@ -50,7 +50,7 @@ Telegram bot to auto-moderate groups by deleting messages with links or @usernam
 
 Command	Description
 
-/whitelist (reply)	✅ Whitelist a user so they can post links or usernames
+/allow - mention, User ID or (reply)	✅ Whitelist a user so they can post links or usernames
 
 /unwhitelist (reply)	❌ Remove user from whitelist
 
@@ -129,7 +129,7 @@ Stay updated with the latest features and improvements to Link Scan Bot:
 
 ### 🤝 Contributing
 
-We welcome contributions to the Link Scan Bot project. If you'd like to contribute, please follow these steps:
+We welcome contributions to the Bio Link Remover Bot project. If you'd like to contribute, please follow these steps:
 
 1. Fork the repository.
 2. Create a new branch with a meaningful name.
