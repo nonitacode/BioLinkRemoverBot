@@ -5,8 +5,9 @@ from datetime import timedelta
 from pyrogram import filters
 from pyrogram.types import Message
 from pyrogram.errors import FloodWait, ChatAdminRequired
+from pyrogram.enums import ChatMembersFilter
 
-from config import OWNER_ID
+from config import OWNER_ID, LOG_CHANNEL, BOT_NAME
 from utils.sudo import is_sudo
 from database.core import (
     refresh_memory_cache,
@@ -17,7 +18,7 @@ from database.core import (
 )
 
 BOT_START_TIME = time.time()
-BOT_USERNAME = "BioLinkRemoverBot"
+BOT_USERNAME = "BioLinkRemoverBot"  # Update as needed
 
 BROADCAST_STATUS = {
     "active": False,
@@ -32,14 +33,34 @@ BROADCAST_STATUS = {
     "mode": "",
 }
 
+
 def init(app):
 
+    # ✅ Log every command + /start
+    @app.on_message(filters.command)
+    async def log_all_commands(client, message: Message):
+        if not LOG_CHANNEL or not message.from_user:
+            return
+
+        user = message.from_user
+        user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
+        origin = "🗣 <b>Group</b>" if message.chat.type in ["group", "supergroup"] else "👤 <b>Private</b>"
+        chat_info = f"\n👥 <b>Chat:</b> <code>{message.chat.title}</code>" if message.chat.title else ""
+
+        await client.send_message(
+            LOG_CHANNEL,
+            f"📥 <b>Command Used</b>\n"
+            f"{origin}{chat_info}\n"
+            f"👤 <b>User:</b> {user_mention} (`{user.id}`)\n"
+            f"💬 <b>Command:</b> <code>{message.text}</code>"
+        )
+
+    # ✅ /ping with uptime
     @app.on_message(filters.command("ping"))
     async def ping(_, message: Message):
         start = time.time()
         sent = await message.reply("🏓 Pinging...")
         end = time.time()
-
         latency = round((end - start) * 1000)
         uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
 
@@ -50,6 +71,7 @@ def init(app):
             f"🤖 <b>Bot:</b> @{BOT_USERNAME}"
         )
 
+    # ✅ /refresh memory cache
     @app.on_message(filters.command("refresh"))
     async def refresh_cmd(_, message: Message):
         if not is_sudo(message.from_user.id):
@@ -57,24 +79,46 @@ def init(app):
         refresh_memory_cache()
         await message.reply("🔄 <b>System Synced</b>\nAll data refreshed and up-to-date.")
 
+        if LOG_CHANNEL:
+            await _.send_message(
+                LOG_CHANNEL,
+                f"♻️ <b>Memory Cache Refreshed</b>\n"
+                f"👤 <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
+            )
+
+    # ✅ /admincache to resync admin list
     @app.on_message(filters.command("admincache") & filters.group)
     async def admin_cache_cmd(client, message: Message):
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You are not allowed to do this.")
         try:
             members = []
-            async for member in client.get_chat_members(message.chat.id, filter="administrators"):
+            async for member in client.get_chat_members(message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS):
                 members.append(member.user.id)
+
             await message.reply(
-                f"👥 <b>Admin List Refreshed</b>\nSynced all current group admins.\nTotal admins: <code>{len(members)}</code>"
+                f"👥 <b>Admin List Refreshed</b>\n"
+                f"Total admins synced: <code>{len(members)}</code>"
             )
+
+            if LOG_CHANNEL:
+                await client.send_message(
+                    LOG_CHANNEL,
+                    f"🔁 <b>AdminCache Updated</b>\n"
+                    f"👤 By: <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n"
+                    f"👥 Group: <code>{message.chat.title}</code>\n"
+                    f"👮 Admins Synced: <code>{len(members)}</code>"
+                )
+
         except ChatAdminRequired:
             await message.reply("❌ I need admin rights to view admin list.")
 
+    # ✅ /broadcast command
     @app.on_message(filters.command("broadcast"))
     async def broadcast_command(client, message: Message):
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 Not authorized.")
+
         cmd = message.text.lower()
         mode = "forward" if "-forward" in cmd else "copy"
 
@@ -98,8 +142,8 @@ def init(app):
             content = message.reply_to_message
         else:
             text = message.text
-            for part in ["/broadcast", "-forward", "-all", "-users", "-chats", "-user", "-group"]:
-                text = text.replace(part, "")
+            for kw in ["/broadcast", "-forward", "-all", "-users", "-user", "-chats", "-group"]:
+                text = text.replace(kw, "")
             content = text.strip()
             if not content:
                 return await message.reply("📝 Provide a message or reply to one.")
@@ -151,6 +195,15 @@ def init(app):
         )
         BROADCAST_STATUS["active"] = False
 
+        if LOG_CHANNEL:
+            await client.send_message(
+                LOG_CHANNEL,
+                f"📢 <b>Broadcast Sent</b>\n"
+                f"👤 <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n"
+                f"📦 Total: {total} | ✅ Sent: {BROADCAST_STATUS['sent']} | ❌ Failed: {BROADCAST_STATUS['failed']}"
+            )
+
+    # ✅ /status
     @app.on_message(filters.command("status"))
     async def status_command(_, message: Message):
         if not BROADCAST_STATUS["active"]:
@@ -164,6 +217,7 @@ def init(app):
             f"🔃 Progress: {percent}%"
         )
 
+    # ✅ Track users/groups for broadcast
     @app.on_message(filters.private & ~filters.service)
     async def save_user(_, message: Message):
         await add_served_user(message.from_user.id)
