@@ -20,5 +20,5 @@ MAX_VIOLATIONS = int(getenv("MAX_VIOLATIONS", 5))  # Number of violations before
 LOG_CHANNEL = int(getenv("LOG_CHANNEL", 0))        # Channel ID for logging actions
 
 # Bot Identity
-BOT_NAME = "Bio Link Remover 🔗"
+BOT_NAME = "Bio Link Remover"
 OWNER_ID = int(getenv("OWNER_ID", "123456789"))
