@@ -16,6 +16,14 @@ def init(app):
 
         user_id = user.id
 
+        # Skip if admin
+        try:
+            member = await app.get_chat_member(chat_id, user_id)
+            if member.status in ("administrator", "creator"):
+                return
+        except:
+            pass
+
         if is_whitelisted(user_id):
             return
 
