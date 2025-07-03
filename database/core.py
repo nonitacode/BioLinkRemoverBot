@@ -1,4 +1,3 @@
-# core.py
 from pymongo import MongoClient
 from config import MONGO_URL
 
