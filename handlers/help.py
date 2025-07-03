@@ -1,3 +1,4 @@
+from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 def init(app):
@@ -17,7 +18,7 @@ def init(app):
         )
 
         buttons = InlineKeyboardMarkup([
-            [InlineKeyboardButton("➕ Add to Group", url="https://t.me/BioLinkRemoverBot?startgroup=true")]
+            [InlineKeyboardButton("➕ Add to Group", url="https://t.me/LinkScanBot?startgroup=true")]
         ])
 
         await message.reply(text, reply_markup=buttons)
