@@ -1,51 +1,30 @@
-from pyrogram.errors import FloodWait
-import asyncio
+from pyrogram import filters
+from pyrogram.types import Message
+from database.mongo import users, chats
 
-@filters.command("broadcast") & filters.user(lambda _, __, m: m.from_user and m.from_user.is_chat_admin)
+@filters.command("broadcast")
 def broadcast_handler(client, message: Message):
     if not message.reply_to_message:
-        return message.reply("Reply to a message with `/broadcast -all`, `-group`, or `-user`", quote=True)
+        return message.reply("❌ Please reply to a message to broadcast.")
 
-    args = message.text.split()
-    if len(args) != 2 or args[1] not in ["-all", "-group", "-user"]:
-        return message.reply("Usage: /broadcast -all | -group | -user", quote=True)
-
-    mode = args[1][1:]  # 'all', 'group', or 'user'
-    target_ids = get_target_ids(mode)
-
-    original = message.reply_to_message
+    mode = message.text.split(" ")[-1].strip()
     sent, failed = 0, 0
-    message.reply(f"📢 Starting `{mode}` broadcast to {len(target_ids)} targets...")
 
-    for target_id in target_ids:
+    if mode == "-all":
+        targets = list(users.find()) + list(chats.find())
+    elif mode == "-user":
+        targets = users.find()
+    elif mode == "-group":
+        targets = chats.find()
+    else:
+        return message.reply("❌ Invalid mode. Use `-all`, `-user`, or `-group`.")
+
+    for target in targets:
+        _id = target.get("user_id") or target.get("chat_id")
         try:
-            original.copy(target_id)
+            client.copy_message(_id, message.chat.id, message.reply_to_message.id)
             sent += 1
-        except FloodWait as e:
-            asyncio.sleep(e.value)
         except:
             failed += 1
 
-    message.reply(f"✅ Broadcast finished.\n✅ Sent: {sent}\n❌ Failed: {failed}")
-
-
-# database/mongo.py additions
-
-users = db.users
-chats = db.chats
-
-# Update to collect IDs by type
-def get_target_ids(mode: str):
-    group_ids = [c["chat_id"] for c in chats.find()] if mode in ["all", "group"] else []
-    user_ids = [u["user_id"] for u in users.find()] if mode in ["all", "user"] else []
-    return list(set(group_ids + user_ids))
-
-
-# Add to message_scan or main to store user/group IDs:
-# Store group/user for broadcast
-@app.on_message(filters.all)
-def track_entities(client, message):
-    if message.chat.type in ["group", "supergroup"]:
-        chats.update_one({"chat_id": message.chat.id}, {"$set": {"chat_id": message.chat.id}}, upsert=True)
-    elif message.chat.type == "private":
-        users.update_one({"user_id": message.from_user.id}, {"$set": {"user_id": message.from_user.id}}, upsert=True)
+    message.reply(f"📢 Broadcast complete!\n✅ Sent: {sent}\n❌ Failed: {failed}")
