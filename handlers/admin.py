@@ -43,7 +43,7 @@ BROADCAST_STATUS = {
 
 def init(app):
     # ✅ Log all commands
-    @app.on_message(filters.command)
+    @app.on_message(filters.command("") & filters.text)
     async def log_all_commands(client, message: Message):
         if not LOG_CHANNEL or not message.from_user:
             return
@@ -60,7 +60,6 @@ def init(app):
             f"👤 <b>User:</b> {user_mention} (`{user.id}`)\n"
             f"💬 <b>Command:</b> <code>{message.text}</code>"
         )
-
     # ✅ /ping
     @app.on_message(filters.command("ping"))
     async def ping(_, message: Message):
