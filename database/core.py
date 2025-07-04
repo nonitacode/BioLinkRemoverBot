@@ -44,6 +44,7 @@ def set_bio_scan(chat_id, enabled: bool):
         {"$set": {"_id": chat_id, "bio_scan": enabled}},
         upsert=True
     )
+    refresh_memory_cache()  # ✅ Auto refresh on config change
     memory_cache["configs"].setdefault(chat_id, {})["bio_scan"] = enabled
 
 def get_bio_scan(chat_id):
@@ -54,11 +55,11 @@ def is_whitelisted(user_id):
 
 def add_to_whitelist(user_id):
     whitelist_col.update_one({"_id": user_id}, {"$set": {"_id": user_id}}, upsert=True)
-    memory_cache["whitelist"].add(user_id)
+    refresh_memory_cache()  # ✅ Auto refresh on add
 
 def remove_from_whitelist(user_id):
     whitelist_col.delete_one({"_id": user_id})
-    memory_cache["whitelist"].discard(user_id)
+    refresh_memory_cache()  # ✅ Auto refresh on remove
 
 def get_all_whitelist():
     return [doc["_id"] for doc in whitelist_col.find()]
