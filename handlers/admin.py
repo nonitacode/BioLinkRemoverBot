@@ -19,11 +19,9 @@ from database.core import (
     add_served_chat,
     set_bio_scan,
     get_bio_scan,
-)
-from database.whitelist import (
-    add_whitelist_user,
-    remove_whitelist_user,
-    get_whitelisted_users,
+    add_to_whitelist,
+    remove_from_whitelist,
+    get_all_whitelist,
 )
 
 BOT_START_TIME = time.time()
@@ -44,8 +42,7 @@ BROADCAST_STATUS = {
 
 
 def init(app):
-
-    # ✅ Log every command
+    # ✅ Log all commands
     @app.on_message(filters.command)
     async def log_all_commands(client, message: Message):
         if not LOG_CHANNEL or not message.from_user:
@@ -87,7 +84,6 @@ def init(app):
             return await message.reply("🚫 You are not allowed to do this.")
         refresh_memory_cache()
         await message.reply("🔄 <b>System Synced</b>\nAll data refreshed and up-to-date.")
-
         if LOG_CHANNEL:
             await _.send_message(
                 LOG_CHANNEL,
@@ -104,12 +100,10 @@ def init(app):
             members = []
             async for member in client.get_chat_members(message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS):
                 members.append(member.user.id)
-
             await message.reply(
                 f"👥 <b>Admin List Refreshed</b>\n"
                 f"Total admins synced: <code>{len(members)}</code>"
             )
-
             if LOG_CHANNEL:
                 await client.send_message(
                     LOG_CHANNEL,
@@ -118,11 +112,10 @@ def init(app):
                     f"👥 Group: <code>{message.chat.title}</code>\n"
                     f"👮 Admins Synced: <code>{len(members)}</code>"
                 )
-
         except ChatAdminRequired:
             await message.reply("❌ I need admin rights to view admin list.")
 
-    # ✅ /broadcast command
+    # ✅ /broadcast
     @app.on_message(filters.command("broadcast"))
     async def broadcast_command(client, message: Message):
         if not is_sudo(message.from_user.id):
@@ -204,15 +197,7 @@ def init(app):
         )
         BROADCAST_STATUS["active"] = False
 
-        if LOG_CHANNEL:
-            await client.send_message(
-                LOG_CHANNEL,
-                f"📢 <b>Broadcast Sent</b>\n"
-                f"👤 <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n"
-                f"📦 Total: {total} | ✅ Sent: {BROADCAST_STATUS['sent']} | ❌ Failed: {BROADCAST_STATUS['failed']}"
-            )
-
-    # ✅ /status - Enhanced
+    # ✅ /status
     @app.on_message(filters.command("status"))
     async def status_command(_, message: Message):
         if not is_sudo(message.from_user.id):
@@ -243,7 +228,36 @@ def init(app):
             f"<b>🖥️ CPU Load:</b> <code>{cpu}%</code>"
         )
 
-    # ✅ Track users/groups
+    # ✅ Whitelist management
+    @app.on_message(filters.command("allow") & filters.group)
+    async def allow_user(_, message: Message):
+        if not is_sudo(message.from_user.id):
+            return await message.reply("🚫 You don't have permission to do this.")
+        if not message.reply_to_message:
+            return await message.reply("Reply to a user's message to allow them.")
+        user_id = message.reply_to_message.from_user.id
+        add_to_whitelist(user_id)
+        await message.reply("✅ User has been whitelisted from bio scans.")
+
+    @app.on_message(filters.command("remove") & filters.group)
+    async def remove_user(_, message: Message):
+        if not is_sudo(message.from_user.id):
+            return await message.reply("🚫 You don't have permission to do this.")
+        if not message.reply_to_message:
+            return await message.reply("Reply to a user's message to remove them.")
+        user_id = message.reply_to_message.from_user.id
+        remove_from_whitelist(user_id)
+        await message.reply("❌ User removed from whitelist.")
+
+    @app.on_message(filters.command("freelist") & filters.group)
+    async def list_whitelisted(_, message: Message):
+        users = get_all_whitelist()
+        if not users:
+            return await message.reply("📝 Whitelist is currently empty.")
+        formatted = "\n".join([f"• <code>{uid}</code>" for uid in users])
+        await message.reply(f"<b>Whitelisted Users:</b>\n{formatted}")
+
+    # ✅ User tracking
     @app.on_message(filters.private & ~filters.service)
     async def save_user(_, message: Message):
         await add_served_user(message.from_user.id)
