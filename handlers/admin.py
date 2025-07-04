@@ -99,49 +99,51 @@ def init(app):
             await _.send_message(LOG_CHANNEL, log_text)
 
     @app.on_message(filters.command("ping"))
-    async def ping(_, message: Message):
-        start = time.time()
-        sent = await message.reply("🏓 Pinging...")
-        end = time.time()
-        latency = round((end - start) * 1000)
-        uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
-        refresh_memory_cache()
-        await sent.edit_text(
-            f"🏓 <b>Bot Status</b>\n"
-            f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
-            f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
-            f"🤖 <b>Bot:</b> @{BOT_USERNAME}"
-        )
+async def ping(_, message: Message):
+    start = time.time()
+    sent = await message.reply("🏓 Pinging...")
+    end = time.time()
+    latency = round((end - start) * 1000)
+    uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
+    refresh_memory_cache()
+    await sent.edit_text(
+        f"🏓 <b>Bot Status</b>\n"
+        f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
+        f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
+        f"🤖 <b>Bot:</b> @{BOT_USERNAME}",
+        reply_markup=SUPPORT_BUTTON
+    )
 
     @app.on_message(filters.command("status"))
-    async def bot_status(_, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 You are not allowed to do this.")
+async def bot_status(_, message: Message):
+    if not is_sudo(message.from_user.id):
+        return await message.reply("🚫 You are not allowed to do this.")
 
-        start = time.time()
-        sent = await message.reply("📊 Fetching full status...")
-        end = time.time()
-        latency = round((end - start) * 1000)
+    start = time.time()
+    sent = await message.reply("📊 Fetching full status...")
+    end = time.time()
+    latency = round((end - start) * 1000)
 
-        uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
-        users = await get_served_users()
-        chats = await get_served_chats()
+    uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
+    users = await get_served_users()
+    chats = await get_served_chats()
 
-        cpu = psutil.cpu_percent()
-        ram = psutil.virtual_memory()
-        disk = psutil.disk_usage("/")
+    cpu = psutil.cpu_percent()
+    ram = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
 
-        await sent.edit_text(
-            f"📊 <b>Bot Full Status</b>\n"
-            f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
-            f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
-            f"👤 <b>Total Users:</b> <code>{len(users)}</code>\n"
-            f"👥 <b>Total Groups:</b> <code>{len(chats)}</code>\n\n"
-            f"🧠 <b>RAM:</b> <code>{ram.percent}%</code> - Used: <code>{ram.used // (1024**2)}MB</code> / <code>{ram.total // (1024**2)}MB</code>\n"
-            f"💾 <b>Disk:</b> <code>{disk.percent}%</code> - Used: <code>{disk.used // (1024**3)}GB</code> / <code>{disk.total // (1024**3)}GB</code>\n"
-            f"🧮 <b>CPU:</b> <code>{cpu}%</code>\n"
-            f"💻 <b>Platform:</b> <code>{platform.system()} {platform.release()}</code>"
-        )
+    await sent.edit_text(
+        f"📊 <b>Bot Full Status</b>\n"
+        f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
+        f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
+        f"👤 <b>Total Users:</b> <code>{len(users)}</code>\n"
+        f"👥 <b>Total Groups:</b> <code>{len(chats)}</code>\n\n"
+        f"🧠 <b>RAM:</b> <code>{ram.percent}%</code> - Used: <code>{ram.used // (1024**2)}MB</code> / <code>{ram.total // (1024**2)}MB</code>\n"
+        f"💾 <b>Disk:</b> <code>{disk.percent}%</code> - Used: <code>{disk.used // (1024**3)}GB</code> / <code>{disk.total // (1024**3)}GB</code>\n"
+        f"🧮 <b>CPU:</b> <code>{cpu}%</code>\n"
+        f"💻 <b>Platform:</b> <code>{platform.system()} {platform.release()}</code>",
+        reply_markup=SUPPORT_BUTTON
+    )
 
     @app.on_message(filters.command("refresh"))
     async def refresh_cmd(_, message: Message):
