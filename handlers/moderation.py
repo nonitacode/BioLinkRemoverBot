@@ -166,7 +166,8 @@ def init(app):
             await callback_query.answer("✅ User has been unmuted and warnings reset.", show_alert=True)
             await callback_query.message.edit_text(
                 f"🔓 <b>User Unmuted</b>\n"
-                f"👤 {user_mention} (`{user_id}`) has been unmuted and warnings cleared."
+                f"👤 {user_mention} (`{user_id}`) has been unmuted and warnings cleared.\n\n"
+                f"⚠️ <i>Note: They are still under watch. Not whitelisted yet.</i>"
             )
         except Exception as e:
             await callback_query.answer("❌ Failed to unmute.", show_alert=True)
