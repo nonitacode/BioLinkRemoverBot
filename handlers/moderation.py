@@ -64,7 +64,7 @@ def init(app):
                 mode = config['punishment_mode']
 
                 if count >= limit:
-                    # ðŸ§¹ Delete previous warn message if it exists
+                    # 🧹 Delete previous warn message if it exists
                     old_warn = get_last_warn(chat_id, user_id)
                     if old_warn and "message_id" in old_warn:
                         try:
@@ -73,22 +73,22 @@ def init(app):
                             pass
                     delete_last_warn(chat_id, user_id)
 
-                    # ðŸš« Mute or ban the user
+                    # 🚫 Mute or ban the user
                     if mode == "mute":
                         await message.chat.restrict_member(user_id, ChatPermissions(can_send_messages=False))
                     elif mode == "ban":
                         await message.chat.ban_member(user_id)
 
                     keyboard = InlineKeyboardMarkup([
-                        [InlineKeyboardButton("ðŸ”“ Unmute User", callback_data=f"unmute:{user_id}")]
+                        [InlineKeyboardButton("🔓 Unmute User", callback_data=f"unmute:{user_id}")]
                     ])
 
                     await message.reply(
-                        f"ðŸš« <b>User Muted for Repeated Violations</b>\n"
-                        f"ðŸ‘¤ <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
-                        f"âš ï¸ <b>Total Violations:</b> {count} / {limit}\n"
-                        f"ðŸ“› <b>Reason:</b> Suspicious username or bio link detected.\n"
-                        f"ðŸ”’ <b>Action Taken:</b> Muted in this group.",
+                        f"🚫 <b>User Muted for Repeated Violations</b>\n"
+                        f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                        f"⚠️ <b>Total Violations:</b> {count} / {limit}\n"
+                        f"📛 <b>Reason:</b> Suspicious username or bio link detected.\n"
+                        f"🔒 <b>Action Taken:</b> Muted in this group.",
                         reply_markup=keyboard,
                         quote=True
                     )
@@ -96,16 +96,16 @@ def init(app):
                     if LOG_CHANNEL:
                         await app.send_message(
                             LOG_CHANNEL,
-                            f"ðŸš¨ <b>Auto Mute Triggered</b>\n"
-                            f"ðŸ‘¤ User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
-                            f"ðŸ†” User ID: <code>{user_id}</code>\n"
-                            f"ðŸ“ Group: <code>{chat_id}</code>\n"
-                            f"ðŸ“› Reason: Bio or username link\n"
-                            f"ðŸš« Violations: {count} / {limit}"
+                            f"🚨 <b>Auto Mute Triggered</b>\n"
+                            f"👤 User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                            f"🆔 User ID: <code>{user_id}</code>\n"
+                            f"📍 Group: <code>{chat_id}</code>\n"
+                            f"📛 Reason: Bio or username link\n"
+                            f"🚫 Violations: {count} / {limit}"
                         )
 
                 else:
-                    # ðŸ§¹ Delete last warning if exists
+                    # 🧹 Delete last warning if exists
                     old_warn = get_last_warn(chat_id, user_id)
                     if old_warn and "message_id" in old_warn:
                         try:
@@ -114,11 +114,11 @@ def init(app):
                             pass
 
                     warn_msg = await message.reply(
-                        f"âš ï¸ <b>Warning Issued</b>\n"
-                        f"ðŸ‘¤ <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
-                        f"âš ï¸ <b>Violation:</b> Detected link or @username in profile.\n"
-                        f"ðŸ“Œ <b>Warning Count:</b> {count} / {limit}\n"
-                        f"ðŸ›‘ Please remove links from your profile to avoid restrictions.",
+                        f"⚠️ <b>Warning Issued</b>\n"
+                        f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                        f"⚠️ <b>Violation:</b> Detected link or @username in profile.\n"
+                        f"📌 <b>Warning Count:</b> {count} / {limit}\n"
+                        f"🛑 Please remove links from your profile to avoid restrictions.",
                         quote=True
                     )
                     set_last_warn(chat_id, user_id, warn_msg.id)
@@ -126,11 +126,11 @@ def init(app):
                     if LOG_CHANNEL:
                         await app.send_message(
                             LOG_CHANNEL,
-                            f"âš ï¸ <b>Warning Logged</b>\n"
-                            f"ðŸ‘¤ User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
-                            f"ðŸ†” User ID: <code>{user_id}</code>\n"
-                            f"ðŸ“ Group: <code>{chat_id}</code>\n"
-                            f"âš ï¸ Violations: {count} / {limit}"
+                            f"⚠️ <b>Warning Logged</b>\n"
+                            f"👤 User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                            f"🆔 User ID: <code>{user_id}</code>\n"
+                            f"📍 Group: <code>{chat_id}</code>\n"
+                            f"⚠️ Violations: {count} / {limit}"
                         )
 
         except Exception as e:
