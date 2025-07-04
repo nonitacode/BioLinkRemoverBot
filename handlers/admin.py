@@ -1,11 +1,10 @@
 import time
 from datetime import timedelta
-
 import psutil
 import platform
 
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import ChatAdminRequired
 from pyrogram.enums import ChatMembersFilter, ChatMemberStatus
 
@@ -27,6 +26,10 @@ from database.core import (
 
 BOT_START_TIME = time.time()
 BOT_USERNAME = "BioLinkRemoverBot"
+
+ADD_TO_GROUP_BUTTON = InlineKeyboardMarkup(
+    [[InlineKeyboardButton("➕ Add Me to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")]]
+)
 
 BROADCAST_STATUS = {
     "active": False,
@@ -98,8 +101,7 @@ def init(app):
             f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
             f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
             f"👤 <b>Total Users:</b> <code>{len(users)}</code>\n"
-            f"👥 <b>Total Groups:</b> <code>{len(chats)}</code>\n"
-            f"\n"
+            f"👥 <b>Total Groups:</b> <code>{len(chats)}</code>\n\n"
             f"🧠 <b>RAM:</b> <code>{ram.percent}%</code> - Used: <code>{ram.used // (1024**2)}MB</code> / <code>{ram.total // (1024**2)}MB</code>\n"
             f"💾 <b>Disk:</b> <code>{disk.percent}%</code> - Used: <code>{disk.used // (1024**3)}GB</code> / <code>{disk.total // (1024**3)}GB</code>\n"
             f"🧮 <b>CPU:</b> <code>{cpu}%</code>\n"
@@ -116,7 +118,10 @@ def init(app):
     @app.on_message(filters.command("admincache"))
     async def admin_cache_cmd(client, message: Message):
         if message.chat.type == "private":
-            return await message.reply("⚠️ This command only works in group chats.")
+            return await message.reply(
+                "🚫 This command is for group chats only.\n\nPlease add me to a group and use it there.",
+                reply_markup=ADD_TO_GROUP_BUTTON
+            )
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You are not allowed to do this.")
 
@@ -135,7 +140,10 @@ def init(app):
     @app.on_message(filters.command("biolink"))
     async def toggle_biolink(_, message: Message):
         if message.chat.type == "private":
-            return await message.reply("⚠️ This command only works in group chats.")
+            return await message.reply(
+                "🚫 This command is for group chats only.\n\nPlease add me to a group and use it there.",
+                reply_markup=ADD_TO_GROUP_BUTTON
+            )
 
         user_id = message.from_user.id
         chat_id = message.chat.id
@@ -164,7 +172,10 @@ def init(app):
     @app.on_message(filters.command("allow"))
     async def allow_user(_, message: Message):
         if message.chat.type == "private":
-            return await message.reply("⚠️ This command only works in group chats.")
+            return await message.reply(
+                "🚫 This command is for group chats only.\n\nPlease add me to a group and use it there.",
+                reply_markup=ADD_TO_GROUP_BUTTON
+            )
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
 
@@ -191,7 +202,10 @@ def init(app):
     @app.on_message(filters.command("remove"))
     async def remove_user(_, message: Message):
         if message.chat.type == "private":
-            return await message.reply("⚠️ This command only works in group chats.")
+            return await message.reply(
+                "🚫 This command is for group chats only.\n\nPlease add me to a group and use it there.",
+                reply_markup=ADD_TO_GROUP_BUTTON
+            )
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
 
@@ -218,7 +232,10 @@ def init(app):
     @app.on_message(filters.command("freelist"))
     async def list_whitelisted(_, message: Message):
         if message.chat.type == "private":
-            return await message.reply("⚠️ This command only works in group chats.")
+            return await message.reply(
+                "🚫 This command is for group chats only.\n\nPlease add me to a group and use it there.",
+                reply_markup=ADD_TO_GROUP_BUTTON
+            )
 
         users = get_all_whitelist()
         if not users:
