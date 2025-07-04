@@ -64,7 +64,6 @@ def init(app):
                 mode = config['punishment_mode']
 
                 if count >= limit:
-                    # 🧹 Delete previous warn message if it exists
                     old_warn = get_last_warn(chat_id, user_id)
                     if old_warn and "message_id" in old_warn:
                         try:
@@ -73,7 +72,6 @@ def init(app):
                             pass
                     delete_last_warn(chat_id, user_id)
 
-                    # 🚫 Mute or ban the user
                     if mode == "mute":
                         await message.chat.restrict_member(user_id, ChatPermissions(can_send_messages=False))
                     elif mode == "ban":
@@ -83,9 +81,11 @@ def init(app):
                         [InlineKeyboardButton("🔓 Unmute User", callback_data=f"unmute:{user_id}")]
                     ])
 
+                    user_mention = f"<a href='tg://user?id={user_id}'>{user.first_name}</a>"
+
                     await message.reply(
                         f"🚫 <b>User Muted for Repeated Violations</b>\n"
-                        f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                        f"👤 {user_mention} (`{user_id}`)\n"
                         f"⚠️ <b>Total Violations:</b> {count} / {limit}\n"
                         f"📛 <b>Reason:</b> Suspicious username or bio link detected.\n"
                         f"🔒 <b>Action Taken:</b> Muted in this group.",
@@ -97,7 +97,7 @@ def init(app):
                         await app.send_message(
                             LOG_CHANNEL,
                             f"🚨 <b>Auto Mute Triggered</b>\n"
-                            f"👤 User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                            f"👤 User: {user_mention}\n"
                             f"🆔 User ID: <code>{user_id}</code>\n"
                             f"📍 Group: <code>{chat_id}</code>\n"
                             f"📛 Reason: Bio or username link\n"
@@ -105,7 +105,6 @@ def init(app):
                         )
 
                 else:
-                    # 🧹 Delete last warning if exists
                     old_warn = get_last_warn(chat_id, user_id)
                     if old_warn and "message_id" in old_warn:
                         try:
@@ -113,9 +112,11 @@ def init(app):
                         except:
                             pass
 
+                    user_mention = f"<a href='tg://user?id={user_id}'>{user.first_name}</a>"
+
                     warn_msg = await message.reply(
                         f"⚠️ <b>Warning Issued</b>\n"
-                        f"👤 <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                        f"👤 {user_mention} (`{user_id}`)\n"
                         f"⚠️ <b>Violation:</b> Detected link or @username in profile.\n"
                         f"📌 <b>Warning Count:</b> {count} / {limit}\n"
                         f"🛑 Please remove links from your profile to avoid restrictions.",
@@ -127,7 +128,7 @@ def init(app):
                         await app.send_message(
                             LOG_CHANNEL,
                             f"⚠️ <b>Warning Logged</b>\n"
-                            f"👤 User: <a href='tg://user?id={user_id}'>{user.first_name}</a>\n"
+                            f"👤 {user_mention}\n"
                             f"🆔 User ID: <code>{user_id}</code>\n"
                             f"📍 Group: <code>{chat_id}</code>\n"
                             f"⚠️ Violations: {count} / {limit}"
@@ -135,3 +136,38 @@ def init(app):
 
         except Exception as e:
             print(f"[!] Identity check failed for user {user_id}: {e}")
+
+    # ✅ UNMUTE BUTTON HANDLER
+    @app.on_callback_query(filters.regex(r"^unmute:(\d+)$"))
+    async def handle_unmute(client, callback_query):
+        user_id = int(callback_query.data.split(":")[1])
+        chat_id = callback_query.message.chat.id
+
+        try:
+            await client.restrict_chat_member(
+                chat_id,
+                user_id,
+                ChatPermissions(
+                    can_send_messages=True,
+                    can_send_media_messages=True,
+                    can_send_polls=True,
+                    can_send_other_messages=True,
+                    can_add_web_page_previews=True,
+                    can_change_info=False,
+                    can_invite_users=True,
+                    can_pin_messages=False
+                )
+            )
+            remove_user_record(user_id)
+
+            user_info = await client.get_users(user_id)
+            user_mention = f"<a href='tg://user?id={user_id}'>{user_info.first_name}</a>"
+
+            await callback_query.answer("✅ User has been unmuted and warnings reset.", show_alert=True)
+            await callback_query.message.edit_text(
+                f"🔓 <b>User Unmuted</b>\n"
+                f"👤 {user_mention} (`{user_id}`) has been unmuted and warnings cleared."
+            )
+        except Exception as e:
+            await callback_query.answer("❌ Failed to unmute.", show_alert=True)
+            print(f"[!] Failed to unmute user {user_id}: {e}")
