@@ -144,7 +144,7 @@ def init(app):
 
     @app.on_message(filters.command("admincache"))
     async def admin_cache_cmd(client, message: Message):
-        if message.chat.type == "private":
+        if message.chat.type not in ["group", "supergroup"]:
             return await message.reply(GROUP_ONLY_ALERT, reply_markup=ADD_TO_GROUP_BUTTON)
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You are not allowed to do this.")
@@ -164,7 +164,7 @@ def init(app):
 
     @app.on_message(filters.command("biolink"))
     async def toggle_biolink(_, message: Message):
-        if message.chat.type == "private":
+        if message.chat.type not in ["group", "supergroup"]:
             return await message.reply(GROUP_ONLY_ALERT, reply_markup=ADD_TO_GROUP_BUTTON)
         user_id = message.from_user.id
         chat_id = message.chat.id
@@ -189,7 +189,7 @@ def init(app):
 
     @app.on_message(filters.command("allow"))
     async def allow_user(_, message: Message):
-        if message.chat.type == "private":
+        if message.chat.type not in ["group", "supergroup"]:
             return await message.reply(GROUP_ONLY_ALERT, reply_markup=ADD_TO_GROUP_BUTTON)
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
@@ -213,7 +213,7 @@ def init(app):
 
     @app.on_message(filters.command("remove"))
     async def remove_user(_, message: Message):
-        if message.chat.type == "private":
+        if message.chat.type not in ["group", "supergroup"]:
             return await message.reply(GROUP_ONLY_ALERT, reply_markup=ADD_TO_GROUP_BUTTON)
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
@@ -237,7 +237,7 @@ def init(app):
 
     @app.on_message(filters.command("freelist"))
     async def list_whitelisted(_, message: Message):
-        if message.chat.type == "private":
+        if message.chat.type not in ["group", "supergroup"]:
             return await message.reply(GROUP_ONLY_ALERT, reply_markup=ADD_TO_GROUP_BUTTON)
         try:
             member = await _.get_chat_member(message.chat.id, message.from_user.id)
