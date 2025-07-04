@@ -31,6 +31,10 @@ ADD_TO_GROUP_BUTTON = InlineKeyboardMarkup(
     [[InlineKeyboardButton("➕ Add Me to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")]]
 )
 
+SUPPORT_BUTTON = InlineKeyboardMarkup(
+    [[InlineKeyboardButton("💬 Support Group", url="https://t.me/GrayBotSupport")]]
+)
+
 GROUP_ONLY_ALERT = (
     "🚫 This command can only be used in group chats.\n\n"
     "🤖 To use this feature, please add me to your group.\n\n"
