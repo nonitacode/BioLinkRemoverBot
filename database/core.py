@@ -19,22 +19,36 @@ memory_cache = {
     "configs": {},
 }
 
-# Cache refresh (used by /refresh)
 def refresh_memory_cache():
     memory_cache["whitelist"] = set(get_all_whitelist())
     memory_cache["configs"] = {
         doc["_id"]: {
             "warn_limit": doc.get("warn_limit", 3),
-            "punishment_mode": doc.get("punishment_mode", "mute")
+            "punishment_mode": doc.get("punishment_mode", "mute"),
+            "bio_scan": doc.get("bio_scan", False)
         }
         for doc in config_col.find()
     }
     return True
 
 def get_memory_config(chat_id):
-    return memory_cache["configs"].get(chat_id, {"warn_limit": 3, "punishment_mode": "mute"})
+    return memory_cache["configs"].get(chat_id, {
+        "warn_limit": 3,
+        "punishment_mode": "mute",
+        "bio_scan": False
+    })
 
-# Whitelist
+def set_bio_scan(chat_id, enabled: bool):
+    config_col.update_one(
+        {"_id": chat_id},
+        {"$set": {"_id": chat_id, "bio_scan": enabled}},
+        upsert=True
+    )
+    memory_cache["configs"].setdefault(chat_id, {})["bio_scan"] = enabled
+
+def get_bio_scan(chat_id):
+    return memory_cache["configs"].get(chat_id, {}).get("bio_scan", False)
+
 def is_whitelisted(user_id):
     return user_id in memory_cache["whitelist"]
 
@@ -49,7 +63,6 @@ def remove_from_whitelist(user_id):
 def get_all_whitelist():
     return [doc["_id"] for doc in whitelist_col.find()]
 
-# Violations
 def increment_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
     return violations_col.find_one_and_update(
@@ -66,7 +79,6 @@ def remove_user_record(user_id):
     warn_cache_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
     backup_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
 
-# Last warn message
 def set_last_warn(chat_id, user_id, message_id):
     key = f"{chat_id}:{user_id}"
     warn_cache_col.update_one(
@@ -83,7 +95,6 @@ def delete_last_warn(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
     warn_cache_col.delete_one({"_id": key})
 
-# Backup/restore
 def save_old_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
     doc = violations_col.find_one({"_id": key})
@@ -97,7 +108,6 @@ def restore_old_violations(chat_id, user_id):
         violations_col.replace_one({"_id": key}, doc, upsert=True)
         backup_col.delete_one({"_id": key})
 
-# Group/User storage for broadcast
 async def get_served_users():
     return list(users_col.find({}, {"_id": 0, "user_id": 1}))
 
