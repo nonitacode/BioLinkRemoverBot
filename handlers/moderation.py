@@ -8,11 +8,11 @@ from database.core import (
     get_last_warn,
     set_last_warn,
     delete_last_warn,
-    get_memory_config
+    get_memory_config,
+    get_bio_scan
 )
 from utils.filters import contains_link
 from pyrogram.enums import ChatMemberStatus
-
 
 def init(app):
     @app.on_message(filters.group & filters.text)
@@ -21,6 +21,9 @@ def init(app):
         chat_id = message.chat.id
 
         if not user or user.is_bot:
+            return
+
+        if not get_bio_scan(chat_id):
             return
 
         user_id = user.id
