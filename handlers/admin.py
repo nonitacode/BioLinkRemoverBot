@@ -19,6 +19,7 @@ from database.core import (
     add_to_whitelist,
     remove_from_whitelist,
     get_all_whitelist,
+    remove_user_record  # ✅ added to reset warnings
 )
 
 BOT_START_TIME = time.time()
@@ -166,6 +167,7 @@ def init(app):
             )
 
         add_to_whitelist(user.id)
+        remove_user_record(user.id)  # ✅ clear warnings
         await message.reply(f"✅ <b>{user.first_name}</b> has been whitelisted from bio scans.")
 
     @app.on_message(filters.command("remove") & filters.group)
@@ -196,6 +198,7 @@ def init(app):
             )
 
         remove_from_whitelist(user.id)
+        remove_user_record(user.id)  # ✅ clear warnings
         await message.reply(f"❌ <b>{user.first_name}</b> has been removed from the whitelist.")
 
     @app.on_message(filters.command("freelist") & filters.group)
