@@ -1,6 +1,9 @@
 import time
 from datetime import timedelta
 
+import psutil
+import platform
+
 from pyrogram import filters
 from pyrogram.types import Message
 from pyrogram.errors import ChatAdminRequired
@@ -19,7 +22,7 @@ from database.core import (
     add_to_whitelist,
     remove_from_whitelist,
     get_all_whitelist,
-    remove_user_record  # ✅ to reset warnings
+    remove_user_record
 )
 
 BOT_START_TIME = time.time()
@@ -64,14 +67,43 @@ def init(app):
         end = time.time()
         latency = round((end - start) * 1000)
         uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
-
         refresh_memory_cache()
-
         await sent.edit_text(
             f"🏓 <b>Bot Status</b>\n"
             f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
             f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
             f"🤖 <b>Bot:</b> @{BOT_USERNAME}"
+        )
+
+    @app.on_message(filters.command("status"))
+    async def bot_status(_, message: Message):
+        if not is_sudo(message.from_user.id):
+            return await message.reply("🚫 You are not allowed to do this.")
+
+        start = time.time()
+        sent = await message.reply("📊 Fetching full status...")
+        end = time.time()
+        latency = round((end - start) * 1000)
+
+        uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
+        users = await get_served_users()
+        chats = await get_served_chats()
+
+        cpu = psutil.cpu_percent()
+        ram = psutil.virtual_memory()
+        disk = psutil.disk_usage("/")
+
+        await sent.edit_text(
+            f"📊 <b>Bot Full Status</b>\n"
+            f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
+            f"📶 <b>Ping:</b> <code>{latency}ms</code>\n"
+            f"👤 <b>Total Users:</b> <code>{len(users)}</code>\n"
+            f"👥 <b>Total Groups:</b> <code>{len(chats)}</code>\n"
+            f"\n"
+            f"🧠 <b>RAM:</b> <code>{ram.percent}%</code> - Used: <code>{ram.used // (1024**2)}MB</code> / <code>{ram.total // (1024**2)}MB</code>\n"
+            f"💾 <b>Disk:</b> <code>{disk.percent}%</code> - Used: <code>{disk.used // (1024**3)}GB</code> / <code>{disk.total // (1024**3)}GB</code>\n"
+            f"🧮 <b>CPU:</b> <code>{cpu}%</code>\n"
+            f"💻 <b>Platform:</b> <code>{platform.system()} {platform.release()}</code>"
         )
 
     @app.on_message(filters.command("refresh"))
@@ -149,26 +181,16 @@ def init(app):
             user = message.reply_to_message.from_user
         elif len(message.command) > 1:
             query = message.command[1]
-            if query.startswith("@"):
-                try:
-                    user = await _.get_users(query)
-                except:
-                    return await message.reply("❌ Could not find that username.")
-            else:
-                try:
-                    user = await _.get_users(int(query))
-                except:
-                    return await message.reply("❌ Invalid user ID.")
-        
+            try:
+                user = await _.get_users(query)
+            except:
+                return await message.reply("❌ Invalid user.")
+
         if not user:
-            return await message.reply(
-                "ℹ️ Reply to a user or provide a username/user ID.\nUsage:\n<code>/allow @username</code>\n<code>/allow 123456789</code>",
-                quote=True
-            )
+            return await message.reply("ℹ️ Usage: /allow @username or reply to a user")
 
         add_to_whitelist(user.id)
-        remove_user_record(user.id)  # ✅ Reset warnings
-
+        remove_user_record(user.id)
         user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
         await message.reply(
             f"✅ <b>User Allowed</b>\n"
@@ -185,26 +207,16 @@ def init(app):
             user = message.reply_to_message.from_user
         elif len(message.command) > 1:
             query = message.command[1]
-            if query.startswith("@"):
-                try:
-                    user = await _.get_users(query)
-                except:
-                    return await message.reply("❌ Could not find that username.")
-            else:
-                try:
-                    user = await _.get_users(int(query))
-                except:
-                    return await message.reply("❌ Invalid user ID.")
-        
+            try:
+                user = await _.get_users(query)
+            except:
+                return await message.reply("❌ Invalid user.")
+
         if not user:
-            return await message.reply(
-                "ℹ️ Reply to a user or provide a username/user ID.\nUsage:\n<code>/remove @username</code>\n<code>/remove 123456789</code>",
-                quote=True
-            )
+            return await message.reply("ℹ️ Usage: /remove @username or reply to a user")
 
         remove_from_whitelist(user.id)
-        remove_user_record(user.id)  # ✅ Reset warnings
-
+        remove_user_record(user.id)
         user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
         await message.reply(
             f"❌ <b>User Removed</b>\n"
@@ -219,15 +231,19 @@ def init(app):
         formatted = "\n".join([f"• <code>{uid}</code>" for uid in users])
         await message.reply(f"<b>Whitelisted Users:</b>\n{formatted}")
 
-    @app.on_message(filters.private & ~filters.service)
-    async def save_user(_, message: Message):
-        await add_served_user(message.from_user.id)
+    @app.on_message(filters.private & filters.command("start"))
+    async def start_command(_, message: Message):
+        user = message.from_user
+        await add_served_user(user.id)
+
+        await message.reply_text("👋 Welcome! I'm active and running.")
+
         if LOG_CHANNEL:
             await _.send_message(
                 LOG_CHANNEL,
-                f"👤 <b>New User Started Bot</b>\n"
-                f"🆔 ID: <code>{message.from_user.id}</code>\n"
-                f"👤 Name: <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
+                f"🚀 <b>User Pressed /start</b>\n"
+                f"👤 Name: <a href='tg://user?id={user.id}'>{user.first_name}</a>\n"
+                f"🆔 ID: <code>{user.id}</code>"
             )
 
     @app.on_chat_member_updated()
