@@ -1,7 +1,7 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_URL
 
-client = MongoClient(MONGO_URL)
+client = AsyncIOMotorClient(MONGO_URL)
 db = client.link_scan
 
 # Collections
@@ -19,104 +19,118 @@ memory_cache = {
     "configs": {},
 }
 
-def refresh_memory_cache():
-    memory_cache["whitelist"] = set(get_all_whitelist())
+async def refresh_memory_cache():
+    whitelist = await get_all_whitelist()
+    memory_cache["whitelist"] = set(whitelist)
     memory_cache["configs"] = {
         doc["_id"]: {
             "warn_limit": doc.get("warn_limit", 3),
             "punishment_mode": doc.get("punishment_mode", "mute"),
             "bio_scan": doc.get("bio_scan", False)
         }
-        for doc in config_col.find()
+        async for doc in config_col.find()
     }
     return True
 
-def get_memory_config(chat_id):
+async def get_memory_config(chat_id):
     return memory_cache["configs"].get(chat_id, {
         "warn_limit": 3,
         "punishment_mode": "mute",
         "bio_scan": False
     })
 
-def set_bio_scan(chat_id, enabled: bool):
-    config_col.update_one(
+async def set_bio_scan(chat_id, enabled: bool):
+    await config_col.update_one(
         {"_id": chat_id},
         {"$set": {"_id": chat_id, "bio_scan": enabled}},
         upsert=True
     )
-    refresh_memory_cache()  # ✅ Auto refresh on config change
+    await refresh_memory_cache()
     memory_cache["configs"].setdefault(chat_id, {})["bio_scan"] = enabled
 
-def get_bio_scan(chat_id):
-    return memory_cache["configs"].get(chat_id, {}).get("bio_scan", False)
-
-def is_whitelisted(user_id):
+async def is_whitelisted(user_id):
     return user_id in memory_cache["whitelist"]
 
-def add_to_whitelist(user_id):
-    whitelist_col.update_one({"_id": user_id}, {"$set": {"_id": user_id}}, upsert=True)
-    refresh_memory_cache()  # ✅ Auto refresh on add
+async def add_to_whitelist(user_id):
+    await whitelist_col.update_one(
+        {"_id": user_id},
+        {"$set": {"_id": user_id}},
+        upsert=True
+    )
+    await refresh_memory_cache()
 
-def remove_from_whitelist(user_id):
-    whitelist_col.delete_one({"_id": user_id})
-    refresh_memory_cache()  # ✅ Auto refresh on remove
+async def remove_from_whitelist(user_id):
+    await whitelist_col.delete_one({"_id": user_id})
+    await refresh_memory_cache()
 
-def get_all_whitelist():
-    return [doc["_id"] for doc in whitelist_col.find()]
+async def get_all_whitelist():
+    return [doc["_id"] async for doc in whitelist_col.find()]
 
-def increment_violations(chat_id, user_id):
+async def increment_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
-    return violations_col.find_one_and_update(
-        {"_id": key}, {"$inc": {"count": 1}}, upsert=True, return_document=True
-    )["count"]
+    result = await violations_col.find_one_and_update(
+        {"_id": key}, 
+        {"$inc": {"count": 1}}, 
+        upsert=True, 
+        return_document=True
+    )
+    return result["count"]
 
-def get_violations(chat_id, user_id):
+async def get_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
-    doc = violations_col.find_one({"_id": key})
+    doc = await violations_col.find_one({"_id": key})
     return doc["count"] if doc else 0
 
-def remove_user_record(user_id):
-    violations_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
-    warn_cache_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
-    backup_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
+async def remove_user_record(user_id):
+    await violations_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
+    await warn_cache_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
+    await backup_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
 
-def set_last_warn(chat_id, user_id, message_id):
+async def set_last_warn(chat_id, user_id, message_id):
     key = f"{chat_id}:{user_id}"
-    warn_cache_col.update_one(
+    await warn_cache_col.update_one(
         {"_id": key},
         {"$set": {"_id": key, "message_id": message_id}},
         upsert=True
     )
 
-def get_last_warn(chat_id, user_id):
+async def get_last_warn(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
-    return warn_cache_col.find_one({"_id": key})
+    return await warn_cache_col.find_one({"_id": key})
 
-def delete_last_warn(chat_id, user_id):
+async def delete_last_warn(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
-    warn_cache_col.delete_one({"_id": key})
+    await warn_cache_col.delete_one({"_id": key})
 
-def save_old_violations(chat_id, user_id):
+async def save_old_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
-    doc = violations_col.find_one({"_id": key})
+    doc = await violations_col.find_one({"_id": key})
     if doc:
-        backup_col.update_one({"_id": key}, {"$set": doc}, upsert=True)
+        await backup_col.update_one({"_id": key}, {"$set": doc}, upsert=True)
 
-def restore_old_violations(chat_id, user_id):
+async def restore_old_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
-    doc = backup_col.find_one({"_id": key})
+    doc = await backup_col.find_one({"_id": key})
     if doc:
-        violations_col.replace_one({"_id": key}, doc, upsert=True)
-        backup_col.delete_one({"_id": key})
+        await violations_col.replace_one({"_id": key}, doc, upsert=True)
+        await backup_col.delete_one({"_id": key})
 
 async def get_served_users():
-    return list(users_col.find({}, {"_id": 0, "user_id": 1}))
+    return [doc["user_id"] async for doc in users_col.find({}, {"_id": 0, "user_id": 1})]
 
 async def get_served_chats():
-    return list(groups_col.find({}, {"_id": 0, "chat_id": 1}))
+    return [doc["chat_id"] async for doc in groups_col.find({}, {"_id": 0, "chat_id": 1})]
 
 async def add_served_user(user_id):
-    users_col.update_one({"user_id": user_id}, {"$set": {"user_id": user_id}}, upsert=True)
+    await users_col.update_one(
+        {"user_id": user_id},
+        {"$set": {"user_id": user_id}},
+        upsert=True
+    )
 
 async def add_served_chat(chat_id):
-    groups_col.update_one({"chat_id": chat_id}, {"$set": {"chat_id": chat_id}}, upsert=True)
+    await groups_col.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"chat_id": chat_id}},
+        upsert=True
+    )
