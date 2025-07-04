@@ -1,13 +1,10 @@
 import time
-import asyncio
-import os
-import psutil
 from datetime import timedelta
 
 from pyrogram import filters
 from pyrogram.types import Message
-from pyrogram.errors import FloodWait, ChatAdminRequired
-from pyrogram.enums import ChatMembersFilter
+from pyrogram.errors import ChatAdminRequired
+from pyrogram.enums import ChatMembersFilter, ChatMemberStatus
 
 from config import OWNER_ID, LOG_CHANNEL, BOT_NAME
 from utils.sudo import is_sudo
@@ -67,7 +64,7 @@ def init(app):
         latency = round((end - start) * 1000)
         uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
 
-        refresh_memory_cache()  # Still explicitly useful here
+        refresh_memory_cache()
 
         await sent.edit_text(
             f"🏓 <b>Bot Status</b>\n"
@@ -122,7 +119,7 @@ def init(app):
 
         try:
             member = await _.get_chat_member(chat_id, user_id)
-            if member.status not in ("administrator", "creator"):
+            if member.status not in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER):
                 return await message.reply("🚫 You must be a group admin to use this.")
         except ChatAdminRequired:
             return await message.reply("❌ I need admin rights to check your status.")
