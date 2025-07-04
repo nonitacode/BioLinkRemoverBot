@@ -42,10 +42,12 @@ def init(app):
     async def log_all_commands(client, message: Message):
         if not LOG_CHANNEL or not message.from_user:
             return
+
         user = message.from_user
         user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
         origin = "🗣 <b>Group</b>" if message.chat.type in ["group", "supergroup"] else "👤 <b>Private</b>"
         chat_info = f"\n👥 <b>Chat:</b> <code>{message.chat.title}</code>" if message.chat.title else ""
+
         await client.send_message(
             LOG_CHANNEL,
             f"📥 <b>Command Used</b>\n"
@@ -53,6 +55,48 @@ def init(app):
             f"👤 <b>User:</b> {user_mention} (`{user.id}`)\n"
             f"💬 <b>Command:</b> <code>{message.text}</code>"
         )
+
+    @app.on_message(filters.private & filters.command("start"))
+    async def start_command(_, message: Message):
+        user = message.from_user
+        await add_served_user(user.id)
+        await message.reply_text("👋 Welcome! I'm active and running.")
+        if LOG_CHANNEL:
+            await _.send_message(
+                LOG_CHANNEL,
+                f"👤 <b>New User Started Bot</b>\n"
+                f"🆔 ID: <code>{user.id}</code>\n"
+                f"👤 Name: <b>{user.first_name}</b>"
+            )
+
+    @app.on_chat_member_updated()
+    async def log_bot_added_or_removed(_, event):
+        if event.new_chat_member.user.id != (await _.get_me()).id:
+            return
+
+        chat = event.chat
+        actor = event.from_user
+        action_by = f"{actor.first_name} ({actor.id})" if actor else "Unknown"
+
+        if event.old_chat_member.status not in ("member", "administrator") and event.new_chat_member.status in ("member", "administrator"):
+            log_text = (
+                f"➕ <b>Bot Added to Group</b>\n"
+                f"👥 Group: <b>{chat.title}</b>\n"
+                f"🆔 Group ID: <code>{chat.id}</code>\n"
+                f"👤 Added by: {action_by}"
+            )
+        elif event.old_chat_member.status in ("member", "administrator") and event.new_chat_member.status == "left":
+            log_text = (
+                f"➖ <b>Bot Removed from Group</b>\n"
+                f"👥 Group: <b>{chat.title}</b>\n"
+                f"🆔 Group ID: <code>{chat.id}</code>\n"
+                f"👤 Removed by: {action_by}"
+            )
+        else:
+            return
+
+        if LOG_CHANNEL:
+            await _.send_message(LOG_CHANNEL, log_text)
 
     @app.on_message(filters.command("ping"))
     async def ping(_, message: Message):
@@ -73,16 +117,20 @@ def init(app):
     async def bot_status(_, message: Message):
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You are not allowed to do this.")
+
         start = time.time()
         sent = await message.reply("📊 Fetching full status...")
         end = time.time()
         latency = round((end - start) * 1000)
+
         uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
         users = await get_served_users()
         chats = await get_served_chats()
+
         cpu = psutil.cpu_percent()
         ram = psutil.virtual_memory()
         disk = psutil.disk_usage("/")
+
         await sent.edit_text(
             f"📊 <b>Bot Full Status</b>\n"
             f"⏱ <b>Uptime:</b> <code>{uptime}</code>\n"
@@ -101,6 +149,8 @@ def init(app):
             return await message.reply("🚫 You are not allowed to do this.")
         refresh_memory_cache()
         await message.reply("🔄 <b>System Synced</b>\nAll data refreshed and up-to-date.")
+
+# Additional commands like /allow, /remove, /biolink, /freelist, etc. are also assumed to be included here as previously written.
 
     @app.on_message(filters.command("admincache"))
     async def admin_cache_cmd(client, message: Message):
