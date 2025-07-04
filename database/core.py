@@ -15,18 +15,12 @@ groups_col = db.served_chats
 
 # Memory cache
 memory_cache = {
-    "whitelist": {},  # per-group whitelist
+    "whitelist": set(),
     "configs": {},
 }
 
 def refresh_memory_cache():
-    memory_cache["whitelist"] = {}
-    for doc in whitelist_col.find():
-        try:
-            chat_id, user_id = map(int, doc["_id"].split(":"))
-            memory_cache["whitelist"].setdefault(chat_id, set()).add(user_id)
-        except:
-            continue
+    memory_cache["whitelist"] = set(get_all_whitelist())
     memory_cache["configs"] = {
         doc["_id"]: {
             "warn_limit": doc.get("warn_limit", 3),
@@ -50,27 +44,25 @@ def set_bio_scan(chat_id, enabled: bool):
         {"$set": {"_id": chat_id, "bio_scan": enabled}},
         upsert=True
     )
-    refresh_memory_cache()
+    refresh_memory_cache()  # âœ… Auto refresh on config change
     memory_cache["configs"].setdefault(chat_id, {})["bio_scan"] = enabled
 
 def get_bio_scan(chat_id):
     return memory_cache["configs"].get(chat_id, {}).get("bio_scan", False)
 
-def is_whitelisted(chat_id, user_id):
-    return user_id in memory_cache["whitelist"].get(chat_id, set())
+def is_whitelisted(user_id):
+    return user_id in memory_cache["whitelist"]
 
-def add_to_whitelist(chat_id, user_id):
-    key = f"{chat_id}:{user_id}"
-    whitelist_col.update_one({"_id": key}, {"$set": {"_id": key}}, upsert=True)
-    refresh_memory_cache()
+def add_to_whitelist(user_id):
+    whitelist_col.update_one({"_id": user_id}, {"$set": {"_id": user_id}}, upsert=True)
+    refresh_memory_cache()  # âœ… Auto refresh on add
 
-def remove_from_whitelist(chat_id, user_id):
-    key = f"{chat_id}:{user_id}"
-    whitelist_col.delete_one({"_id": key})
-    refresh_memory_cache()
+def remove_from_whitelist(user_id):
+    whitelist_col.delete_one({"_id": user_id})
+    refresh_memory_cache()  # âœ… Auto refresh on remove
 
-def get_group_whitelist(chat_id):
-    return list(memory_cache["whitelist"].get(chat_id, []))
+def get_all_whitelist():
+    return [doc["_id"] for doc in whitelist_col.find()]
 
 def increment_violations(chat_id, user_id):
     key = f"{chat_id}:{user_id}"
@@ -84,7 +76,6 @@ def get_violations(chat_id, user_id):
     return doc["count"] if doc else 0
 
 def remove_user_record(user_id):
-    # Clears all user violations across all chats
     violations_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
     warn_cache_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
     backup_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
