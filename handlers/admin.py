@@ -1,5 +1,7 @@
 import time
 import asyncio
+import os
+import psutil
 from datetime import timedelta
 
 from pyrogram import filters
@@ -15,10 +17,17 @@ from database.core import (
     get_served_chats,
     add_served_user,
     add_served_chat,
+    set_bio_scan,
+    get_bio_scan,
+)
+from database.whitelist import (
+    add_whitelist_user,
+    remove_whitelist_user,
+    get_whitelisted_users,
 )
 
 BOT_START_TIME = time.time()
-BOT_USERNAME = "BioLinkRemoverBot"  # Update as needed
+BOT_USERNAME = "BioLinkRemoverBot"
 
 BROADCAST_STATUS = {
     "active": False,
@@ -36,7 +45,7 @@ BROADCAST_STATUS = {
 
 def init(app):
 
-    # ✅ Log every command + /start
+    # ✅ Log every command
     @app.on_message(filters.command)
     async def log_all_commands(client, message: Message):
         if not LOG_CHANNEL or not message.from_user:
@@ -55,7 +64,7 @@ def init(app):
             f"💬 <b>Command:</b> <code>{message.text}</code>"
         )
 
-    # ✅ /ping with uptime
+    # ✅ /ping
     @app.on_message(filters.command("ping"))
     async def ping(_, message: Message):
         start = time.time()
@@ -203,21 +212,38 @@ def init(app):
                 f"📦 Total: {total} | ✅ Sent: {BROADCAST_STATUS['sent']} | ❌ Failed: {BROADCAST_STATUS['failed']}"
             )
 
-    # ✅ /status
+    # ✅ /status - Enhanced
     @app.on_message(filters.command("status"))
     async def status_command(_, message: Message):
-        if not BROADCAST_STATUS["active"]:
-            return await message.reply("📡 No active broadcast.")
-        percent = round((BROADCAST_STATUS["sent"] + BROADCAST_STATUS["failed"]) / BROADCAST_STATUS["total"] * 100, 2)
-        await message.reply(
-            f"📊 Broadcast Progress:\n"
-            f"✅ Sent: {BROADCAST_STATUS['sent']}\n"
-            f"❌ Failed: {BROADCAST_STATUS['failed']}\n"
-            f"📦 Total: {BROADCAST_STATUS['total']}\n"
-            f"🔃 Progress: {percent}%"
+        if not is_sudo(message.from_user.id):
+            return await message.reply("🚫 You're not authorized to check system status.")
+
+        served_users = await get_served_users()
+        served_chats = await get_served_chats()
+
+        uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
+        cpu = psutil.cpu_percent()
+        ram = psutil.virtual_memory().percent
+        total_users = len(served_users)
+        total_chats = len(served_chats)
+
+        start = time.time()
+        sent = await message.reply("Checking status...")
+        end = time.time()
+        ping = round((end - start) * 1000)
+
+        await sent.edit_text(
+            f"<b>📊 System Status</b>\n"
+            f"<b>🤖 Bot:</b> @{BOT_USERNAME}\n"
+            f"<b>⏱ Uptime:</b> <code>{uptime}</code>\n"
+            f"<b>📡 Ping:</b> <code>{ping}ms</code>\n"
+            f"<b>👥 Users:</b> <code>{total_users}</code>\n"
+            f"<b>💬 Groups:</b> <code>{total_chats}</code>\n"
+            f"<b>🧠 RAM Usage:</b> <code>{ram}%</code>\n"
+            f"<b>🖥️ CPU Load:</b> <code>{cpu}%</code>"
         )
 
-    # ✅ Track users/groups for broadcast
+    # ✅ Track users/groups
     @app.on_message(filters.private & ~filters.service)
     async def save_user(_, message: Message):
         await add_served_user(message.from_user.id)
