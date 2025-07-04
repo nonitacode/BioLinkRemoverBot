@@ -76,6 +76,7 @@ def get_violations(chat_id, user_id):
     return doc["count"] if doc else 0
 
 def remove_user_record(user_id):
+    # ✅ Called on allow/remove/unmute — clears all user violations
     violations_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
     warn_cache_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
     backup_col.delete_many({"_id": {"$regex": f":{user_id}$"}})
