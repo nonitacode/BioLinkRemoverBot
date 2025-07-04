@@ -19,7 +19,7 @@ from database.core import (
     add_to_whitelist,
     remove_from_whitelist,
     get_all_whitelist,
-    remove_user_record  # ✅ added to reset warnings
+    remove_user_record  # ✅ to reset warnings
 )
 
 BOT_START_TIME = time.time()
@@ -167,8 +167,13 @@ def init(app):
             )
 
         add_to_whitelist(user.id)
-        remove_user_record(user.id)  # ✅ clear warnings
-        await message.reply(f"✅ <b>{user.first_name}</b> has been whitelisted from bio scans.")
+        remove_user_record(user.id)  # ✅ Reset warnings
+
+        user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
+        await message.reply(
+            f"✅ <b>User Allowed</b>\n"
+            f"👤 {user_mention} (`{user.id}`) has been whitelisted and warnings reset."
+        )
 
     @app.on_message(filters.command("remove") & filters.group)
     async def remove_user(_, message: Message):
@@ -198,8 +203,13 @@ def init(app):
             )
 
         remove_from_whitelist(user.id)
-        remove_user_record(user.id)  # ✅ clear warnings
-        await message.reply(f"❌ <b>{user.first_name}</b> has been removed from the whitelist.")
+        remove_user_record(user.id)  # ✅ Reset warnings
+
+        user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
+        await message.reply(
+            f"❌ <b>User Removed</b>\n"
+            f"👤 {user_mention} (`{user.id}`) has been removed from whitelist and violations cleared."
+        )
 
     @app.on_message(filters.command("freelist") & filters.group)
     async def list_whitelisted(_, message: Message):
