@@ -64,12 +64,20 @@ def init(app):
                 mode = config['punishment_mode']
 
                 if count >= limit:
+                    # 🧹 Delete previous warn message if it exists
+                    old_warn = get_last_warn(chat_id, user_id)
+                    if old_warn and "message_id" in old_warn:
+                        try:
+                            await app.delete_messages(chat_id, old_warn["message_id"])
+                        except:
+                            pass
+                    delete_last_warn(chat_id, user_id)
+
+                    # 🚫 Mute or ban the user
                     if mode == "mute":
                         await message.chat.restrict_member(user_id, ChatPermissions(can_send_messages=False))
                     elif mode == "ban":
                         await message.chat.ban_member(user_id)
-
-                    delete_last_warn(chat_id, user_id)
 
                     keyboard = InlineKeyboardMarkup([
                         [InlineKeyboardButton("🔓 Unmute User", callback_data=f"unmute:{user_id}")]
@@ -95,7 +103,9 @@ def init(app):
                             f"📛 Reason: Bio or username link\n"
                             f"🚫 Violations: {count} / {limit}"
                         )
+
                 else:
+                    # 🧹 Delete last warning if exists
                     old_warn = get_last_warn(chat_id, user_id)
                     if old_warn and "message_id" in old_warn:
                         try:
