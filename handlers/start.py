@@ -12,31 +12,31 @@ def init(app):
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("➕ Add to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
             [
-                InlineKeyboardButton("🛠 Help", callback_data="show_help"),
-                InlineKeyboardButton("👨‍💻 Developer", url=DEVELOPER)
+                InlineKeyboardButton("Developer", url=DEVELOPER),
+                InlineKeyboardButton("Help Menu", callback_data="show_help")
             ],
             [
-                InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL),
-                InlineKeyboardButton("🆘 Support", url=SUPPORT_GROUP)
+                InlineKeyboardButton("Support", url=SUPPORT_GROUP),
+                InlineKeyboardButton("Updates", url=UPDATES_CHANNEL)
             ]
         ])
 
         await message.reply(
             f"""
-👋 <b>Welcome to Bio Link Remover Bot!</b> 🛡️
+👋 <b>Welcome to <u>Bio Link Remover Bot</u>!</b>
 
-<b>I protect your groups from:</b>  
-• Unwanted links in bios and messages  
-• Spam users with external URLs
+🛡️ <b>Cleaner Groups, Safer Chats</b>
+• Detects links in bios/usernames
+• Auto-warns, mutes, or bans violators
+• Prevents spam and phishing
 
-<b>🔧 Features:</b>  
-• Auto-link removal in chat  
-• Bio link scans  
-• Custom warnings, mute/ban  
-• Whitelist trusted users
+🧰 <b>Features:</b>
+• Real-time moderation
+• Whitelisting system
+• Broadcast to users/groups
+• Easy admin tools & memory caching
 
-➕ <b>Add me to your group to activate protection.</b>  
-🤖 <i>Powered by</i> <a href="{UPDATES_CHANNEL}">@GrayBots</a>
+<i>Use the buttons below to get started 👇</i>
             """,
             reply_markup=keyboard,
             disable_web_page_preview=True
