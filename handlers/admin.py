@@ -112,41 +112,31 @@ def init(app):
             return await message.reply("🚫 You are not allowed to do this.")
         refresh_memory_cache()
         await message.reply("🔄 <b>System Synced</b>\nAll data refreshed and up-to-date.")
-        if LOG_CHANNEL:
-            await _.send_message(
-                LOG_CHANNEL,
-                f"♻️ <b>Memory Cache Refreshed</b>\n"
-                f"👤 <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
-            )
 
-    @app.on_message(filters.command("admincache") & filters.group)
+    @app.on_message(filters.command("admincache"))
     async def admin_cache_cmd(client, message: Message):
+        if message.chat.type == "private":
+            return await message.reply("⚠️ This command only works in group chats.")
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You are not allowed to do this.")
+
         try:
             members = []
             async for member in client.get_chat_members(message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS):
                 members.append(member.user.id)
-
             refresh_memory_cache()
-
             await message.reply(
                 f"👥 <b>Admin List Refreshed</b>\n"
                 f"Total admins synced: <code>{len(members)}</code>"
             )
-            if LOG_CHANNEL:
-                await client.send_message(
-                    LOG_CHANNEL,
-                    f"🔁 <b>AdminCache Updated</b>\n"
-                    f"👤 By: <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n"
-                    f"👥 Group: <code>{message.chat.title}</code>\n"
-                    f"👮 Admins Synced: <code>{len(members)}</code>"
-                )
         except ChatAdminRequired:
             await message.reply("❌ I need admin rights to view admin list.")
 
-    @app.on_message(filters.command("biolink") & filters.group)
+    @app.on_message(filters.command("biolink"))
     async def toggle_biolink(_, message: Message):
+        if message.chat.type == "private":
+            return await message.reply("⚠️ This command only works in group chats.")
+
         user_id = message.from_user.id
         chat_id = message.chat.id
 
@@ -171,8 +161,10 @@ def init(app):
         else:
             await message.reply("Usage: /biolink enable | disable")
 
-    @app.on_message(filters.command("allow") & filters.group)
+    @app.on_message(filters.command("allow"))
     async def allow_user(_, message: Message):
+        if message.chat.type == "private":
+            return await message.reply("⚠️ This command only works in group chats.")
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
 
@@ -180,9 +172,8 @@ def init(app):
         if message.reply_to_message:
             user = message.reply_to_message.from_user
         elif len(message.command) > 1:
-            query = message.command[1]
             try:
-                user = await _.get_users(query)
+                user = await _.get_users(message.command[1])
             except:
                 return await message.reply("❌ Invalid user.")
 
@@ -197,8 +188,10 @@ def init(app):
             f"👤 {user_mention} (`{user.id}`) has been whitelisted and warnings reset."
         )
 
-    @app.on_message(filters.command("remove") & filters.group)
+    @app.on_message(filters.command("remove"))
     async def remove_user(_, message: Message):
+        if message.chat.type == "private":
+            return await message.reply("⚠️ This command only works in group chats.")
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
 
@@ -206,9 +199,8 @@ def init(app):
         if message.reply_to_message:
             user = message.reply_to_message.from_user
         elif len(message.command) > 1:
-            query = message.command[1]
             try:
-                user = await _.get_users(query)
+                user = await _.get_users(message.command[1])
             except:
                 return await message.reply("❌ Invalid user.")
 
@@ -223,8 +215,11 @@ def init(app):
             f"👤 {user_mention} (`{user.id}`) has been removed from whitelist and violations cleared."
         )
 
-    @app.on_message(filters.command("freelist") & filters.group)
+    @app.on_message(filters.command("freelist"))
     async def list_whitelisted(_, message: Message):
+        if message.chat.type == "private":
+            return await message.reply("⚠️ This command only works in group chats.")
+
         users = get_all_whitelist()
         if not users:
             return await message.reply("📝 Whitelist is currently empty.")
@@ -235,9 +230,7 @@ def init(app):
     async def start_command(_, message: Message):
         user = message.from_user
         await add_served_user(user.id)
-
         await message.reply_text("👋 Welcome! I'm active and running.")
-
         if LOG_CHANNEL:
             await _.send_message(
                 LOG_CHANNEL,
