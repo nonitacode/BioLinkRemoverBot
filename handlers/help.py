@@ -83,7 +83,8 @@ def init(app):
 
 /start — Welcome message and intro  
 /help — Show help menu  
-/ping — Check latency & uptime
+/ping — Check latency & uptime  
+/biolink enable|disable — Toggle bio scanner in your group
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
@@ -148,8 +149,7 @@ Action Path:
 
 /broadcast -all | -user | -group  
 /refresh — Reload config cache  
-/admincache — Refresh group admin list  
-/biolink enable|disable — Toggle bio scanner
+/admincache — Refresh group admin list
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
