@@ -7,20 +7,54 @@ UPDATES_CHANNEL = "https://t.me/GrayBots"
 DEVELOPER = "https://t.me/Nikchil"
 
 def init(app):
+    # /help command handler (NEWLY ADDED)
+    @app.on_message(filters.command("help"))
+    async def help_command(_, message: Message):
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Basics", callback_data="help_basic"),
+                InlineKeyboardButton("Broadcast", callback_data="help_broadcast")
+            ],
+            [
+                InlineKeyboardButton("Config", callback_data="help_config"),
+                InlineKeyboardButton("Moderation", callback_data="help_moderation")
+            ],
+            [
+                InlineKeyboardButton("Sudo Commands", callback_data="help_sudo"),
+                InlineKeyboardButton("Utilities", callback_data="help_util")
+            ],
+            [
+                InlineKeyboardButton("⬅️ Back", callback_data="back_home")
+            ]
+        ])
+        await message.reply(
+            """
+<b>🛠️ Help Center — Choose a Section</b>
+
+• Basics – Getting started & ping  
+• Broadcast – Send messages to all users/groups  
+• Config – Group settings & punishment rules  
+• Moderation – Scan usernames/bios for links  
+• Sudo – Owner-only tools  
+• Utilities – Admin, whitelist, refresh tools
+            """,
+            reply_markup=keyboard
+        )
+
     @app.on_callback_query(filters.regex("show_help"))
     async def show_help_menu(_, cb: CallbackQuery):
         keyboard = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("⚙️ Config", callback_data="help_config"),
-                InlineKeyboardButton("🚫 Moderation", callback_data="help_moderation")
+                InlineKeyboardButton("Basics", callback_data="help_basic"),
+                InlineKeyboardButton("Broadcast", callback_data="help_broadcast")
             ],
             [
-                InlineKeyboardButton("📣 Broadcast", callback_data="help_broadcast"),
-                InlineKeyboardButton("🧰 Utilities", callback_data="help_util")
+                InlineKeyboardButton("Config", callback_data="help_config"),
+                InlineKeyboardButton("Moderation", callback_data="help_moderation")
             ],
             [
-                InlineKeyboardButton("👑 Sudo Commands", callback_data="help_sudo"),
-                InlineKeyboardButton("📌 Basics", callback_data="help_basic")
+                InlineKeyboardButton("Sudo Commands", callback_data="help_sudo"),
+                InlineKeyboardButton("Utilities", callback_data="help_util")
             ],
             [
                 InlineKeyboardButton("⬅️ Back", callback_data="back_home")
@@ -29,16 +63,14 @@ def init(app):
 
         await cb.message.edit_text(
             """
-<b>🛠️ Help Panel — Choose a Category</b>
+<b>🛠️ Help Center — Choose a Section</b>
 
-Select the type of commands you want help with:
-
-⚙️ Config – Customize group behavior  
-🚫 Moderation – Scan usernames, bio & messages  
-📣 Broadcast – Mass send messages to groups/users  
-🧰 Utilities – Ping, whitelist, refresh  
-👑 Sudo – Owner-only bot controls  
-📌 Basics – Starting and using the bot
+• Basics – Getting started & ping  
+• Broadcast – Send messages to all users/groups  
+• Config – Group settings & punishment rules  
+• Moderation – Scan usernames/bios for links  
+• Sudo – Owner-only tools  
+• Utilities – Admin, whitelist, refresh tools
             """,
             reply_markup=keyboard
         )
@@ -49,31 +81,25 @@ Select the type of commands you want help with:
             """
 <b>📌 Basic Commands</b>
 
-<b>/start</b> — Show welcome panel & features  
-<b>/help</b> — Show help categories panel  
-<b>/ping</b> — Check real-time latency & uptime
-
-These work in both private chat & groups.
+/start — Welcome message and intro  
+/help — Show help menu  
+/ping — Check latency & uptime
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
             ])
         )
 
-    @app.on_callback_query(filters.regex("help_sudo"))
-    async def help_sudo(_, cb: CallbackQuery):
+    @app.on_callback_query(filters.regex("help_broadcast"))
+    async def help_broadcast(_, cb: CallbackQuery):
         await cb.message.edit_text(
             """
-<b>👑 Sudo-Only Commands</b>
+<b>📣 Broadcast System</b>
 
-<b>/broadcast -all</b> — Send message to all groups & users  
-<b>/broadcast -user</b> — Send only to users  
-<b>/broadcast -group</b> — Send only to groups  
-
-<b>/refresh</b> — Reload memory & Mongo cache  
-<b>/admincache</b> — Reload admin list for all groups  
-
-<i>These are limited to OWNER_ID or sudoers only.</i>
+/broadcast -all — Send to all users & groups  
+/broadcast -user — Send to user chats only  
+/broadcast -group — Send to group chats only  
+Add <i>-forward</i> to forward instead of copy
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
@@ -84,12 +110,12 @@ These work in both private chat & groups.
     async def help_config(_, cb: CallbackQuery):
         await cb.message.edit_text(
             """
-<b>⚙️ Group Configuration Commands</b>
+<b>⚙️ Config Panel</b>
 
-<b>/config</b> — Opens group config panel with inline buttons  
-Set warn limit, choose punishment (mute/ban), and more — all from a sleek inline menu.
-
-<i>Only available in groups where bot is admin.</i>
+/config — Launch inline group settings  
+• Set warn limit  
+• Choose punishment (mute/ban)  
+• Toggle bio scanning
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
@@ -102,36 +128,28 @@ Set warn limit, choose punishment (mute/ban), and more — all from a sleek inli
             """
 <b>🚫 Moderation System</b>
 
-<b>🔗 Auto Triggered On:</b>  
-• Any message containing links or @usernames  
-• User bios with Telegram usernames, links, or spam words
+Triggers on:
+• Usernames, bios with links  
+• Spam words or unwanted domains
 
-<b>🔨 Action Flow:</b>  
-1. ⚠️ First warn with reason  
-2. 🔇 Mute after limit  
-3. 🔒 Ban (if configured)
-
-Admins will see inline buttons for unmute and whitelist when available.
+Action Path:
+⚠️ Warn → 🔇 Mute → 🔒 Ban
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
             ])
         )
 
-    @app.on_callback_query(filters.regex("help_broadcast"))
-    async def help_broadcast(_, cb: CallbackQuery):
+    @app.on_callback_query(filters.regex("help_sudo"))
+    async def help_sudo(_, cb: CallbackQuery):
         await cb.message.edit_text(
             """
-<b>📣 Broadcast Commands</b>
+<b>👑 Sudo-Only Commands</b>
 
-<b>/broadcast -all</b> — Send message to all groups & users  
-<b>/broadcast -user</b> — To personal chats only  
-<b>/broadcast -group</b> — To groups only
-
-Use -forward to forward instead of copying.
-
-<i>Example:</i>  
-<code>/broadcast -all -forward</code>
+/broadcast -all | -user | -group  
+/refresh — Reload config cache  
+/admincache — Refresh group admin list  
+/biolink enable|disable — Toggle bio scanner
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
@@ -144,12 +162,11 @@ Use -forward to forward instead of copying.
             """
 <b>🧰 Utility Commands</b>
 
-<b>/allow</b> — Whitelist a user to bypass filters  
-<b>/remove</b> — Remove from whitelist  
-<b>/freelist</b> — Show all allowed users
-
-<b>/refresh</b> — Reload Mongo/memory configs  
-<b>/admincache</b> — Update group admin list
+/allow — Add a user to whitelist  
+/remove — Remove from whitelist  
+/freelist — List all whitelisted users  
+/refresh — Sync memory and DB  
+/admincache — Refresh admin list
             """,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Back", callback_data="show_help")]
@@ -161,31 +178,24 @@ Use -forward to forward instead of copying.
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("➕ Add to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
             [
-                InlineKeyboardButton("🛠 Help", callback_data="show_help"),
-                InlineKeyboardButton("👨‍💻 Developer", url=DEVELOPER)
+                InlineKeyboardButton("Developer", url=DEVELOPER),
+                InlineKeyboardButton("Help Menu", callback_data="show_help")
             ],
             [
-                InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL),
-                InlineKeyboardButton("🆘 Support", url=SUPPORT_GROUP)
+                InlineKeyboardButton("Support", url=SUPPORT_GROUP),
+                InlineKeyboardButton("Updates", url=UPDATES_CHANNEL)
             ]
         ])
 
         await cb.message.edit_text(
             f"""
-👋 <b>Welcome to Bio Link Remover Bot!</b> 🛡️
+👋 <b>Welcome to <u>Bio Link Remover Bot</u>!</b>
 
-<b>I protect your groups from:</b>  
-• Unwanted links in bios and messages  
-• Spam users with external URLs
+🛡️ <b>Cleaner Groups, Safer Chats</b>
+• Detect and act on spam bios/usernames
+• Tools for admins and auto moderation
 
-<b>🔧 Features:</b>  
-• Auto-link removal in chat  
-• Bio link scans  
-• Custom warnings, mute/ban  
-• Whitelist trusted users
-
-➕ <b>Add me to your group to activate protection.</b>  
-🤖 <i>Powered by</i> <a href="{UPDATES_CHANNEL}">@GrayBots</a>
+<i>Use the buttons below to begin 👇</i>
             """,
             reply_markup=keyboard
         )
