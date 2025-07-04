@@ -40,7 +40,6 @@ BROADCAST_STATUS = {
     "mode": "",
 }
 
-
 def init(app):
     # ✅ Log all commands
     @app.on_message(filters.command("") & filters.text)
@@ -60,6 +59,7 @@ def init(app):
             f"👤 <b>User:</b> {user_mention} (`{user.id}`)\n"
             f"💬 <b>Command:</b> <code>{message.text}</code>"
         )
+
     # ✅ /ping
     @app.on_message(filters.command("ping"))
     async def ping(_, message: Message):
@@ -76,7 +76,7 @@ def init(app):
             f"🤖 <b>Bot:</b> @{BOT_USERNAME}"
         )
 
-    # ✅ /refresh memory cache
+    # ✅ /refresh
     @app.on_message(filters.command("refresh"))
     async def refresh_cmd(_, message: Message):
         if not is_sudo(message.from_user.id):
@@ -90,7 +90,7 @@ def init(app):
                 f"👤 <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
             )
 
-    # ✅ /admincache to resync admin list
+    # ✅ /admincache
     @app.on_message(filters.command("admincache") & filters.group)
     async def admin_cache_cmd(client, message: Message):
         if not is_sudo(message.from_user.id):
@@ -114,140 +114,96 @@ def init(app):
         except ChatAdminRequired:
             await message.reply("❌ I need admin rights to view admin list.")
 
-    # ✅ /broadcast
-    @app.on_message(filters.command("broadcast"))
-    async def broadcast_command(client, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 Not authorized.")
+    # ✅ /biolink enable|disable for admins
+    @app.on_message(filters.command("biolink") & filters.group)
+    async def toggle_biolink(_, message: Message):
+        user_id = message.from_user.id
+        chat_id = message.chat.id
 
-        cmd = message.text.lower()
-        mode = "forward" if "-forward" in cmd else "copy"
+        try:
+            member = await _.get_chat_member(chat_id, user_id)
+            if member.status not in ("administrator", "creator"):
+                return await message.reply("🚫 You must be a group admin to use this.")
+        except ChatAdminRequired:
+            return await message.reply("❌ I need admin rights to check your status.")
 
-        if "-all" in cmd:
-            users = await get_served_users()
-            chats = await get_served_chats()
-            target_users = [u["user_id"] for u in users]
-            target_chats = [c["chat_id"] for c in chats]
-        elif "-user" in cmd or "-users" in cmd:
-            users = await get_served_users()
-            target_users = [u["user_id"] for u in users]
-            target_chats = []
-        elif "-group" in cmd or "-chats" in cmd:
-            chats = await get_served_chats()
-            target_users = []
-            target_chats = [c["chat_id"] for c in chats]
+        args = message.text.split(None, 1)
+        if len(args) == 1:
+            return await message.reply("Usage: /biolink enable | disable")
+
+        choice = args[1].lower().strip()
+        if choice == "enable":
+            set_bio_scan(chat_id, True)
+            await message.reply("✅ Bio link scanning has been enabled in this group.")
+        elif choice == "disable":
+            set_bio_scan(chat_id, False)
+            await message.reply("❌ Bio link scanning has been disabled in this group.")
         else:
-            return await message.reply("Usage: /broadcast -all|-user|-group [-forward]")
+            await message.reply("Usage: /biolink enable | disable")
 
-        if message.reply_to_message:
-            content = message.reply_to_message
-        else:
-            text = message.text
-            for kw in ["/broadcast", "-forward", "-all", "-users", "-user", "-chats", "-group"]:
-                text = text.replace(kw, "")
-            content = text.strip()
-            if not content:
-                return await message.reply("📝 Provide a message or reply to one.")
-
-        total = len(target_users) + len(target_chats)
-        BROADCAST_STATUS.update({
-            "active": True,
-            "sent": 0,
-            "failed": 0,
-            "total": total,
-            "start_time": time.time(),
-            "users": len(target_users),
-            "chats": len(target_chats),
-            "sent_users": 0,
-            "sent_chats": 0,
-            "mode": mode,
-        })
-
-        msg = await message.reply("📡 Broadcast started...")
-
-        async def deliver(chat_id):
-            try:
-                if isinstance(content, str):
-                    await client.send_message(chat_id, content)
-                elif mode == "forward":
-                    await client.forward_messages(chat_id, message.chat.id, [content.id])
-                else:
-                    await content.copy(chat_id)
-                BROADCAST_STATUS["sent"] += 1
-            except FloodWait as e:
-                await asyncio.sleep(e.value)
-                return await deliver(chat_id)
-            except Exception:
-                BROADCAST_STATUS["failed"] += 1
-
-        targets = target_users + target_chats
-        for i in range(0, total, 100):
-            batch = targets[i:i + 100]
-            await asyncio.gather(*(deliver(cid) for cid in batch))
-            await asyncio.sleep(1)
-
-        elapsed = round(time.time() - BROADCAST_STATUS["start_time"])
-        await msg.edit_text(
-            f"✅ <b>Broadcast Complete</b>\n"
-            f"📦 Total: {total}\n"
-            f"✅ Sent: {BROADCAST_STATUS['sent']}\n"
-            f"❌ Failed: {BROADCAST_STATUS['failed']}\n"
-            f"⏱ Time: {elapsed}s"
-        )
-        BROADCAST_STATUS["active"] = False
-
-    # ✅ /status
-    @app.on_message(filters.command("status"))
-    async def status_command(_, message: Message):
-        if not is_sudo(message.from_user.id):
-            return await message.reply("🚫 You're not authorized to check system status.")
-
-        served_users = await get_served_users()
-        served_chats = await get_served_chats()
-
-        uptime = str(timedelta(seconds=int(time.time() - BOT_START_TIME)))
-        cpu = psutil.cpu_percent()
-        ram = psutil.virtual_memory().percent
-        total_users = len(served_users)
-        total_chats = len(served_chats)
-
-        start = time.time()
-        sent = await message.reply("Checking status...")
-        end = time.time()
-        ping = round((end - start) * 1000)
-
-        await sent.edit_text(
-            f"<b>📊 System Status</b>\n"
-            f"<b>🤖 Bot:</b> @{BOT_USERNAME}\n"
-            f"<b>⏱ Uptime:</b> <code>{uptime}</code>\n"
-            f"<b>📡 Ping:</b> <code>{ping}ms</code>\n"
-            f"<b>👥 Users:</b> <code>{total_users}</code>\n"
-            f"<b>💬 Groups:</b> <code>{total_chats}</code>\n"
-            f"<b>🧠 RAM Usage:</b> <code>{ram}%</code>\n"
-            f"<b>🖥️ CPU Load:</b> <code>{cpu}%</code>"
-        )
-
-    # ✅ Whitelist management
+    # ✅ /allow with reply, username or user ID
     @app.on_message(filters.command("allow") & filters.group)
     async def allow_user(_, message: Message):
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
-        if not message.reply_to_message:
-            return await message.reply("Reply to a user's message to allow them.")
-        user_id = message.reply_to_message.from_user.id
-        add_to_whitelist(user_id)
-        await message.reply("✅ User has been whitelisted from bio scans.")
 
+        user = None
+        if message.reply_to_message:
+            user = message.reply_to_message.from_user
+        elif len(message.command) > 1:
+            query = message.command[1]
+            if query.startswith("@"):
+                try:
+                    user = await _.get_users(query)
+                except:
+                    return await message.reply("❌ Could not find that username.")
+            else:
+                try:
+                    user = await _.get_users(int(query))
+                except:
+                    return await message.reply("❌ Invalid user ID.")
+        
+        if not user:
+            return await message.reply(
+                "ℹ️ Reply to a user or provide a username/user ID.\nUsage:\n<code>/allow @username</code>\n<code>/allow 123456789</code>",
+                quote=True
+            )
+
+        add_to_whitelist(user.id)
+        await message.reply(f"✅ <b>{user.first_name}</b> has been whitelisted from bio scans.")
+
+    # ✅ /remove with reply, username or user ID
     @app.on_message(filters.command("remove") & filters.group)
     async def remove_user(_, message: Message):
         if not is_sudo(message.from_user.id):
             return await message.reply("🚫 You don't have permission to do this.")
-        if not message.reply_to_message:
-            return await message.reply("Reply to a user's message to remove them.")
-        user_id = message.reply_to_message.from_user.id
-        remove_from_whitelist(user_id)
-        await message.reply("❌ User removed from whitelist.")
 
+        user = None
+        if message.reply_to_message:
+            user = message.reply_to_message.from_user
+        elif len(message.command) > 1:
+            query = message.command[1]
+            if query.startswith("@"):
+                try:
+                    user = await _.get_users(query)
+                except:
+                    return await message.reply("❌ Could not find that username.")
+            else:
+                try:
+                    user = await _.get_users(int(query))
+                except:
+                    return await message.reply("❌ Invalid user ID.")
+        
+        if not user:
+            return await message.reply(
+                "ℹ️ Reply to a user or provide a username/user ID.\nUsage:\n<code>/remove @username</code>\n<code>/remove 123456789</code>",
+                quote=True
+            )
+
+        remove_from_whitelist(user.id)
+        await message.reply(f"❌ <b>{user.first_name}</b> has been removed from the whitelist.")
+
+    # ✅ /freelist
     @app.on_message(filters.command("freelist") & filters.group)
     async def list_whitelisted(_, message: Message):
         users = get_all_whitelist()
