@@ -12,3 +12,4 @@ from .help import *
 from .user_commands import *
 from .spam_detection import *
 from .inline import *
+from .admin_cache import *
