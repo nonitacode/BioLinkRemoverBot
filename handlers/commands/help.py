@@ -12,7 +12,7 @@ from config import LOG_CHANNEL, START_IMG
 @app.on_message(filters.command("help"))
 async def help_command(client, message: Message):
     lang = get_user_language(message.from_user.id)
-    help_text = get_message(lang, "help_message")
+    help_text = get_message(lang, "HELP")
 
     try:
         await message.reply_photo(
