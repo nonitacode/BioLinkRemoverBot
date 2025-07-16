@@ -10,11 +10,12 @@ from utils.inline_buttons import commands_buttons
 
 @app.on_callback_query(filters.regex("help_panel"))
 async def help_panel_cb(client, query: CallbackQuery):
-    lang = get_user_language(query.from_user.id)
+    user_id = query.from_user.id
+    lang = get_user_language(user_id)
     help_text = get_message(lang, "help_message")
 
     await query.message.edit_text(
         text=help_text,
-        reply_markup=commands_buttons(),
+        reply_markup=commands_buttons(user_id),  # ✅ Pass user_id here
         disable_web_page_preview=True
     )
