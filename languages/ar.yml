@@ -1,0 +1,44 @@
+welcome_message: |
+  مرحبًا بك في BioLinkRemoverBot!
+  هنا يمكنك التفاعل مع البوت، عرض الإحصائيات وإدارة المستخدمين.
+
+about_me: |
+  عن BioLinkRemoverBot:
+  أنا بوت مصمم لإدارة المجموعات، كشف الرسائل المزعجة وتنبيه المستخدمين.
+
+donate_info: |
+  دعم البوت واستمراره:
+  التبرع عبر UPI: itxnikhil@ptyes
+
+commands_category: |
+  اختر فئة الأوامر:
+
+bot_commands: |
+  أوامر البوت:
+  - /start
+  - /ping
+  - /alive
+  - /stats
+
+user_commands: |
+  أوامر المستخدم:
+  - /addauth
+  - /removeauth
+  - /warn
+  - /profile
+
+moderation_commands: |
+  أوامر الإشراف:
+  - /ban
+  - /mute
+  - /unmute
+  - /spam
+
+admin_commands: |
+  أوامر الإدارة:
+  - /admincache
+  - /clearcache
+
+help_message: |
+  قسم المساعدة:
+  اختر فئة لعرض الأوامر.
