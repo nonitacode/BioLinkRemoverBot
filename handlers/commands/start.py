@@ -9,7 +9,7 @@ from database.groups import store_group_data
 from database.user_language import get_user_language
 from utils.language import get_message
 from utils.inline_buttons import start_buttons
-from config import LOG_CHANNEL
+from config import LOG_CHANNEL, START_IMG  # ✅ added START_IMG
 
 @app.on_message(filters.command("start"))
 async def start_command(client, message: Message):
@@ -25,7 +25,7 @@ async def start_command(client, message: Message):
 
     try:
         await message.reply_photo(
-            photo="assets/biolinkremoverbot.png",
+            photo=START_IMG,  # ✅ updated
             caption=welcome_message,
             reply_markup=start_buttons()
         )
