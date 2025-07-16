@@ -1,18 +1,14 @@
-# BioLinkRemoverBot - All rights reserved
-# --------------------------------------
-# This code is fully owned by BioLinkRemoverBot and is reserved.
-# Unauthorized copying, distribution, or use is prohibited.
-# © Graybots™. All rights reserved.
+# bot/logger.py
 
 import logging
 
-# Set up logging configuration
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
-def log(message):
-    """Log important events and operations."""
-    logging.info(message)
+def log(msg):
+    logging.info(msg)
 
-def error_log(error_message):
-    """Log error messages."""
-    logging.error(error_message)
+def error_log(msg):
+    logging.error(msg)
