@@ -2,6 +2,7 @@
 # © Graybots™. All rights reserved.
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
 
 def start_buttons():
     return InlineKeyboardMarkup([
