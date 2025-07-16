@@ -6,7 +6,7 @@ from config import BOT_NAME
 
 # ✅ Import all handlers to register them
 from handlers.commands import start, help, basic, core, moderation, owner, stats
-from handlers.callbacks import start as cb_start, help as cb_help
+from handlers.callbacks import start as cb_start, help as cb_help, language as cb_language
 from handlers.group import member_updates
 from handlers.spam import group_spam, private_spam
 from handlers.misc import message_scan
