@@ -3,26 +3,31 @@
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
+from utils.language import get_message  # Adjust path if needed
 
-def start_buttons():
+async def start_buttons(chat_id: int):
+    lang = get_message("en", "buttons")  # Hardcoded 'en' for now; make dynamic if needed
+
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("➕ Add to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
+        [InlineKeyboardButton(lang["ADD"], url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
         [
-            InlineKeyboardButton("👤 Developer", url="https://t.me/nikchil"),
-            InlineKeyboardButton("📚 Help Menu", callback_data="help_panel")
+            InlineKeyboardButton(lang["DEVELOPER"], url="https://t.me/nikchil"),
+            InlineKeyboardButton(lang["HELP_MENU"], callback_data="help_panel")
         ],
         [
-            InlineKeyboardButton("💬 Support", url=SUPPORT_GROUP),
-            InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL)
+            InlineKeyboardButton(lang["SUPPORT"], url=SUPPORT_GROUP),
+            InlineKeyboardButton(lang["UPDATES"], url=UPDATES_CHANNEL)
         ],
-        [InlineKeyboardButton("🌐 Language", callback_data="language_panel")]  # ✅ New button
+        [InlineKeyboardButton(lang["LANGUAGE"], callback_data="language_panel")]
     ])
 
-def commands_buttons():
+async def commands_buttons(chat_id: int):
+    lang = get_message("en", "buttons")
+
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔗 /allow", callback_data="help_allow")],
-        [InlineKeyboardButton("⚠️ /warn", callback_data="help_warn")],
-        [InlineKeyboardButton("🔇 /mute", callback_data="help_mute")],
-        [InlineKeyboardButton("⛔ /ban", callback_data="help_ban")],
-        [InlineKeyboardButton("🔁 Back", callback_data="main_menu")],
+        [InlineKeyboardButton(lang["ALLOW"], callback_data="help_allow")],
+        [InlineKeyboardButton(lang["WARN"], callback_data="help_warn")],
+        [InlineKeyboardButton(lang["MUTE"], callback_data="help_mute")],
+        [InlineKeyboardButton(lang["BAN"], callback_data="help_ban")],
+        [InlineKeyboardButton(lang["BACK"], callback_data="main_menu")],
     ])
