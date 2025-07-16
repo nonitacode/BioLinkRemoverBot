@@ -1,81 +1,78 @@
-# main.py
+# BioLinkRemoverBot - All rights reserved
+# --------------------------------------
+# This code is fully owned by BioLinkRemoverBot and is reserved.
+# Unauthorized copying, distribution, or use is prohibited.
+# © Graybots™. All rights reserved.
 
-from pyrogram import filters
-from pyrogram.types import InputMediaPhoto
+from pyrogram import Client, filters
+from pyrogram.types import Message
+from config import OWNER_ID, BOT_NAME
 from bot.bot import bot
-from config import OWNER_ID
+from utils.language import get_message
+from database.user_language_db import get_user_language
 from database.users_db import store_user_data
 from database.stats_db import get_bot_stats
 from database.violation_db import log_violation
-from database.user_language_db import get_user_language
-from utils.language import get_message
+from utils.logger import log_to_channel
 from modules.inline import start_buttons, commands_buttons
-from bot.logger import log, error_log
 
 @bot.on_message(filters.command("start"))
-async def start(client, message):
+async def start_handler(client, message: Message):
     user = message.from_user
     store_user_data(user.id, user.username, user.full_name)
     lang = get_user_language(user.id)
-    welcome_text = get_message(lang, "welcome_message")
-    try:
-        await message.reply_photo(
-            photo="assets/biolinkremoverbot.png",
-            caption=welcome_text,
-            reply_markup=start_buttons()
-        )
-        log(f"/start used by {user.id}")
-    except Exception as e:
-        error_log(f"Failed to send start image: {e}")
-        await message.reply(welcome_text, reply_markup=start_buttons())
+    welcome = get_message(lang, "welcome_message")
+    photo = "assets/biolinkremoverbot.png"
+    await log_to_channel(bot, f"🚀 {user.mention} started the bot.")
+    await message.reply_photo(photo, caption=welcome, reply_markup=start_buttons())
 
 @bot.on_message(filters.command("help"))
-async def help(client, message):
+async def help_handler(client, message: Message):
     lang = get_user_language(message.from_user.id)
     help_text = get_message(lang, "help_message")
-    await message.reply(help_text, reply_markup=commands_buttons())
-    log(f"/help used by {message.from_user.id}")
+    photo = "assets/biolinkremoverbot.png"
+    await message.reply_photo(photo, caption=help_text, reply_markup=commands_buttons())
 
 @bot.on_message(filters.command("ping"))
-async def ping(client, message):
+async def ping_handler(client, message: Message):
     await message.reply("✅ Pong!")
-    log(f"/ping used by {message.from_user.id}")
 
 @bot.on_message(filters.command("alive"))
-async def alive(client, message):
-    await message.reply("✅ I am alive and running!")
-    log(f"/alive used by {message.from_user.id}")
+async def alive_handler(client, message: Message):
+    await message.reply("✅ I'm alive and working perfectly.")
 
 @bot.on_message(filters.command("stats"))
-async def stats(client, message):
-    users_count, groups_count = get_bot_stats()
-    await message.reply(f"📊 Stats:\nUsers: {users_count}\nGroups: {groups_count}")
-    log(f"/stats used by {message.from_user.id}")
+async def stats_handler(client, message: Message):
+    users, groups = get_bot_stats()
+    await message.reply(f"📊 Bot Stats:\n👤 Users: {users}\n👥 Groups: {groups}")
 
-@bot.on_message(filters.command("broadcast"))
-async def broadcast(client, message):
-    if message.from_user.id != OWNER_ID:
-        return await message.reply("🚫 You are not authorized.")
-    text = " ".join(message.command[1:])
-    if not text:
-        return await message.reply("❗ Provide a message.")
-    log("Broadcast started.")
-    count = 0
-    try:
-        async for dialog in bot.iter_dialogs():
-            if dialog.chat.type in ("group", "supergroup"):
-                await bot.send_message(dialog.chat.id, text)
-                count += 1
-    except Exception as e:
-        error_log(f"Broadcast error: {e}")
-    await message.reply(f"✅ Broadcasted to {count} groups.")
+@bot.on_message(filters.command("warn"))
+async def warn_user(client, message: Message):
+    if message.reply_to_message:
+        user_id = message.reply_to_message.from_user.id
+        log_violation(user_id, "User warned")
+        await message.reply("⚠️ User has been warned.")
 
-@bot.on_message(filters.text & ~filters.command)
-async def spam_and_bio_scan(client, message):
-    user = message.from_user
+@bot.on_message(filters.command("ban"))
+async def ban_user(client, message: Message):
+    if message.reply_to_message:
+        user_id = message.reply_to_message.from_user.id
+        log_violation(user_id, "User banned")
+        await message.reply("🚫 User has been banned.")
+
+@bot.on_message(filters.command("mute"))
+async def mute_user(client, message: Message):
+    if message.reply_to_message:
+        user_id = message.reply_to_message.from_user.id
+        log_violation(user_id, "User muted")
+        await message.reply("🔇 User has been muted.")
+
+@bot.on_message(filters.text)
+async def bio_link_detector(client, message: Message):
+    if message.text.startswith("/"):
+        return
     text = message.text.lower()
-    suspicious = any(keyword in text for keyword in ["http", "t.me", "@", "promo", "buy"])
-    if suspicious:
+    if any(x in text for x in ["http", "@", "t.me", "link", "promo", "sale", "buy"]):
         await message.delete()
-        log_violation(user.id, "Spam/Bio Link Detected")
-        log(f"⚠️ Spam deleted from {user.id}")
+        log_violation(message.from_user.id, "Detected spam or promotional link")
+        await log_to_channel(bot, f"🚫 Deleted spam message from [{message.from_user.id}](tg://user?id={message.from_user.id})")
