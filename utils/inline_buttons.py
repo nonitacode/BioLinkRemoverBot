@@ -20,7 +20,6 @@ async def start_buttons(user_id: int):
         ],
         [InlineKeyboardButton(get_message(lang_code, "LANGUAGE_BUTTON"), callback_data="language_panel")]
     ])
-    ])
 
 async def commands_buttons(user_id: int):
     lang_code = get_user_language(user_id)
