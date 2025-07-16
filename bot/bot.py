@@ -16,10 +16,12 @@ bot = Client(
     bot_token=BOT_TOKEN
 )
 
-# Define bot startup
-@bot.on_start
+# Define bot start handler (startup logic)
 async def on_start(client):
     log("Bot started successfully")
+
+# Attach the start handler to the bot
+bot.add_handler(on_start)
 
 # Define the shutdown handler
 @bot.on_shutdown
@@ -27,4 +29,6 @@ async def on_shutdown(client):
     log("Bot shutting down")
 
 # Run the bot
-bot.run()
+if __name__ == "__main__":
+    log("Starting BioLinkRemoverBot...")
+    bot.run()
