@@ -5,7 +5,7 @@
 # © Graybots™. All rights reserved.
 
 from pyrogram import Client, filters
-from inline import commands_buttons
+from modules.inline import commands_buttons
 
 @bot.on_message(filters.command("help"))
 async def help(client, message):
