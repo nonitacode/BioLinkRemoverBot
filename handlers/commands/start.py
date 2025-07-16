@@ -21,7 +21,7 @@ async def start_command(client, message: Message):
         store_group_data(chat.id, chat.title)
 
     lang = get_user_language(user.id)
-    WELCOME = get_message(lang, "WELCOME").format(user=user.mention)
+    welcome_message = get_message(lang, "WELCOME").format(user=user.mention)
 
     try:
         await message.reply_photo(
