@@ -8,7 +8,7 @@ def start_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Add to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
         [
-            InlineKeyboardButton("👤 Developer", url="https://t.me/StormBreakerz"),
+            InlineKeyboardButton("👤 Developer", url="https://t.me/nikchil"),
             InlineKeyboardButton("📚 Help Menu", callback_data="help_panel")
         ],
         [
