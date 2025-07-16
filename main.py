@@ -8,7 +8,7 @@ from pyrogram import Client, filters
 from bot.bot import bot  # Importing the initialized bot object
 from database.violation_db import log_violation
 from config import OWNER_ID
-from inline import start_buttons, commands_buttons
+from modules.inline import start_buttons, commands_buttons  # Correct import
 
 # Bot Commands Handlers
 
