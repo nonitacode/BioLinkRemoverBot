@@ -12,7 +12,7 @@ from utils.inline_buttons import commands_buttons
 async def help_panel_cb(client, query: CallbackQuery):
     user_id = query.from_user.id
     lang = get_user_language(user_id)
-    help_text = get_message(lang, "HELP")
+    help_text = get_message(lang, "help_message")
 
     await query.message.edit_text(
         text=help_text,
