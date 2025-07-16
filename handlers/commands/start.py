@@ -4,7 +4,8 @@
 from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
-from database.users import store_user_data, store_group_data
+from database.users import store_user_data
+from database.groups import store_group_data
 from database.user_language import get_user_language
 from utils.language import get_message
 from utils.inline_buttons import start_buttons
