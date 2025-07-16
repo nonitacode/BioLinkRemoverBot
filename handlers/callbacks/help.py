@@ -5,11 +5,12 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from database.user_language import get_user_language
 from utils.language import get_message
-from config import BOT_USERNAME, SUPPORT_GROUP
+from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
 
 @Client.on_callback_query(filters.regex("help_panel"))
 async def help_panel_cb(client, query: CallbackQuery):
-    lang = get_user_language(query.from_user.id)
+    user = query.from_user
+    lang = get_user_language(user.id)
     help_text = get_message(lang, "help_message")
 
     buttons = InlineKeyboardMarkup([
