@@ -6,7 +6,7 @@ from datetime import timedelta
 from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
-from utils.language import get_message  # ✅ Corrected import
+from utils.language import get_message
 
 BOT_START_TIME = time.time()
 
@@ -15,7 +15,7 @@ def get_readable_time(seconds: int) -> str:
 
 @app.on_message(filters.command("ping") & ~filters.channel)
 async def ping_command(client, message: Message):
-    lang = "en"  # Later you can load dynamically per chat
+    lang = "en"
     reply_temp = get_message(lang, "PING")
     reply_final = get_message(lang, "PING_FINAL")
 
@@ -29,7 +29,7 @@ async def ping_command(client, message: Message):
     await sent.edit_text(
         reply_final.format(
             uptime=uptime,
-            ping=latency
+            ping=ping  # ✅ Corrected here
         )
     )
 
@@ -49,6 +49,6 @@ async def alive_command(client, message: Message):
     await sent.edit_text(
         reply_final.format(
             uptime=uptime,
-            ping=latency
+            ping=ping  # ✅ Corrected here
         )
     )
