@@ -9,7 +9,10 @@ from bot.bot import bot  # Importing the initialized bot object
 from database.violation_db import log_violation
 from config import OWNER_ID
 from modules.inline import start_buttons, commands_buttons  # Correct import
-from bot.logger import log  # Importing the log function from logger.py
+
+# Log function to print messages to console
+def log(message):
+    print(message)
 
 # Bot Commands Handlers
 
