@@ -8,6 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from database.violation_db import log_violation
 import re
+from bot.bot import bot
 
 SPAM_KEYWORDS = ["http", "@", "promo", "buy", "sale"]
 
