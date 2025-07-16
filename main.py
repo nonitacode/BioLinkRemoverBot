@@ -8,8 +8,9 @@ from pyrogram import Client, filters
 from bot.bot import bot  # Importing the initialized bot object
 from database.violation_db import log_violation
 from config import OWNER_ID
+from inline import start_buttons, commands_buttons
 
-# Define bot commands and their corresponding functions
+# Bot Commands Handlers
 
 @bot.on_message(filters.command("start"))
 async def start(client, message):
