@@ -7,7 +7,7 @@ from bot.bot import app
 from database.user_language import get_user_language
 from utils.language import get_message
 from utils.inline_buttons import commands_buttons
-from config import LOG_CHANNEL, START_IMG  # ✅ added START_IMG
+from config import LOG_CHANNEL, START_IMG
 
 @app.on_message(filters.command("help"))
 async def help_command(client, message: Message):
@@ -16,7 +16,7 @@ async def help_command(client, message: Message):
 
     try:
         await message.reply_photo(
-            photo=START_IMG,  # ✅ updated
+            photo=START_IMG,
             caption=help_text,
             reply_markup=commands_buttons()
         )
