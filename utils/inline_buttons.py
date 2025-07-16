@@ -3,6 +3,7 @@
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
+from database.user_language import get_user_language
 from utils.language import get_message  # Adjust path if needed
 
 async def start_buttons(user_id: int):
