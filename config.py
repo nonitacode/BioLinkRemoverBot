@@ -24,8 +24,8 @@ BOT_USERNAME = "BioLinkRemoverBot"  # Bot username
 OWNER_ID = int(os.getenv("OWNER_ID", "123456789"))
 
 # Channel Links
-UPDATE_CHANNEL = "GrayBots"
-SUPPORT_CHAT = "GrayBotSupport"
+UPDATE_CHANNEL = "https://t.me/GrayBots"
+SUPPORT_CHAT = "https://t.me/GrayBotSupport"
 
 # System Monitoring
 SYSTEM_MONITOR = {
