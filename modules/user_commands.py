@@ -7,6 +7,7 @@
 from pyrogram import Client, filters
 from modules.inline import user_commands_buttons  # Import the inline buttons
 from config import OWNER_ID
+from bot.bot import bot
 
 # Handle user commands callback queries
 @bot.on_message(filters.command("user_commands"))
