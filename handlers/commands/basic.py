@@ -23,14 +23,13 @@ async def ping_command(client, message: Message):
     sent = await message.reply(reply_temp)
     end = time.time()
 
-    latency = round((end - start) * 1000, 3)
+    ping = round((end - start) * 1000, 3)
     uptime = get_readable_time(time.time() - BOT_START_TIME)
 
     await sent.edit_text(
         reply_final.format(
             uptime=uptime,
-            latency=latency,
-            ping=latency
+            ping=ping
         )
     )
 
@@ -44,13 +43,12 @@ async def alive_command(client, message: Message):
     sent = await message.reply(reply_temp)
     end = time.time()
 
-    latency = round((end - start) * 1000, 3)
+    ping = round((end - start) * 1000, 3)
     uptime = get_readable_time(time.time() - BOT_START_TIME)
 
     await sent.edit_text(
         reply_final.format(
             uptime=uptime,
-            latency=latency,
-            ping=latency
+            ping=ping
         )
     )
