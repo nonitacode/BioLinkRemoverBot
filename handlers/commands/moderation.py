@@ -2,9 +2,8 @@
 # © Graybots™. All rights reserved.
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, ChatPermissions
 from database.violations import log_violation, get_user_violations
-from pyrogram.enums import ChatPermissions
 
 @Client.on_message(filters.command("warn"))
 async def warn(_, message: Message):
