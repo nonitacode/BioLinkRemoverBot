@@ -23,7 +23,7 @@ async def help_command(client, message: Message):
     except:
         await message.reply(help_text, reply_markup=commands_buttons())
 
-    await bot.send_message(
+    await app.send_message(
         LOG_CHANNEL,
         f"#HELP used by [{message.from_user.first_name}](tg://user?id={message.from_user.id})"
     )
