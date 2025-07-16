@@ -16,6 +16,7 @@ def start_buttons():
             InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL)
         ]
     ])
+
 def commands_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("🔗 /allow", callback_data="help_allow")],
