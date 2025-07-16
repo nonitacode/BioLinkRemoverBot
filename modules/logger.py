@@ -5,13 +5,19 @@
 # © Graybots™. All rights reserved.
 
 import logging
+from config import LOG_CHANNEL
+from bot.bot import bot
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
-def log(message):
-    """Logs important events and errors."""
+def log_console(message: str):
     logging.info(message)
 
-def error_log(error_message):
-    """Logs error events."""
-    logging.error(error_message)
+async def log_to_channel(message: str):
+    try:
+        await bot.send_message(LOG_CHANNEL, message)
+    except Exception as e:
+        logging.error(f"Logging to channel failed: {e}")
