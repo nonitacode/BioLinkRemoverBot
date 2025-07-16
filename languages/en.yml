@@ -1,0 +1,56 @@
+# BioLinkRemoverBot - English Language File
+# -----------------------------------------
+# This file contains the responses and commands in English
+# © Graybots™. All rights reserved.
+
+welcome_message: |
+  **Welcome to BioLinkRemoverBot!**
+  Here you can interact with the bot, get stats, manage users, and more.
+  Click the buttons below to get started!
+
+about_me: |
+  **About BioLinkRemoverBot:**
+  I am a bot designed to help you manage your groups with advanced spam detection, user moderation, and more.
+  I can detect spam, manage warnings, and much more!
+
+donate_info: |
+  Support the bot and keep it running!
+  Donate via UPI: **itxnikhil@ptyes**
+
+commands_category: |
+  Choose a category to view commands:
+  - Bot Commands
+  - User Commands
+  - Moderation Commands
+  - Admin Commands
+
+bot_commands: |
+  These are the bot-related commands:
+  - /start - Start the bot and store user data
+  - /ping - Check the bot’s latency
+  - /alive - Show bot uptime and stats
+  - /stats - Show bot statistics
+
+user_commands: |
+  These are the user-related commands:
+  - /addauth - Add a user to the whitelist
+  - /removeauth - Remove a user from the whitelist
+  - /warn - Warn a user
+  - /profile - View user profile and warnings
+
+moderation_commands: |
+  These are the moderation commands:
+  - /ban - Ban a user from the group
+  - /mute - Mute a user in the group
+  - /unmute - Unmute a user in the group
+  - /spam - Detect spam in the group
+
+admin_commands: |
+  These are the admin commands:
+  - /admincache - Refresh memory cache
+  - /clearcache - Clear all cached data
+
+help_message: |
+  **Help Section:**
+  Here you can find the list of commands available for you to use.
+  Select a command from the list below to view more information.
