@@ -1,0 +1,44 @@
+welcome_message: |
+  ¡Bienvenido a BioLinkRemoverBot!
+  Aquí puedes interactuar con el bot, ver estadísticas y gestionar usuarios.
+
+about_me: |
+  Sobre BioLinkRemoverBot:
+  Soy un bot diseñado para ayudarte a administrar grupos, detectar spam y advertir a los usuarios.
+
+donate_info: |
+  ¡Apoya al bot para mantenerlo activo!
+  Dona vía UPI: itxnikhil@ptyes
+
+commands_category: |
+  Elige una categoría de comandos:
+
+bot_commands: |
+  Estos son los comandos relacionados con el bot:
+  - /start
+  - /ping
+  - /alive
+  - /stats
+
+user_commands: |
+  Comandos relacionados con el usuario:
+  - /addauth
+  - /removeauth
+  - /warn
+  - /profile
+
+moderation_commands: |
+  Comandos de moderación:
+  - /ban
+  - /mute
+  - /unmute
+  - /spam
+
+admin_commands: |
+  Comandos de administrador:
+  - /admincache
+  - /clearcache
+
+help_message: |
+  Sección de Ayuda:
+  Selecciona una categoría para ver los comandos.
