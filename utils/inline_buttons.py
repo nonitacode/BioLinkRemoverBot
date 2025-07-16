@@ -22,13 +22,13 @@ async def start_buttons(user_id: int):
     ])
     ])
 
-async def commands_buttons(chat_id: int):
-    lang = get_message("en", "buttons")
+async def commands_buttons(user_id: int):
+    lang_code = get_user_language(user_id)
 
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(lang["ALLOW"], callback_data="help_allow")],
-        [InlineKeyboardButton(lang["WARN"], callback_data="help_warn")],
-        [InlineKeyboardButton(lang["MUTE"], callback_data="help_mute")],
-        [InlineKeyboardButton(lang["BAN"], callback_data="help_ban")],
-        [InlineKeyboardButton(lang["BACK"], callback_data="main_menu")],
+        [InlineKeyboardButton(get_message(lang_code, "ALLOW"), callback_data="help_allow")],
+        [InlineKeyboardButton(get_message(lang_code, "WARN"), callback_data="help_warn")],
+        [InlineKeyboardButton(get_message(lang_code, "MUTE"), callback_data="help_mute")],
+        [InlineKeyboardButton(get_message(lang_code, "BAN"), callback_data="help_ban")],
+        [InlineKeyboardButton(get_message(lang_code, "BACK"), callback_data="main_menu")],
     ])
