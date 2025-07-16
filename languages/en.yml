@@ -7,17 +7,7 @@ help_message: "📚 **Help Panel – BioLink Remover Bot**\n\nI automatically ch
 
 basic:
   ping_reply_temp: "🔄 Pinging..."
-  ping_final_reply: |
-    🏓 **Pong!**
-
-    ⏱️ **Uptime:** `{uptime}`
-    ⚡ **Latency:** `{latency} ms`
-    📶 **Ping:** `{ping} ms`
+  ping_final_reply: "🏓 **Pong!**\n\n⏱️ **Uptime:** `{uptime}`\n⚡ **Latency:** `{latency} ms`\n📶 **Ping:** `{ping} ms`"
 
   alive_reply_temp: "🔄 Checking status..."
-  alive_final_reply: |
-    🤖 **Bot Status: Alive!**
-
-    ⏱️ **Uptime:** `{uptime}`
-    ⚡ **Latency:** `{latency} ms`
-    📶 **Ping:** `{ping} ms`
+  alive_final_reply: "🤖 **Bot Status: Alive!**\n\n⏱️ **Uptime:** `{uptime}`\n⚡ **Latency:** `{latency} ms`\n📶 **Ping:** `{ping} ms`"
