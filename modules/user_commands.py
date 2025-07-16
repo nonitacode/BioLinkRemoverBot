@@ -8,6 +8,7 @@ from pyrogram import Client, filters
 from modules.inline import user_commands_buttons
 from config import COMMAND_PREFIXES
 from database.users_db import store_user_data, store_group_data
+from bot.bot import bot
 
 @bot.on_message(filters.command("addauth"))
 async def add_auth(client, message):
