@@ -18,17 +18,27 @@ bot = Client(
 
 # Define bot start handler (startup logic)
 async def on_start(client):
+    """This function will be called when the bot starts."""
     log("Bot started successfully")
 
-# Attach the start handler to the bot
-bot.add_handler(on_start)
-
-# Define the shutdown handler
-@bot.on_shutdown
+# Shutdown handling function
 async def on_shutdown(client):
-    log("Bot shutting down")
+    """This function will be called when the bot is shutting down."""
+    log("Bot shutting down...")
 
-# Run the bot
+# Define a handler to stop the bot and call shutdown logic
+async def stop_bot(client):
+    """Stops the bot and triggers shutdown handling."""
+    await client.stop()
+    await on_shutdown(client)
+
+# Start the bot and handle shutdown logic
 if __name__ == "__main__":
     log("Starting BioLinkRemoverBot...")
+    
+    # Attach the on_start and on_shutdown functions to handle the startup and shutdown events
+    bot.add_handler(on_start)  # Add start handler
+    bot.add_handler(on_shutdown)  # Add shutdown handler
+    
+    # Start the bot with a correct run method that will handle shutdown events.
     bot.run()
