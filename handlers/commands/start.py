@@ -18,8 +18,8 @@ async def start_panel_cb(client, query: CallbackQuery):
         # ✅ Update the photo + caption using edit_media
         await query.message.edit_media(
             media={"type": "photo", "media": START_IMG, "caption": welcome_message},
-            reply_markup=start_buttons
+            reply_markup=start_buttons()
         )
     except:
         # Fallback for plain text messages
-        await query.message.edit_text(welcome_message, reply_markup=start_buttons)
+        await query.message.edit_text(welcome_message, reply_markup=start_buttons())
