@@ -3,7 +3,7 @@
 
 import re
 from config import OWNER_ID, LOG_CHANNEL, MAX_VIOLATIONS
-from bot.bot import bot
+from bot.bot import app
 from pyrogram.types import Message
 from pyrogram.enums import ChatMemberStatus
 from database.violations import log_violation, get_user_violations
@@ -39,11 +39,11 @@ async def check_and_handle_violation(message: Message):
 
     if count >= MAX_VIOLATIONS:
         try:
-            await bot.restrict_chat_member(chat_id, user_id, permissions={})
+            await app.restrict_chat_member(chat_id, user_id, permissions={})
             await message.reply(f"{user.mention} muted after {MAX_VIOLATIONS} violations.")
-            await bot.send_message(LOG_CHANNEL, f"Muted {user.mention} in {message.chat.title} for {MAX_VIOLATIONS} violations.")
+            await app.send_message(LOG_CHANNEL, f"Muted {user.mention} in {message.chat.title} for {MAX_VIOLATIONS} violations.")
         except Exception as e:
             await message.reply("Failed to mute the user. Ensure I'm admin.")
-            await bot.send_message(LOG_CHANNEL, f"Error muting user: {e}")
+            await app.send_message(LOG_CHANNEL, f"Error muting user: {e}")
     else:
         await message.reply(f"{user.mention}, warning {count}/{MAX_VIOLATIONS} for spam/bio.")
