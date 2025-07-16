@@ -18,6 +18,8 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 # MongoDB Connection URI
 MONGO_URL = os.getenv("MONGO_URL")
 
+LOG_CHANNEL = os.getenv("LOG_CHANNEL")
+
 # Bot Settings
 BOT_NAME = "Bio Link Remover"
 BOT_USERNAME = "BioLinkRemoverBot"  # Bot username
