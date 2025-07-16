@@ -21,7 +21,7 @@ async def start_command(client, message: Message):
         store_group_data(chat.id, chat.title)
 
     lang = get_user_language(user.id)
-    welcome_message = get_message(lang, "welcome_message")
+    welcome_message = get_message(lang, "welcome_message").format(user=user.mention)
 
     try:
         await message.reply_photo(
@@ -32,4 +32,7 @@ async def start_command(client, message: Message):
     except:
         await message.reply(welcome_message, reply_markup=start_buttons())
 
-    await bot.send_message(LOG_CHANNEL, f"#START by [{user.first_name}](tg://user?id={user.id}) | `{user.id}`")
+    await app.send_message(
+        LOG_CHANNEL,
+        f"#START by [{user.first_name}](tg://user?id={user.id}) | `{user.id}`"
+    )
