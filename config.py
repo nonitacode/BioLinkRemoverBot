@@ -29,3 +29,5 @@ OWNER_ID = int(os.getenv("OWNER_ID", "123456789"))
 # Channel Links
 UPDATES_CHANNEL = "GrayBots"
 SUPPORT_GROUP = "GrayBotSupport"
+
+START_IMG = "https://graph.org/file/1a7f52e83918f96ec62af-126cf16dd5a6e4a734.jpg"
