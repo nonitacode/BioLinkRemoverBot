@@ -5,10 +5,10 @@ from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
 
-@bot.on_message(filters.command("ping"))
+@app.on_message(filters.command("ping"))
 async def ping_command(client, message: Message):
     await message.reply("✅ Pong! Bot is responsive.")
 
-@bot.on_message(filters.command("alive"))
+@app.on_message(filters.command("alive"))
 async def alive_command(client, message: Message):
     await message.reply("✅ I'm alive and working properly.")
