@@ -11,12 +11,12 @@ PING_FINAL : "🏓 **Pong!**\n\n⏱️ **Uptime:** `{uptime}`\n⚡ **Latency:** 
 ALIVE : "🔄 Checking status..."
 ALIVE_FINAL : "🤖 **Bot Status: Alive!**\n\n⏱️ **Uptime:** `{uptime}`\n⚡ **Latency:** `{latency} ms`\n📶 **Ping:** `{ping} ms`"
 
-ADD_BUTTON: "➕ Add to Group"
-DEVELOPER_BUTTON: "👤 Developer"
-HELP_MENU_BUTTON: "📚 Help Menu"
-SUPPORT_BUTTON: "💬 Support"
-UPDATES_BUTTON: "📢 Updates"
-LANGUAGE_BUTTON: "🌐 Language"
+ADD_BUTTON : "➕ Add to Group"
+DEVELOPER_BUTTON : "👤 Developer"
+HELP_MENU_BUTTON : "📚 Help Menu"
+SUPPORT_BUTTON : "💬 Support"
+UPDATES_BUTTON : "📢 Updates"
+LANGUAGE_BUTTON : "🌐 Language"
 
 ALLOW : "🔗 Allow"
 WARN : "⚠️ Warn"
