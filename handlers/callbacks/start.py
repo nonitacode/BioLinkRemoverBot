@@ -2,18 +2,26 @@
 # © Graybots™. All rights reserved.
 
 from pyrogram import Client, filters
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from database.user_language import get_user_language
 from utils.language import get_message
-from utils.inline_buttons import commands_buttons, start_buttons
+from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
 
-@Client.on_callback_query(filters.regex("help_menu"))
-async def help_menu_cb(_, query: CallbackQuery):
-    lang = "en"
-    help_msg = get_message(lang, "help_message")
-    await query.message.edit_caption(caption=help_msg, reply_markup=commands_buttons())
+@Client.on_callback_query(filters.regex("start_panel"))
+async def start_panel_cb(client, query: CallbackQuery):
+    user = query.from_user
+    lang = get_user_language(user.id)
+    welcome_text = get_message(lang, "welcome_message").format(user=user.mention)
 
-@Client.on_callback_query(filters.regex("main_menu"))
-async def main_menu_cb(_, query: CallbackQuery):
-    lang = "en"
-    welcome = get_message(lang, "welcome_message")
-    await query.message.edit_caption(caption=welcome, reply_markup=start_buttons())
+    buttons = InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Add Me to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
+        [
+            InlineKeyboardButton("📚 Help", callback_data="help_panel"),
+            InlineKeyboardButton("👤 Developer", url="https://t.me/StormBreakerz")
+        ],
+        [
+            InlineKeyboardButton("💬 Support Group", url=SUPPORT_GROUP),
+            InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL)
+        ]
+    ])
+    await query.message.edit_caption(caption=welcome_text, reply_markup=buttons)
