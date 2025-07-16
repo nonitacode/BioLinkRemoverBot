@@ -2,7 +2,7 @@
 import yaml
 import os
 
-LANGUAGE_DIR = "language"
+LANGUAGE_DIR = "languages"
 
 def get_message(lang_code: str, key: str) -> str:
     print(f"⚠️ DEBUG: Trying to load lang_code={lang_code}, key={key}")
