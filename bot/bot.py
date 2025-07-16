@@ -1,16 +1,10 @@
-# BioLinkRemoverBot - All rights reserved
-# --------------------------------------
-# Unauthorized copying, distribution, or use is prohibited.
-# © Graybots™. All rights reserved.
-
 from pyrogram import Client
-from config import API_ID, API_HASH, BOT_TOKEN
+import config
 
-bot = Client(
+app = Client(
     "BioLinkRemoverBot",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN,
-    workers=50,
+    api_id=config.API_ID,
+    api_hash=config.API_HASH,
+    bot_token=config.BOT_TOKEN,
     plugins={"root": "handlers"}
 )
