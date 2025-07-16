@@ -16,8 +16,8 @@ def get_readable_time(seconds: int) -> str:
 @app.on_message(filters.command("ping") & ~filters.channel)
 async def ping_command(client, message: Message):
     lang = "en"  # Later you can load dynamically per chat
-    reply_temp = get_message(lang, "basic.ping_reply_temp")
-    reply_final = get_message(lang, "basic.ping_final_reply")
+    reply_temp = get_message(lang, "PING")
+    reply_final = get_message(lang, "PING_FINAL")
 
     start = time.time()
     sent = await message.reply(reply_temp)
@@ -37,8 +37,8 @@ async def ping_command(client, message: Message):
 @app.on_message(filters.command("alive") & ~filters.channel)
 async def alive_command(client, message: Message):
     lang = "en"
-    reply_temp = get_message(lang, "basic.alive_reply_temp")
-    reply_final = get_message(lang, "basic.alive_final_reply")
+    reply_temp = get_message(lang, "ALIVE")
+    reply_final = get_message(lang, "ALIVE_FINAL")
 
     start = time.time()
     sent = await message.reply(reply_temp)
