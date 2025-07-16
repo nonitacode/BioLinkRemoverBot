@@ -27,10 +27,13 @@ async def start_command(client, message: Message):
         await message.reply_photo(
             photo=START_IMG,
             caption=welcome_message,
-            reply_markup=start_buttons()
+            reply_markup=await start_buttons(user.id)  # ✅ Pass user id for language
         )
     except:
-        await message.reply(welcome_message, reply_markup=start_buttons())
+        await message.reply(
+            welcome_message,
+            reply_markup=await start_buttons(user.id)  # ✅ Also fix here
+        )
 
     await app.send_message(
         LOG_CHANNEL,
