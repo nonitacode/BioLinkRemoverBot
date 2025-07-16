@@ -9,6 +9,7 @@ from bot.bot import bot  # Importing the initialized bot object
 from database.violation_db import log_violation
 from config import OWNER_ID
 from modules.inline import start_buttons, commands_buttons  # Correct import
+from bot.logger import log  # Importing the log function from logger.py
 
 # Bot Commands Handlers
 
@@ -19,7 +20,7 @@ async def start(client, message):
     store_user_data(user.id, user.username, user.full_name)
     welcome_message = f"**Welcome to BioLinkRemoverBot!**\n\n" \
                       "You can manage your group, track spam, and more!\n" \
-                      "Click below to get started!"
+                      "Click the buttons below to get started!"
     keyboard = start_buttons()  # Inline buttons for starting
     await message.reply(welcome_message, reply_markup=keyboard)
 
