@@ -13,7 +13,7 @@ BOT_START_TIME = time.time()
 def get_readable_time(seconds: int) -> str:
     return str(timedelta(seconds=int(seconds)))
 
-@app.on_message(filters.command("ping") & (filters.chat_type.groups | filters.chat_type.private))
+@app.on_message(filters.command("ping") & ~filters.channel)
 async def ping_command(client, message: Message):
     lang = "en"  # Later you can load dynamically per chat
     reply_temp = get_message(lang, "basic.ping_reply_temp")
@@ -34,7 +34,7 @@ async def ping_command(client, message: Message):
         )
     )
 
-@app.on_message(filters.command("alive") & (filters.chat_type.groups | filters.chat_type.private))
+@app.on_message(filters.command("alive") & ~filters.channel)
 async def alive_command(client, message: Message):
     lang = "en"
     reply_temp = get_message(lang, "basic.alive_reply_temp")
