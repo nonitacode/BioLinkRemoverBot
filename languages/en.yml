@@ -1,5 +1,5 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-welcome_message: "Hello {user}, welcome!"
-help_message: "This is the help section."
+welcome_message: "👋 Hello {user}, I am BioLink Remover Bot!"
+help_message: "📚 This is the help section for using the bot commands."
