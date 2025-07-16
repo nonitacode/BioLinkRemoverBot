@@ -5,7 +5,7 @@
 # © Graybots™. All rights reserved.
 
 from pyrogram import Client, filters
-from inline import user_commands_buttons
+from modules.inline import user_commands_buttons
 from config import COMMAND_PREFIXES
 from database.users_db import store_user_data, store_group_data
 
