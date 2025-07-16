@@ -1,21 +1,40 @@
 # BioLinkRemoverBot - All rights reserved
-# --------------------------------------
-# This code is fully owned by BioLinkRemoverBot and is reserved.
-# Unauthorized copying, distribution, or use is prohibited.
 # © Graybots™. All rights reserved.
 
 welcome_message: |
-  👋 **Welcome, {user}!**
-  🤖 **I am BioLink Remover Bot** ...
-  🔐 **Top Features:**
-  ...
-  ➕ **Add me to your group ...**
+  👋 Hello {user}!
+
+  I'm **BioLink Remover Bot** – your group’s automated guard against harmful, suspicious, or spammy bio links.
+
+  ✅ I scan new users' bios and instantly take action if bad links are found.
+  🔧 Use the buttons below to see help or add me to a group.
+
+  ➕ Add me to groups where you need anti-spam protection.
+  💡 Tap “📚 Help” to see available commands and moderation tools.
 
 help_message: |
-  🛠 **BioLink Remover Bot Help Panel**
-  🔧 **Available Commands:**
-  ...
-  🔗 Make sure I'm admin ...
+  📚 **Help Panel – BioLink Remover Bot**
+
+  I automatically check users' bio links when they join and take action if links are flagged.
+
+  🔧 **Admin Commands**:
+  /warn – Warn a user  
+  /ban – Ban a user  
+  /mute – Mute a user  
+  /unmute – Unmute a user  
+  /addauth – Add a user to the whitelist  
+  /removeauth – Remove a user from the whitelist  
+  /profile – Show a user's profile, warnings, and violations  
+  /admincache – Refresh admin list cache  
+  /clearcache – Clear stored cache  
+
+  📊 **Other Commands**:
+  /stats – Show bot usage stats (users/groups)  
+  /alive – Show bot health & status  
+  /ping – Check bot latency  
+  /start – Start or refresh the bot menu  
+
+  💬 For help, join our support group or contact the developer.
 
 usage_start: |
   🔹 **Command:** /start  
