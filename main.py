@@ -85,9 +85,13 @@ async def mute_user(client, message):
     log_violation(user_id, "User muted")
     await message.reply("User has been muted.")
 
-@bot.on_message(filters.text & ~filters.command())  # Correct filter to catch non-command text messages
+@bot.on_message(filters.text)
 async def general_message(client, message):
     """Handles general messages and checks for spam"""
+    # Skip if it's a command (messages starting with '/')
+    if message.text.startswith("/"):
+        return  # It's a command, so we do nothing
+
     text = message.text.lower()
     if any(keyword in text for keyword in ["http", "@", "promo", "buy", "sale"]):
         await message.delete()  # Delete the message
