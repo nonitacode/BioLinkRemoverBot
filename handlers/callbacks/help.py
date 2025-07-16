@@ -1,12 +1,12 @@
-# handlers/callbacks/help.py
+# BioLinkRemoverBot - All rights reserved
+# © Graybots™. All rights reserved.
 
-from bot.bot import app  # ✅ Import the correct Client instance
+from bot.bot import app
 from pyrogram import filters
-from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import CallbackQuery
 from utils.language import get_message
 from database.user_language import get_user_language
-from config import SUPPORT_GROUP, UPDATES_CHANNEL, BOT_USERNAME
-from utils.inline_buttons import commands_buttons  # your help command list
+from utils.inline_buttons import commands_buttons
 
 @app.on_callback_query(filters.regex("help_panel"))
 async def help_panel_cb(client, query: CallbackQuery):
