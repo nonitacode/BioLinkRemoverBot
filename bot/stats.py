@@ -5,6 +5,7 @@
 # © Graybots™. All rights reserved.
 
 from database.stats_db import update_bot_stats, get_bot_stats
+from bot.bot import bot
 
 @bot.on_message(filters.command("stats"))
 async def stats(client, message):
