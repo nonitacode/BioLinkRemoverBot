@@ -102,6 +102,43 @@ async def general_message(client, message):
         log_violation(message.from_user.id, "Spam detected")
         await message.reply("Your message has been deleted due to potential spam.")
 
+# Handle callback queries from user commands
+@bot.on_callback_query(filters.regex("addauth"))
+async def addauth_callback(client, callback_query):
+    """Handle the 'Add to Whitelist' button click"""
+    log(f"Callback received: {callback_query.data}")  # Log the callback data
+    await callback_query.answer("Adding user to the whitelist...")
+    user_id = callback_query.from_user.id
+    # Logic to add user to whitelist (your DB logic here)
+    await callback_query.message.edit_text("User added to the whitelist!")
+
+@bot.on_callback_query(filters.regex("removeauth"))
+async def removeauth_callback(client, callback_query):
+    """Handle the 'Remove from Whitelist' button click"""
+    log(f"Callback received: {callback_query.data}")  # Log the callback data
+    await callback_query.answer("Removing user from the whitelist...")
+    user_id = callback_query.from_user.id
+    # Logic to remove user from whitelist (your DB logic here)
+    await callback_query.message.edit_text("User removed from the whitelist!")
+
+@bot.on_callback_query(filters.regex("warn"))
+async def warn_callback(client, callback_query):
+    """Handle the 'Warn User' button click"""
+    log(f"Callback received: {callback_query.data}")  # Log the callback data
+    await callback_query.answer("Warning the user...")
+    user_id = callback_query.from_user.id
+    # Logic to warn the user (your DB logic here)
+    await callback_query.message.edit_text("User has been warned.")
+
+@bot.on_callback_query(filters.regex("profile"))
+async def profile_callback(client, callback_query):
+    """Handle the 'Show Profile' button click"""
+    log(f"Callback received: {callback_query.data}")  # Log the callback data
+    await callback_query.answer("Showing profile...")
+    user_id = callback_query.from_user.id
+    # Logic to fetch and show user profile (your DB logic here)
+    await callback_query.message.edit_text(f"Showing profile for user: {user_id}")
+
 # Run the bot by executing it
 if __name__ == "__main__":
     log("Starting BioLinkRemoverBot...")
