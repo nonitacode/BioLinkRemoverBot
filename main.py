@@ -14,7 +14,8 @@ from modules.inline import (
     admin_commands_buttons,
     language_buttons
 )
-from database.users_db import store_user_data, get_bot_stats
+from database.users_db import store_user_data
+from database.stats_db import get_bot_stats
 
 @bot.on_message(filters.command("start"))
 async def start(client, message):
