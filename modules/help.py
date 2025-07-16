@@ -6,6 +6,7 @@
 
 from pyrogram import Client, filters
 from modules.inline import commands_buttons
+from bot.bot import bot
 
 @bot.on_message(filters.command("help"))
 async def help(client, message):
