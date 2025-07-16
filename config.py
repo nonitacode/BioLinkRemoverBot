@@ -24,5 +24,5 @@ BOT_USERNAME = "BioLinkRemoverBot"  # Bot username
 OWNER_ID = int(os.getenv("OWNER_ID", "123456789"))
 
 # Channel Links
-UPDATE_CHANNEL = "GrayBots"
+UPDATES_CHANNEL = "GrayBots"
 SUPPORT_GROUP = "GrayBotSupport"
