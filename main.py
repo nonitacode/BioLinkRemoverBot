@@ -10,6 +10,8 @@ from database.violation_db import log_violation
 from config import OWNER_ID
 from modules.inline import start_buttons, commands_buttons  # Correct import
 from bot.logger import log  # Import the log function from logger.py
+# Load all modules
+from modules import callbacks  # <-- Add this line
 
 # Bot Commands Handlers
 
