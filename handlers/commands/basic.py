@@ -29,7 +29,7 @@ async def ping_command(client, message: Message):
     await sent.edit_text(
         reply_final.format(
             uptime=uptime,
-            ping=ping
+            ping=latency
         )
     )
 
@@ -49,6 +49,6 @@ async def alive_command(client, message: Message):
     await sent.edit_text(
         reply_final.format(
             uptime=uptime,
-            ping=ping
+            ping=latency
         )
     )
