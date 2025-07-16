@@ -3,13 +3,13 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
-from bot.bot import bot
+from bot.bot import app
 from database.user_language import get_user_language
 from utils.language import get_message
 from utils.inline_buttons import commands_buttons
 from config import LOG_CHANNEL
 
-@bot.on_message(filters.command("help"))
+@app.on_message(filters.command("help"))
 async def help_command(client, message: Message):
     lang = get_user_language(message.from_user.id)
     help_text = get_message(lang, "help_message")
