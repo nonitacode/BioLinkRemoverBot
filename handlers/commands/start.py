@@ -3,14 +3,14 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
-from bot.bot import bot
+from bot.bot import app
 from database.users import store_user_data, store_group_data
 from database.user_language import get_user_language
 from utils.language import get_message
 from utils.inline_buttons import start_buttons
 from config import LOG_CHANNEL
 
-@bot.on_message(filters.command("start"))
+@app.on_message(filters.command("start"))
 async def start_command(client, message: Message):
     user = message.from_user
     chat = message.chat
