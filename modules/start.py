@@ -6,6 +6,7 @@
 
 from pyrogram import Client, filters
 from modules.inline import start_buttons
+from bot.bot import bot
 from config import BOT_NAME
 
 @bot.on_message(filters.command("start"))
