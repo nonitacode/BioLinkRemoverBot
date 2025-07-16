@@ -1,4 +1,8 @@
-# modules/help.py
+# BioLinkRemoverBot - All rights reserved
+# --------------------------------------
+# This code is fully owned by BioLinkRemoverBot and is reserved.
+# Unauthorized copying, distribution, or use is prohibited.
+# © Graybots™. All rights reserved.
 
 from pyrogram import filters
 from modules.inline import commands_buttons
