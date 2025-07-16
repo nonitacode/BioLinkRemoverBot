@@ -1,45 +1,75 @@
-welcome_message: |
-  Welcome to BioLinkRemoverBot!
-  Here you can interact with the bot, get stats, manage users, and more.
-  Click the buttons below to get started!
+# BioLinkRemoverBot - All rights reserved
+# --------------------------------------
+# This code is fully owned by BioLinkRemoverBot and is reserved.
+# Unauthorized copying, distribution, or use is prohibited.
+# © Graybots™. All rights reserved.
 
-about_me: |
-  About BioLinkRemoverBot:
-  I am a bot designed to help you manage your groups with advanced spam detection, user moderation, and more.
+usage_start: |
+  🔹 **Command:** /start  
+  🔹 **Description:** Launch the bot and view welcome menu.  
+  🔹 **Usage:** Just type `/start`
 
-donate_info: |
-  Support the bot and keep it running!
-  Donate via UPI: itxnikhil@ptyes
+usage_ping: |
+  🔹 **Command:** /ping  
+  🔹 **Description:** Test the bot's response time.  
+  🔹 **Usage:** `/ping`
 
-commands_category: |
-  Choose a category to view commands:
+usage_alive: |
+  🔹 **Command:** /alive  
+  🔹 **Description:** Check if the bot is running correctly.  
+  🔹 **Usage:** `/alive`
 
-bot_commands: |
-  These are the bot-related commands:
-  - /start
-  - /ping
-  - /alive
-  - /stats
+usage_stats: |
+  🔹 **Command:** /stats  
+  🔹 **Description:** View the bot's usage statistics (users, groups).  
+  🔹 **Usage:** `/stats`
 
-user_commands: |
-  These are the user-related commands:
-  - /addauth
-  - /removeauth
-  - /warn
-  - /profile
+usage_addauth: |
+  🔹 **Command:** /addauth  
+  🔹 **Description:** Add a user to whitelist.  
+  🔹 **Usage:** Reply to user's message and type `/addauth`
 
-moderation_commands: |
-  These are the moderation commands:
-  - /ban
-  - /mute
-  - /unmute
-  - /spam
+usage_removeauth: |
+  🔹 **Command:** /removeauth  
+  🔹 **Description:** Remove a user from whitelist.  
+  🔹 **Usage:** Reply to user's message and type `/removeauth`
 
-admin_commands: |
-  These are the admin commands:
-  - /admincache
-  - /clearcache
+usage_warn: |
+  🔹 **Command:** /warn  
+  🔹 **Description:** Warn the user and log the warning.  
+  🔹 **Usage:** Reply to user's message and type `/warn`
 
-help_message: |
-  Help Section:
-  Select a command category to view commands.
+usage_profile: |
+  🔹 **Command:** /profile  
+  🔹 **Description:** Show user profile info and violations.  
+  🔹 **Usage:** `/profile`
+
+usage_ban: |
+  🔹 **Command:** /ban  
+  🔹 **Description:** Ban user from group.  
+  🔹 **Usage:** Reply to user with `/ban`
+
+usage_mute: |
+  🔹 **Command:** /mute  
+  🔹 **Description:** Mute the user in group.  
+  🔹 **Usage:** Reply with `/mute`
+
+usage_unmute: |
+  🔹 **Command:** /unmute  
+  🔹 **Description:** Unmute previously muted user.  
+  🔹 **Usage:** Reply with `/unmute`
+
+usage_spam: |
+  🔹 **Command:** /spam  
+  🔹 **Description:** Mark user’s message as spam and delete it.  
+  🔹 **Usage:** Reply with `/spam`
+
+usage_admincache: |
+  🔹 **Command:** /admincache  
+  🔹 **Description:** Refresh admin list cache.  
+  🔹 **Usage:** `/admincache`
+
+usage_clearcache: |
+  🔹 **Command:** /clearcache  
+  🔹 **Description:** Clear all stored group/user cache.  
+  🔹 **Usage:** `/clearcache`
