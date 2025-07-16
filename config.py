@@ -18,7 +18,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 # MongoDB Connection URI
 MONGO_URL = os.getenv("MONGO_URL")
 
-LOG_CHANNEL = os.getenv("LOG_CHANNEL")
+LOG_CHANNEL = int(os.getenv("LOG_CHANNEL"))
 MAX_VIOLATIONS = int(os.getenv("MAX_VIOLATIONS"))
 
 # Bot Settings
