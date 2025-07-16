@@ -5,7 +5,7 @@
 # © Graybots™. All rights reserved.
 
 from pyrogram import Client, filters
-from inline import start_buttons
+from modules.inline import start_buttons
 from config import BOT_NAME
 
 @bot.on_message(filters.command("start"))
