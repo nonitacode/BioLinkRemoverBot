@@ -5,6 +5,7 @@
 # © Graybots™. All rights reserved.
 
 from database.mongo import violation_col
+import time
 
 def log_violation(user_id, reason):
     """Logs a violation event into the database."""
@@ -13,3 +14,7 @@ def log_violation(user_id, reason):
         "reason": reason,
         "timestamp": time.time()
     })
+
+def get_user_violations(user_id):
+    """Retrieves all violations for a specific user."""
+    return violation_col.find({"user_id": user_id})
