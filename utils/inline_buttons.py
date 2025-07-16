@@ -5,10 +5,16 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 def start_buttons():
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🛠 Help", callback_data="help_menu")],
-        [InlineKeyboardButton("📣 Updates", url="https://t.me/GrayBots")],
+        [InlineKeyboardButton("➕ Add to Group", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
+        [
+            InlineKeyboardButton("👤 Developer", url="https://t.me/StormBreakerz"),
+            InlineKeyboardButton("📚 Help Menu", callback_data="help_panel")
+        ],
+        [
+            InlineKeyboardButton("💬 Support", url=SUPPORT_GROUP),
+            InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL)
+        ]
     ])
-
 def commands_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("🔗 /allow", callback_data="help_allow")],
