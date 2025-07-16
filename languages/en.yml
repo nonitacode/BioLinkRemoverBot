@@ -4,6 +4,19 @@
 # Unauthorized copying, distribution, or use is prohibited.
 # © Graybots™. All rights reserved.
 
+welcome_message: |
+  👋 **Welcome, {user}!**
+  🤖 **I am BioLink Remover Bot** ...
+  🔐 **Top Features:**
+  ...
+  ➕ **Add me to your group ...**
+
+help_message: |
+  🛠 **BioLink Remover Bot Help Panel**
+  🔧 **Available Commands:**
+  ...
+  🔗 Make sure I'm admin ...
+
 usage_start: |
   🔹 **Command:** /start  
   🔹 **Description:** Launch the bot and view welcome menu.  
