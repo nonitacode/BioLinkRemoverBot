@@ -19,6 +19,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 MONGO_URL = os.getenv("MONGO_URL")
 
 LOG_CHANNEL = os.getenv("LOG_CHANNEL")
+MAX_VIOLATIONS = int(os.getenv("MAX_VIOLATIONS"))
 
 # Bot Settings
 BOT_NAME = "Bio Link Remover"
