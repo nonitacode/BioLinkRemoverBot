@@ -22,34 +22,30 @@ async def user_commands(client, message):
 async def addauth_callback(client, callback_query):
     """Handle the 'Add to Whitelist' button click"""
     await callback_query.answer("Adding user to the whitelist...")
-    # Implement logic for adding user to whitelist (example below)
     user_id = callback_query.from_user.id
-    # Add the user to the whitelist (your logic to store in DB here)
+    # Logic to add user to whitelist (example: save to DB)
     await callback_query.message.edit_text("User added to the whitelist!")
 
 @bot.on_callback_query(filters.regex("removeauth"))
 async def removeauth_callback(client, callback_query):
     """Handle the 'Remove from Whitelist' button click"""
     await callback_query.answer("Removing user from the whitelist...")
-    # Implement logic for removing user from whitelist (example below)
     user_id = callback_query.from_user.id
-    # Remove the user from the whitelist (your logic to remove from DB here)
+    # Logic to remove user from whitelist (example: remove from DB)
     await callback_query.message.edit_text("User removed from the whitelist!")
 
 @bot.on_callback_query(filters.regex("warn"))
 async def warn_callback(client, callback_query):
     """Handle the 'Warn User' button click"""
     await callback_query.answer("Warning the user...")
-    # Implement logic to warn the user (example below)
     user_id = callback_query.from_user.id
-    # Add logic to warn the user in your database or system here
+    # Logic to warn the user (example: log warning)
     await callback_query.message.edit_text("User has been warned.")
 
 @bot.on_callback_query(filters.regex("profile"))
 async def profile_callback(client, callback_query):
     """Handle the 'Show Profile' button click"""
     await callback_query.answer("Showing profile...")
-    # Implement logic to show user profile (example below)
     user_id = callback_query.from_user.id
-    # Retrieve and show profile (your logic to fetch profile data here)
+    # Logic to fetch and show user profile
     await callback_query.message.edit_text(f"Showing profile for user: {user_id}")
