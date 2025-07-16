@@ -20,12 +20,12 @@ MONGO_URL = os.getenv("MONGO_URL")
 
 # Bot Settings
 BOT_NAME = "Bio Link Remover"
-BOT_USERNAME = "@BioLinkRemoverBot"  # Bot username
+BOT_USERNAME = "BioLinkRemoverBot"  # Bot username
 OWNER_ID = int(os.getenv("OWNER_ID", "123456789"))
 
 # Channel Links
-UPDATE_CHANNEL = "@GrayBots"
-SUPPORT_CHAT = "@GrayBotSupport"
+UPDATE_CHANNEL = "GrayBots"
+SUPPORT_CHAT = "GrayBotSupport"
 
 # System Monitoring
 SYSTEM_MONITOR = {
