@@ -1,0 +1,56 @@
+# BioLinkRemoverBot - Fichier de langue Français
+# -----------------------------------------------
+# Ce fichier contient les réponses et commandes en français
+# © Graybots™. Tous droits réservés.
+
+welcome_message: |
+  **Bienvenue sur BioLinkRemoverBot !**
+  Ici, vous pouvez interagir avec le bot, obtenir des statistiques, gérer les utilisateurs, et plus encore.
+  Cliquez sur les boutons ci-dessous pour commencer !
+
+about_me: |
+  **À propos de BioLinkRemoverBot :**
+  Je suis un bot conçu pour vous aider à gérer vos groupes avec une détection avancée de spam, la modération des utilisateurs et plus encore.
+  Je peux détecter le spam, gérer les avertissements, et bien plus !
+
+donate_info: |
+  Soutenez le bot et gardez-le en fonctionnement !
+  Faites un don via UPI : **itxnikhil@ptyes**
+
+commands_category: |
+  Choisissez une catégorie pour voir les commandes :
+  - Commandes du bot
+  - Commandes utilisateur
+  - Commandes de modération
+  - Commandes administrateur
+
+bot_commands: |
+  Ce sont les commandes liées au bot :
+  - /start - Démarrer le bot et enregistrer les données utilisateur
+  - /ping - Vérifier la latence du bot
+  - /alive - Afficher le temps de fonctionnement et les statistiques du bot
+  - /stats - Afficher les statistiques du bot
+
+user_commands: |
+  Ce sont les commandes utilisateur :
+  - /addauth - Ajouter un utilisateur à la liste blanche
+  - /removeauth - Retirer un utilisateur de la liste blanche
+  - /warn - Avertir un utilisateur
+  - /profile - Afficher le profil de l'utilisateur et ses avertissements
+
+moderation_commands: |
+  Ce sont les commandes de modération :
+  - /ban - Bannir un utilisateur du groupe
+  - /mute - Mettre un utilisateur en sourdine dans le groupe
+  - /unmute - Annuler la mise en sourdine d'un utilisateur dans le groupe
+  - /spam - Détecter les spams dans le groupe
+
+admin_commands: |
+  Ce sont les commandes administrateur :
+  - /admincache - Rafraîchir le cache mémoire
+  - /clearcache - Effacer toutes les données mises en cache
+
+help_message: |
+  **Section d'aide :**
+  Ici, vous pouvez trouver la liste des commandes disponibles pour vous.
+  Sélectionnez une commande dans la liste ci-dessous pour plus d'informations.
