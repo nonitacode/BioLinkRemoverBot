@@ -84,7 +84,7 @@ async def mute_user(client, message):
     log_violation(user_id, "User muted")
     await message.reply("User has been muted.")
 
-@bot.on_message(filters.text & ~filters.command())
+@bot.on_message(filters.text & ~filters.command())  # Correct filter to catch non-command text messages
 async def general_message(client, message):
     """Handles general messages and checks for spam"""
     text = message.text.lower()
