@@ -14,7 +14,8 @@ def start_buttons():
         [
             InlineKeyboardButton("💬 Support", url=SUPPORT_GROUP),
             InlineKeyboardButton("📢 Updates", url=UPDATES_CHANNEL)
-        ]
+        ],
+        [InlineKeyboardButton("🌐 Language", callback_data="language_panel")]  # ✅ New button
     ])
 
 def commands_buttons():
