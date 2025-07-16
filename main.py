@@ -5,12 +5,11 @@ from pyrogram import Client
 from config import API_ID, API_HASH, BOT_TOKEN, BOT_NAME
 
 # ✅ Import all handlers manually
-from handlers.commands import start, help
-from handlers.callbacks import start as start_cb, help as help_cb
-import handlers.commands.core
-import handlers.commands.owner
-import handlers.commands.moderation
-import handlers.misc.message_scan
+from handlers.callbacks import start as start_panel, help as help_panel
+from handlers.commands import start, help, basic, core, moderation, owner, stats
+from handlers.group import member_updates
+from handlers.spam import group_spam, private_spam
+import handlers.misc import message_scan
 
 print(f"{BOT_NAME} is starting...")
 
