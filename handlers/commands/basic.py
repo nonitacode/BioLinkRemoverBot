@@ -3,6 +3,7 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
+from bot import app
 
 @bot.on_message(filters.command("ping"))
 async def ping_command(client, message: Message):
