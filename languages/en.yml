@@ -6,10 +6,10 @@ WELCOME : "👋 Hello {user}!\n\nI'm **BioLink Remover Bot** – your group’s 
 HELP : "📚 **Help Panel – BioLink Remover Bot**\n\nI automatically check users' bio links when they join and take action if links are flagged.\n\n🔧 **Admin Commands**:\n/warn – Warn a user\n/ban – Ban a user\n/mute – Mute a user\n/unmute – Unmute a user\n/addauth – Add a user to the whitelist\n/removeauth – Remove a user from the whitelist\n/profile – Show a user's profile, warnings, and violations\n/admincache – Refresh admin list cache\n/clearcache – Clear stored cache\n\n📊 **Other Commands**:\n/stats – Show bot usage stats (users/groups)\n/alive – Show bot health & status\n/ping – Check bot latency\n/start – Start or refresh the bot menu\n\n💬 For help, join our support group or contact the developer."
 
 PING : "🔄 Pinging..."
-PING_FINAL : "🏓 **Pong!**\n\n⏱️ **Uptime:** `{uptime}`\n⚡ **Latency:** `{latency} ms`\n📶 **Ping:** `{ping} ms`"
+PING_FINAL : "🏓 **Pong!**\n\n⏱️ **Uptime:** `{uptime}`\n📶 **Ping:** `{ping} ms`"
 
 ALIVE : "🔄 Checking status..."
-ALIVE_FINAL : "🤖 **Bot Status: Alive!**\n\n⏱️ **Uptime:** `{uptime}`\n⚡ **Latency:** `{latency} ms`\n📶 **Ping:** `{ping} ms`"
+ALIVE_FINAL : "🤖 **Bot Status: Alive!**\n\n⏱️ **Uptime:** `{uptime}`\n📶 **Ping:** `{ping} ms`"
 
 ADD_BUTTON : "➕ Add to Group"
 DEVELOPER_BUTTON : "👤 Developer"
