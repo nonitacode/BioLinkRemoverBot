@@ -9,10 +9,7 @@ from bot.bot import bot  # Importing the initialized bot object
 from database.violation_db import log_violation
 from config import OWNER_ID
 from modules.inline import start_buttons, commands_buttons  # Correct import
-
-# Log function to print messages to console
-def log(message):
-    print(message)
+from bot.logger import log  # Import the log function from logger.py
 
 # Bot Commands Handlers
 
@@ -51,7 +48,10 @@ async def help(client, message):
     """Handles the /help command and shows help instructions"""
     help_message = "Use the following commands to interact with the bot:"
     help_message += "\n/start - Welcome message\n/ping - Check bot latency\n/alive - Check bot status"
-    await message.reply(help_message)
+    help_message += "\n/stats - Show bot stats\n/broadcast - Send message to all groups"
+    help_message += "\n/warn - Warn a user\n/ban - Ban a user\n/mute - Mute a user"
+    keyboard = commands_buttons()  # Inline buttons for commands
+    await message.reply(help_message, reply_markup=keyboard)
 
 @bot.on_message(filters.command("broadcast"))
 async def broadcast(client, message):
