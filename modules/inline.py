@@ -1,4 +1,8 @@
-# modules/inline.py
+# BioLinkRemoverBot - All rights reserved
+# --------------------------------------
+# This code is fully owned by BioLinkRemoverBot and is reserved.
+# Unauthorized copying, distribution, or use is prohibited.
+# © Graybots™. All rights reserved.
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import BOT_USERNAME, SUPPORT_CHAT, UPDATE_CHANNEL
