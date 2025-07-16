@@ -3,7 +3,7 @@ from pyrogram.types import CallbackQuery
 from bot.bot import bot
 from config import OWNER_ID
 from database.violation_db import log_violation
-from database.language_db import get_user_language
+from database.user_language_db import get_user_language
 from utils.language import get_message
 from modules.inline import (
     start_buttons,
