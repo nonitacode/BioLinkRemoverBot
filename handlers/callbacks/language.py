@@ -1,6 +1,3 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
-
 from bot.bot import app
 from pyrogram import filters
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
@@ -11,7 +8,7 @@ from config import START_IMG
 
 @app.on_callback_query(filters.regex("language_panel"))
 async def language_panel_cb(client, query: CallbackQuery):
-    lang = get_user_language(query.from_user.id)
+    lang = await get_user_language(query.from_user.id)  # ✅ await here
 
     text = get_message(lang, "choose_language") or "🌐 **Select your language**\n\nChoose the language you prefer."
 
@@ -39,14 +36,10 @@ async def set_language(client, query: CallbackQuery):
     lang_code = query.data.split("_")[-1]
     user_id = query.from_user.id
 
-    # ✅ Save user language to DB
-    set_user_language(user_id, lang_code)
+    await set_user_language(user_id, lang_code)  # ✅ await async function
 
-    # ✅ Confirmation popup
-    confirmation = f"✅ Language set to `{lang_code}`."
-    await query.answer(confirmation, show_alert=True)
+    await query.answer(f"✅ Language set to `{lang_code}`.", show_alert=True)
 
-    # ✅ Reload updated language message
     welcome = get_message(lang_code, "welcome_message").format(user=query.from_user.mention)
 
     try:
