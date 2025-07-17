@@ -1,14 +1,6 @@
 WELCOME: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nI can help manage and remove suspicious links in your groups. Use the buttons below to explore features or add me to your group."
-
-help_message: |
-  ℹ️ **Available Commands:**
-
-  🔗 /allow - Allow a user to send links  
-  ⚠️ /warn - Warn a user  
-  🔇 /mute - Mute a user  
-  ⛔ /ban - Ban a user  
-
-  Use the buttons below to learn more.
+welcome_message: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nManage suspicious links in groups easily. Use the buttons below."
+help_message: "📚 **Available Commands**\n\n🔗 /allow - Allow a user to send links\n⚠️ /warn - Warn user for suspicious behavior\n🔇 /mute - Mute a user\n⛔ /ban - Ban a user\n\nUse the panel below to explore."
 
 ADD: "➕ Add to Group"
 DEVELOPER: "👤 Developer"
