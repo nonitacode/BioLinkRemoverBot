@@ -1,3 +1,6 @@
+# BioLinkRemoverBot - All rights reserved
+# © Graybots™. All rights reserved.
+
 from bot.bot import app
 from config import BOT_NAME
 
