@@ -40,7 +40,7 @@ async def set_language(client, query: CallbackQuery):
     user_id = query.from_user.id
 
     # ✅ Save user language to DB
-    await set_user_language(user_id, lang_code)
+    set_user_language(user_id, lang_code)
 
     # ✅ Confirmation popup
     confirmation = f"✅ Language set to `{lang_code}`."
