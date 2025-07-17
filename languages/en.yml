@@ -1,40 +1,43 @@
-# === Basic Section ===
-WELCOME: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nI can help manage and remove suspicious links in your groups. Use the buttons below to explore features or add me to your group."
-welcome_message: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nManage suspicious links in groups easily. Use the buttons below."
-help_message: "📚 **Available Commands**\n\nUse the panel below to explore."
-choose_language: "🌐 **Select your language**\n\nChoose the language you prefer."
-BACK_TO_HELP: "🔙 Back"
+# === 🚀 Basic Section ===
+WELCOME: "👋 **Hello {user}, welcome to BioLinkRemoverBot!**\n\n🛡️ I'm here to help you detect and remove suspicious links from your Telegram groups — automatically and efficiently.\n\n🚀 Use the buttons below to explore features or add me to your group now."
+welcome_message: "👋 **Hello {user}, welcome to BioLinkRemoverBot!**\n\n🚨 Manage and remove harmful or suspicious links in your groups — effortlessly and safely.\n\n📲 Tap a button below to get started."
+help_message: "📚 **Command Help Panel**\n\n🔍 View all available commands categorized below.\n📌 Tap on any command type to see its usage and details."
+choose_language: "🌐 **Select Your Language**\n\n🗣️ Choose your preferred language to use the bot comfortably."
+
+# === 🧭 Navigation Buttons ===
+BACK_TO_HELP: "🔙 Back to Help"
 ADD: "➕ Add to Group"
-DEVELOPER: "👤 Developer"
+DEVELOPER: "👨‍💻 Developer"
 HELP_MENU: "📚 Help Menu"
 SUPPORT: "💬 Support"
 UPDATES: "📢 Updates"
 LANGUAGE: "🌐 Language"
 ALLOW_CMD: "📌 Basic"
-WARN_CMD: "👤 User"
+WARN_CMD: "⚠️ User"
 MUTE_CMD: "🔇 Admin"
-BAN_CMD: "💻 Dev"
+BAN_CMD: "🚫 Dev"
 BACK: "🔙 Back"
 
-# === Command Descriptions ===
+# === 💬 Command Descriptions ===
 
-# Basic
+# Basic Commands
 help_panel: "📚 Help Menu"
-main_menu: "🔙 Back to Main Menu"
+main_menu: "🏠 Back to Main Menu"
 language_panel: "🌐 Language Settings"
 
-# User
-help_warn: "👤 /warn command:\nUse this to issue warnings to users. After certain warnings, action may be taken automatically."
+# User-Level Commands
+help_warn: "⚠️ /warn [user] [reason]\n\n👤 Issue a warning to a user for rule violations.\n🔁 After a specific number of warnings, the bot can take automatic actions like muting or banning."
 
-# Admin
-help_allow: "📌 /allow command:\nWhitelist a domain or user from link filtering."
-help_mute: "🔇 /mute command:\nTemporarily mute a member in the group."
+# Admin-Level Commands
+help_allow: "📌 /allow [domain or user]\n\n✅ Whitelist a domain or user to exempt them from link filtering.\n🔒 Ideal for trusted URLs or group admins."
 
-# Developer
-help_ban: "💻 /ban command:\nPermanently ban a user from the group."
+help_mute: "🔇 /mute [user] [time]\n\n🕒 Temporarily mute a user for a specified time.\n🚫 Prevent them from sending messages during the mute period."
 
-# Optional Ping/Alive
+# Developer/Owner Commands
+help_ban: "🚫 /ban [user] [reason]\n\n🔨 Permanently ban a user from the group.\n⚠️ Use responsibly — this cannot be reversed from within the bot."
+
+# === ⚙️ System Status ===
 PING: "🏓 Pinging..."
-PING_FINAL: "**Uptime:** {uptime}\n**Ping:** {ping} ms"
-ALIVE: "Checking status..."
-ALIVE_FINAL: "**I'm alive!**\n\n**Uptime:** {uptime}\n**Ping:** {ping} ms"
+PING_FINAL: "🟢 **Bot is Responsive**\n\n⏱️ **Uptime:** {uptime}\n📶 **Ping:** {ping} ms"
+ALIVE: "📡 Checking bot status..."
+ALIVE_FINAL: "✅ **BioLinkRemoverBot is Alive and Running!**\n\n⏱️ **Uptime:** {uptime}\n📶 **Ping:** {ping} ms"
