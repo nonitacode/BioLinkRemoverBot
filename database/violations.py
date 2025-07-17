@@ -1,10 +1,11 @@
-from database.mongo import violation_col
+from database.mongo import violations_collection
 
-def log_violation(chat_id, user_id, reason):
-    violation_col.insert_one({"chat_id": chat_id, "user_id": user_id, "reason": reason})
+async def log_violation(chat_id, user_id, reason=""):
+    await violations_collection.update_one(
+        {"chat_id": chat_id, "user_id": user_id},
+        {"$set": {"reason": reason}},
+        upsert=True
+    )
 
-def get_user_violations(chat_id, user_id):
-    return violation_col.find({"chat_id": chat_id, "user_id": user_id})
-
-def clear_violations(chat_id, user_id):
-    violation_col.delete_many({"chat_id": chat_id, "user_id": user_id})
+async def clear_violations(chat_id, user_id):
+    await violations_collection.delete_one({"chat_id": chat_id, "user_id": user_id})
