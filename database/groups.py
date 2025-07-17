@@ -1,14 +1,11 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
-
 from database.mongo import groups_col
 
-def store_group_data(chat_id, title):
-    groups_col.update_one(
+async def add_group(chat_id: int, chat_title: str):
+    await groups_col.update_one(
         {"chat_id": chat_id},
-        {"$set": {"title": title}},
+        {"$set": {"title": chat_title}},
         upsert=True
     )
 
-def get_groups_count():
-    return groups_col.count_documents({})
+async def get_all_groups():
+    return groups_col.find()
