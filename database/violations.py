@@ -9,3 +9,9 @@ async def log_violation(chat_id, user_id, reason=""):
 
 async def clear_violations(chat_id, user_id):
     await violations_collection.delete_one({"chat_id": chat_id, "user_id": user_id})
+
+async def get_user_violations(chat_id, user_id):
+    return await violations_collection.find_one({
+        "chat_id": chat_id,
+        "user_id": user_id
+    })
