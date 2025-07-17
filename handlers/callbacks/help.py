@@ -16,6 +16,6 @@ async def help_panel_cb(client, query: CallbackQuery):
 
     await query.message.edit_text(
         text=help_text,
-        reply_markup=commands_buttons(user_id),  # ✅ Pass user_id here
+        reply_markup=await commands_buttons(user_id),
         disable_web_page_preview=True
     )
