@@ -1,13 +1,22 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
+from database.mongo import whitelist_col
 
-from database.mongo import violation_col
+def add_to_whitelist(chat_id, user_id):
+    whitelist_col.update_one(
+        {"chat_id": chat_id},
+        {"$addToSet": {"users": user_id}},
+        upsert=True
+    )
 
-def log_violation(user_id, reason):
-    violation_col.insert_one({"user_id": user_id, "reason": reason})
+def remove_from_whitelist(chat_id, user_id):
+    whitelist_col.update_one(
+        {"chat_id": chat_id},
+        {"$pull": {"users": user_id}}
+    )
 
-def get_user_violations(user_id):
-    return violation_col.find({"user_id": user_id})
+def get_whitelisted_users(chat_id):
+    group = whitelist_col.find_one({"chat_id": chat_id}) or {}
+    return group.get("users", [])
 
-def clear_violations(user_id):
-    violation_col.delete_many({"user_id": user_id})
+async def is_user_whitelisted(chat_id, user_id):
+    group = whitelist_col.find_one({"chat_id": chat_id})
+    return group and user_id in group.get("users", [])
