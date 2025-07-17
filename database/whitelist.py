@@ -1,22 +1,25 @@
+# BioLinkRemoverBot - All rights reserved
+# © Graybots™. All rights reserved.
+
 from database.mongo import whitelist_col
 
-async def add_whitelisted_user(chat_id: int, user_id: int):
-    await whitelist_col.update_one(
+def add_to_whitelist(chat_id: int, user_id: int):
+    whitelist_col.update_one(
         {"chat_id": chat_id},
-        {"$addToSet": {"user_ids": user_id}},
+        {"$addToSet": {"users": user_id}},
         upsert=True
     )
 
-async def remove_whitelisted_user(chat_id: int, user_id: int):
-    await whitelist_col.update_one(
+def remove_from_whitelist(chat_id: int, user_id: int):
+    whitelist_col.update_one(
         {"chat_id": chat_id},
-        {"$pull": {"user_ids": user_id}}
+        {"$pull": {"users": user_id}}
     )
 
-async def get_whitelisted_users(chat_id: int) -> list:
-    doc = await whitelist_col.find_one({"chat_id": chat_id})
-    return doc["user_ids"] if doc else []
+def get_whitelisted_users(chat_id: int) -> list:
+    group = whitelist_col.find_one({"chat_id": chat_id}) or {}
+    return group.get("users", [])
 
-async def is_user_whitelisted(chat_id: int, user_id: int) -> bool:
-    users = await get_whitelisted_users(chat_id)
-    return user_id in users
+def is_user_whitelisted(chat_id: int, user_id: int) -> bool:
+    group = whitelist_col.find_one({"chat_id": chat_id})
+    return user_id in group.get("users", []) if group else False
