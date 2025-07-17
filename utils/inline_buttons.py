@@ -1,10 +1,10 @@
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
-from database.user_language import get_user_language
+from database.users import get_user_language
 from utils.language import get_message
 
-def start_buttons(user_id: int):
-    lang_code = get_user_language(user_id)
+async def start_buttons(user_id: int):
+    lang_code = await get_user_language(user_id)
     return InlineKeyboardMarkup([
         [InlineKeyboardButton(get_message(lang_code, "ADD"), url=f"https://t.me/{BOT_USERNAME}?startgroup=true")],
         [
@@ -18,8 +18,8 @@ def start_buttons(user_id: int):
         [InlineKeyboardButton(get_message(lang_code, "LANGUAGE"), callback_data="language_panel")]
     ])
 
-def commands_buttons(user_id: int):
-    lang_code = get_user_language(user_id)
+async def commands_buttons(user_id: int):
+    lang_code = await get_user_language(user_id)
     return InlineKeyboardMarkup([
         [
             InlineKeyboardButton(get_message(lang_code, "ALLOW_CMD"), callback_data="help_allow"),
@@ -32,8 +32,8 @@ def commands_buttons(user_id: int):
         [InlineKeyboardButton(get_message(lang_code, "BACK"), callback_data="main_menu")]
     ])
 
-def back_to_help_button(user_id: int):
-    lang_code = get_user_language(user_id)
+async def back_to_help_button(user_id: int):
+    lang_code = await get_user_language(user_id)
     return InlineKeyboardMarkup([
         [InlineKeyboardButton(get_message(lang_code, "BACK"), callback_data="help_panel")]
     ])
