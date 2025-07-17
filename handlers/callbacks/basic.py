@@ -40,3 +40,27 @@ async def back_to_help(client, query: CallbackQuery):
         reply_markup=await commands_buttons(user_id),
         disable_web_page_preview=True
     )
+
+@app.on_callback_query(filters.regex("help_allow"))
+async def help_allow_cb(client, query):
+    lang = get_user_language(query.from_user.id)
+    msg = get_message(lang, "help_allow")
+    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
+
+@app.on_callback_query(filters.regex("help_warn"))
+async def help_warn_cb(client, query):
+    lang = get_user_language(query.from_user.id)
+    msg = get_message(lang, "help_warn")
+    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
+
+@app.on_callback_query(filters.regex("help_mute"))
+async def help_mute_cb(client, query):
+    lang = get_user_language(query.from_user.id)
+    msg = get_message(lang, "help_mute")
+    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
+
+@app.on_callback_query(filters.regex("help_ban"))
+async def help_ban_cb(client, query):
+    lang = get_user_language(query.from_user.id)
+    msg = get_message(lang, "help_ban")
+    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
