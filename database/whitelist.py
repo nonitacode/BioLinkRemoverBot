@@ -1,7 +1,7 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import whitelist_col
+from database.mongo import whitelists_col
 
 def add_to_whitelist(chat_id: int, user_id: int):
     whitelist_col.update_one(
