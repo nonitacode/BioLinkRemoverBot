@@ -3,7 +3,7 @@ from pyrogram import filters
 from pyrogram.types import CallbackQuery
 from utils.language import get_message
 from database.user_language import get_user_language
-from utils.inline_buttons import commands_buttons, start_buttons
+from utils.inline_buttons import commands_buttons, start_buttons, back_to_help_button
 
 @app.on_callback_query(filters.regex("help_panel"))
 async def help_panel_cb(client, query: CallbackQuery):
