@@ -21,3 +21,10 @@ async def get_user_language(user_id):
 
 async def get_users_count():
     return await users_collection.count_documents({})
+
+async def set_user_language(user_id: int, language_code: str):
+    await users_collection.update_one(
+        {"_id": user_id},
+        {"$set": {"language": language_code}},
+        upsert=True
+    )
