@@ -1,9 +1,9 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import MONGO_URI
+from config import MONGO_URL
 from cachetools import TTLCache
 
 # MongoDB Setup
-mongo_client = AsyncIOMotorClient(MONGO_URI)
+mongo_client = AsyncIOMotorClient(MONGO_URL)
 db = mongo_client.biolink_remover
 
 # Memory cache for authorized users (cache per group, expires after 1 hour)
