@@ -1,12 +1,9 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
-
 from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
 from database.users import store_user_data
 from database.groups import store_group_data
-from database.user_language import get_user_language
+from database.users import get_user_language
 from utils.language import get_message
 from utils.inline_buttons import start_buttons
 from config import LOG_CHANNEL, START_IMG
@@ -15,24 +12,24 @@ from config import LOG_CHANNEL, START_IMG
 async def start_command(client, message: Message):
     user = message.from_user
     chat = message.chat
-    store_user_data(user.id, user.username, user.full_name)
+    await store_user_data(user.id, user.username, user.full_name)
 
     if chat.type in ["group", "supergroup"]:
-        store_group_data(chat.id, chat.title)
+        await store_group_data(chat.id, chat.title)
 
-    lang = get_user_language(user.id)
+    lang = await get_user_language(user.id)
     welcome_message = get_message(lang, "WELCOME").format(user=user.mention)
 
     try:
         await message.reply_photo(
             photo=START_IMG,
             caption=welcome_message,
-            reply_markup=start_buttons(user.id)
+            reply_markup=await start_buttons(user.id)
         )
     except:
         await message.reply(
             text=welcome_message,
-            reply_markup=start_buttons(user.id)
+            reply_markup=await start_buttons(user.id)
         )
 
     await app.send_message(
