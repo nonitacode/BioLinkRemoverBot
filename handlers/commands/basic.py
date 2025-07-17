@@ -24,7 +24,7 @@ async def help_panel_cb(client, query: CallbackQuery):
 async def back_to_main_menu(client, query: CallbackQuery):
     user_id = query.from_user.id
     lang = await get_user_language(user_id)
-    welcome_text = get_message(lang, "welcome_message")
+    welcome_text = get_message(lang, "welcome_message").format(user=query.from_user.first_name)
 
     await query.message.edit_text(
         text=welcome_text,
