@@ -1,7 +1,7 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import auth_users_col
+from database.mongo import auth_users_collection
 
 def add_auth_user(user_id: int):
     auth_users_col.update_one(
