@@ -5,19 +5,21 @@ from bot.bot import app
 from config import BOT_NAME
 
 # ✅ Command Handlers
-from handlers.commands import start, help, basic, core, moderation, owner, stats
+from handlers.commands import auth, basic, core, core, help, moderation, owner, start, stats
+from handlers.group.callbacks import unmute
+from handlers.group import bio_scan, whitelist, member_updates
 
 # ✅ Callback Handlers (explicitly importing modules)
-import handlers.callbacks.start
-import handlers.callbacks.help
-import handlers.callbacks.basic
-import handlers.callbacks.user
 import handlers.callbacks.admin
+import handlers.callbacks.basic
 import handlers.callbacks.developer
+import handlers.callbacks.help
 import handlers.callbacks.language
+import handlers.callbacks.start
+import handlers.callbacks.user
+import 
 
 # ✅ Group & Spam
-from handlers.group import member_updates
 from handlers.spam import group_spam, private_spam
 
 # ✅ Miscellaneous
