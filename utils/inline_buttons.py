@@ -1,3 +1,8 @@
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from config import BOT_USERNAME, SUPPORT_GROUP, UPDATES_CHANNEL
+from database.users import get_user_language
+from utils.language import get_message
+
 async def start_buttons(user_id: int, lang_code: str = None):
     lang_code = lang_code or await get_user_language(user_id)
     return InlineKeyboardMarkup([
