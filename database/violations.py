@@ -1,4 +1,4 @@
-from database.mongo import violations_col
+from database.mongo import violation_col
 
 async def log_violation(chat_id, user_id, reason=""):
     await violations_collection.update_one(
