@@ -6,6 +6,7 @@ from datetime import timedelta
 from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
+from database.user_language import get_user_language  # ✅ FIXED IMPORT
 from utils.language import get_message
 
 BOT_START_TIME = time.time()
@@ -15,7 +16,7 @@ def get_readable_time(seconds: int) -> str:
 
 @app.on_message(filters.command("ping") & ~filters.channel)
 async def ping_command(client, message: Message):
-    lang = await get_user_language(message.from_user.id)
+    lang = await get_user_language(message.from_user.id)  # ✅ NOW DEFINED
     reply_temp = get_message(lang, "PING")
     reply_final = get_message(lang, "PING_FINAL")
 
