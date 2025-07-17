@@ -1,14 +1,20 @@
+# BioLinkRemoverBot - All rights reserved
+# © Graybots™. All rights reserved.
+
 from database.mongo import auth_users_col
 
-async def is_auth(user_id: int) -> bool:
-    return bool(await auth_users_col.find_one({"user_id": user_id}))
+def add_auth_user(user_id: int):
+    auth_users_col.update_one(
+        {"user_id": user_id},
+        {"$set": {"user_id": user_id}},
+        upsert=True
+    )
 
-async def add_auth(user_id: int):
-    if not await is_auth(user_id):
-        await auth_users_col.insert_one({"user_id": user_id})
+def remove_auth_user(user_id: int):
+    auth_users_col.delete_one({"user_id": user_id})
 
-async def remove_auth(user_id: int):
-    await auth_users_col.delete_one({"user_id": user_id})
+def get_auth_users() -> list:
+    return [doc["user_id"] for doc in auth_users_col.find({}, {"_id": 0, "user_id": 1})]
 
-async def get_all_auth_users():
-    return [doc["user_id"] async for doc in auth_users_col.find()]
+def is_auth_user(user_id: int) -> bool:
+    return auth_users_col.count_documents({"user_id": user_id}) > 0
