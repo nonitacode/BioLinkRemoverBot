@@ -3,14 +3,13 @@ WELCOME: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nI can help manage 
 welcome_message: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nManage suspicious links in groups easily. Use the buttons below."
 help_message: "📚 **Available Commands**\n\nUse the panel below to explore."
 choose_language: "🌐 **Select your language**\n\nChoose the language you prefer."
-
+BACK_TO_HELP: "🔙 Back"
 ADD: "➕ Add to Group"
 DEVELOPER: "👤 Developer"
 HELP_MENU: "📚 Help Menu"
 SUPPORT: "💬 Support"
 UPDATES: "📢 Updates"
 LANGUAGE: "🌐 Language"
-
 ALLOW_CMD: "📌 Basic"
 WARN_CMD: "👤 User"
 MUTE_CMD: "🔇 Admin"
