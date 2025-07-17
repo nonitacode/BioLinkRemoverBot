@@ -63,7 +63,8 @@ async def scan_bio(client, message: Message):
         return
 
     # Scan bio and username
-    bio_text = (user.bio or "") + " " + (user.username or "")
+    user_info = await client.get_chat(user.id)
+bio_text = (user_info.bio or "") + " " + (user_info.username or "")
     if LINK_PATTERN.search(bio_text):
         warn_count = await add_warn(user.id, chat.id)
 
