@@ -11,17 +11,21 @@ from config import LOG_CHANNEL, START_IMG
 
 @app.on_message(filters.command("help"))
 async def help_command(client, message: Message):
-    lang = get_user_language(message.from_user.id)
-    help_text = get_message(lang, "HELP")
+    user_id = message.from_user.id
+    lang = get_user_language(user_id)
+    help_text = get_message(lang, "help_message")
 
     try:
         await message.reply_photo(
             photo=START_IMG,
             caption=help_text,
-            reply_markup=commands_buttons()
+            reply_markup=await commands_buttons(user_id)
         )
     except:
-        await message.reply(help_text, reply_markup=commands_buttons())
+        await message.reply(
+            text=help_text,
+            reply_markup=await commands_buttons(user_id)
+        )
 
     await app.send_message(
         LOG_CHANNEL,
