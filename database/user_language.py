@@ -1,12 +1,12 @@
-from database.mongo import user_language_col
+from database.mongo import users_collection
 
 async def get_user_language(user_id: int) -> str:
-    doc = await user_language_col.find_one({"user_id": user_id})
-    return doc["language"] if doc else "en"
+    user = await users_collection.find_one({"_id": user_id})
+    return user.get("language", "en") if user else "en"
 
-async def set_user_language(user_id: int, lang_code: str):
-    await user_language_col.update_one(
-        {"user_id": user_id},
-        {"$set": {"language": lang_code}},
+async def set_user_language(user_id: int, language_code: str):
+    await users_collection.update_one(
+        {"_id": user_id},
+        {"$set": {"language": language_code}},
         upsert=True
     )
