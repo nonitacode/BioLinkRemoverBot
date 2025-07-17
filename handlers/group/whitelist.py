@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from pyrogram.types import ChatMemberStatus
+from pyrogram.enums import ChatMemberStatus
 from database.whitelist import add_to_whitelist, remove_from_whitelist, get_whitelisted_users
 from database.violations import clear_violations
 
