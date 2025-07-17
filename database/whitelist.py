@@ -18,5 +18,4 @@ def get_whitelisted_users(chat_id):
     return group.get("users", [])
 
 async def is_user_whitelisted(chat_id, user_id):
-    group = whitelist_col.find_one({"chat_id": chat_id})
-    return group and user_id in group.get("users", [])
+    return await whitelist_collection.find_one({"chat_id": chat_id, "user_id": user_id}) is not None
