@@ -21,7 +21,7 @@ from handlers.group import bio_scan, whitelist, member_updates
 from handlers.group.callbacks import unmute
 
 # ✅ Spam Checkers
-from handlers.spam import group_spam, private_spam
+from handlers.spam import group_spam
 
 # ✅ Miscellaneous
 from handlers.misc import message_scan
