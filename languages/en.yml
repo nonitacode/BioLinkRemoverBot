@@ -1,3 +1,4 @@
+# === Basic Section ===
 WELCOME: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nI can help manage and remove suspicious links in your groups. Use the buttons below to explore features or add me to your group."
 welcome_message: "👋 Hello {user}, welcome to BioLinkRemoverBot!\n\nManage suspicious links in groups easily. Use the buttons below."
 help_message: "📚 **Available Commands**\n\nUse the panel below to explore."
@@ -16,8 +17,25 @@ MUTE_CMD: "🔇 Admin"
 BAN_CMD: "💻 Dev"
 BACK: "🔙 Back"
 
+# === Command Descriptions ===
+
+# Basic
+help_panel: "📚 Help Menu"
+main_menu: "🔙 Back to Main Menu"
+language_panel: "🌐 Language Settings"
+
+# User
+help_warn: "👤 /warn command:\nUse this to issue warnings to users. After certain warnings, action may be taken automatically."
+
+# Admin
+help_allow: "📌 /allow command:\nWhitelist a domain or user from link filtering."
+help_mute: "🔇 /mute command:\nTemporarily mute a member in the group."
+
+# Developer
+help_ban: "💻 /ban command:\nPermanently ban a user from the group."
+
+# Optional Ping/Alive
 PING: "🏓 Pinging..."
 PING_FINAL: "**Uptime:** {uptime}\n**Ping:** {ping} ms"
-
 ALIVE: "Checking status..."
 ALIVE_FINAL: "**I'm alive!**\n\n**Uptime:** {uptime}\n**Ping:** {ping} ms"
