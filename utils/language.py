@@ -1,6 +1,3 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
-
 import yaml
 import os
 
@@ -10,7 +7,6 @@ def get_message(lang_code: str, key: str) -> str:
     path = os.path.join(LANGUAGE_DIR, f"{lang_code}.yml")
     if not os.path.exists(path):
         path = os.path.join(LANGUAGE_DIR, "en.yml")
-
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
