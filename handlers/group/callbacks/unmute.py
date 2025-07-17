@@ -5,7 +5,7 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery
 from database.violations import clear_violations
 from utils.language import get_message
-from pyrogram.enums import ChatMemberStatus
+from pyrogram.types import ChatMemberStatus
 
 @Client.on_callback_query(filters.regex("unmute_"))
 async def unmute_callback(client, query: CallbackQuery):
