@@ -1,70 +1,49 @@
-from pyrogram import filters
-from pyrogram.types import Message
-from pyrogram.enums import ChatMemberStatus
+from motor.motor_asyncio import AsyncIOMotorClient
+from config import MONGO_URI
+from cachetools import TTLCache
 
-from bot.bot import app
-from config import OWNER_ID
-from utils.language import get_message
-from database.user_language import get_user_language
-from database.auth_users import add_auth_user, remove_auth_user, get_auth_users, refresh_auth_cache
-from database.warns import reset_warns
+# MongoDB Setup
+mongo_client = AsyncIOMotorClient(MONGO_URI)
+db = mongo_client.biolink_remover
 
-@app.on_message(filters.command("addauth") & filters.group)
-async def add_auth(client, message: Message):
-    lang = await get_user_language(message.from_user.id)
+# Memory cache for authorized users (cache per group, expires after 1 hour)
+auth_cache = TTLCache(maxsize=10000, ttl=3600)
 
-    if not message.reply_to_message:
-        return await message.reply(get_message(lang, "reply_to_user"))
+# Collection
+auth_col = db.auth_users
 
-    user = message.reply_to_message.from_user
-    chat_id = message.chat.id
 
-    member = await client.get_chat_member(chat_id, message.from_user.id)
-    if message.from_user.id != OWNER_ID and member.status not in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
-        return await message.reply(get_message(lang, "admin_only"))
-
-    await add_auth_user(chat_id, user.id)
-    await reset_warns(chat_id, user.id)
+# ✅ Add an authorized user
+async def add_auth_user(chat_id: int, user_id: int):
+    await auth_col.update_one(
+        {"chat_id": chat_id},
+        {"$addToSet": {"user_ids": user_id}},
+        upsert=True
+    )
     await refresh_auth_cache(chat_id)
 
-    await message.reply(get_message(lang, "auth_added").format(user=user.mention))
 
-
-@app.on_message(filters.command("rmauth") & filters.group)
-async def remove_auth(client, message: Message):
-    lang = await get_user_language(message.from_user.id)
-
-    if not message.reply_to_message:
-        return await message.reply(get_message(lang, "reply_to_user"))
-
-    user = message.reply_to_message.from_user
-    chat_id = message.chat.id
-
-    member = await client.get_chat_member(chat_id, message.from_user.id)
-    if message.from_user.id != OWNER_ID and member.status not in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
-        return await message.reply(get_message(lang, "admin_only"))
-
-    await remove_auth_user(chat_id, user.id)
+# ✅ Remove an authorized user
+async def remove_auth_user(chat_id: int, user_id: int):
+    await auth_col.update_one(
+        {"chat_id": chat_id},
+        {"$pull": {"user_ids": user_id}},
+    )
     await refresh_auth_cache(chat_id)
 
-    await message.reply(get_message(lang, "auth_removed").format(user=user.mention))
+
+# ✅ Get all authorized users
+async def get_auth_users(chat_id: int) -> list:
+    if chat_id in auth_cache:
+        return auth_cache[chat_id]
+
+    doc = await auth_col.find_one({"chat_id": chat_id}) or {}
+    users = doc.get("user_ids", [])
+    auth_cache[chat_id] = users
+    return users
 
 
-@app.on_message(filters.command("authusers") & filters.group)
-async def list_auth_users(client, message: Message):
-    lang = await get_user_language(message.from_user.id)
-    chat_id = message.chat.id
-
-    auth_users = await get_auth_users(chat_id)
-    if not auth_users:
-        return await message.reply(get_message(lang, "no_auth_users"))
-
-    text = f"✅ **{get_message(lang, 'authorized_users')}**\n\n"
-    for i, uid in enumerate(auth_users, 1):
-        try:
-            user = await client.get_users(uid)
-            text += f"{i}. [{user.first_name}](tg://user?id={uid})\n"
-        except:
-            continue
-
-    await message.reply(text, disable_web_page_preview=True)
+# ✅ Refresh in-memory cache
+async def refresh_auth_cache(chat_id: int):
+    doc = await auth_col.find_one({"chat_id": chat_id}) or {}
+    auth_cache[chat_id] = doc.get("user_ids", [])
