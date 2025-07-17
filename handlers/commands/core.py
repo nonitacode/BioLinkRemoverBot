@@ -17,6 +17,6 @@ async def alive(_, message: Message):
 
 @Client.on_message(filters.command("stats"))
 async def stats(_, message: Message):
-    users = get_users_count()
-    groups = get_groups_count()
+    users = await get_users_count()   # ✅ Awaited async call
+    groups = await get_groups_count() # ✅ Awaited async call
     await message.reply(f"📊 **Bot Stats:**\n👤 Users: `{users}`\n👥 Groups: `{groups}`")
