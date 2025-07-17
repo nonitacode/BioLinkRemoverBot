@@ -18,3 +18,6 @@ async def store_user_data(user_id, username, full_name):
 async def get_user_language(user_id):
     user = await users_collection.find_one({"_id": user_id})
     return user.get("language", "en") if user else "en"
+
+async def get_users_count():
+    return await users_collection.count_documents({})
