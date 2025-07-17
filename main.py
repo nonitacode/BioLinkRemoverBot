@@ -8,10 +8,10 @@ from config import BOT_NAME
 from handlers.commands import start, help, basic, core, moderation, owner, stats
 
 # ✅ Callback Handlers (import as modules to register routes)
-import handlers.callbacks.callback_basic
-import handlers.callbacks.callback_user
-import handlers.callbacks.callback_admin
-import handlers.callbacks.callback_developer
+import handlers.callbacks.basic
+import handlers.callbacks.user
+import handlers.callbacks.admin
+import handlers.callbacks.developer
 
 # ✅ Group Events & Spam Control
 from handlers.group import member_updates
