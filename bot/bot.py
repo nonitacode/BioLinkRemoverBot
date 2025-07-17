@@ -3,8 +3,7 @@ from config import API_ID, API_HASH, BOT_TOKEN
 
 app = Client(
     "BioLinkRemoverBot",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN,
-    plugins=dict(root="handlers")
+    api_id=config.API_ID,
+    api_hash=config.API_HASH,
+    bot_token=config.BOT_TOKEN
 )
