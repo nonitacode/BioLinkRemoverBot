@@ -8,7 +8,7 @@ from utils.inline_buttons import commands_buttons, start_buttons, back_to_help_b
 @app.on_callback_query(filters.regex("help_panel"))
 async def help_panel_cb(client, query: CallbackQuery):
     user_id = query.from_user.id
-    lang = get_user_language(user_id)
+    lang = await get_user_language(user_id)
     help_text = get_message(lang, "help_message")
 
     await query.message.edit_text(
@@ -20,7 +20,7 @@ async def help_panel_cb(client, query: CallbackQuery):
 @app.on_callback_query(filters.regex("main_menu"))
 async def back_to_main_menu(client, query: CallbackQuery):
     user_id = query.from_user.id
-    lang = get_user_language(user_id)
+    lang = await get_user_language(user_id)
     welcome_text = get_message(lang, "welcome_message")
 
     await query.message.edit_text(
@@ -32,7 +32,7 @@ async def back_to_main_menu(client, query: CallbackQuery):
 @app.on_callback_query(filters.regex("back_to_help"))
 async def back_to_help(client, query: CallbackQuery):
     user_id = query.from_user.id
-    lang = get_user_language(user_id)
+    lang = await get_user_language(user_id)
     help_text = get_message(lang, "help_message")
 
     await query.message.edit_text(
@@ -42,25 +42,7 @@ async def back_to_help(client, query: CallbackQuery):
     )
 
 @app.on_callback_query(filters.regex("help_allow"))
-async def help_allow_cb(client, query):
-    lang = get_user_language(query.from_user.id)
+async def help_allow_cb(client, query: CallbackQuery):
+    lang = await get_user_language(query.from_user.id)
     msg = get_message(lang, "help_allow")
-    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
-
-@app.on_callback_query(filters.regex("help_warn"))
-async def help_warn_cb(client, query):
-    lang = get_user_language(query.from_user.id)
-    msg = get_message(lang, "help_warn")
-    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
-
-@app.on_callback_query(filters.regex("help_mute"))
-async def help_mute_cb(client, query):
-    lang = get_user_language(query.from_user.id)
-    msg = get_message(lang, "help_mute")
-    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
-
-@app.on_callback_query(filters.regex("help_ban"))
-async def help_ban_cb(client, query):
-    lang = get_user_language(query.from_user.id)
-    msg = get_message(lang, "help_ban")
-    await query.message.edit_text(msg, reply_markup=await back_to_help_button(query.from_user.id))
+    await query.message.edit_text(msg, reply_markup=await back_to_help_button
