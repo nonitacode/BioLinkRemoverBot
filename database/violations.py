@@ -1,7 +1,12 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import violation_col
+from motor.motor_asyncio import AsyncIOMotorClient
+from config import MONGO_URL
+
+client = AsyncIOMotorClient(MONGO_URL)
+db = client["BioLinkRemover"]
+violation_col = db["violations"]
 
 async def log_violation(chat_id: int, user_id: int, reason: str = "Violation"):
     await violation_col.update_one(
