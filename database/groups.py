@@ -1,7 +1,7 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import groups_col
+from database.mongo import groups_collection
 
 async def store_group_data(chat_id: int, title: str):
     await groups_col.update_one(
