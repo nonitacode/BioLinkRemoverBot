@@ -1,7 +1,12 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import user_language_col
+from motor.motor_asyncio import AsyncIOMotorClient
+from config import MONGO_URL
+
+client = AsyncIOMotorClient(MONGO_URL)
+db = client["BioLinkRemover"]
+user_language_col = db["user_languages"]
 
 async def get_user_language(user_id: int) -> str:
     user = await user_language_col.find_one({"_id": user_id})
