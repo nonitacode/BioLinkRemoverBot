@@ -1,7 +1,7 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import warns_collection
+from database.mongo import warns_col
 
 async def add_warn(user_id: int, chat_id: int, reason: str = "Violation"):
     await warns_col.insert_one({
