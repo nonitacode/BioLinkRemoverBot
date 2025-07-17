@@ -11,7 +11,7 @@ from config import START_IMG
 
 @app.on_callback_query(filters.regex("language_panel"))
 async def language_panel_cb(client, query: CallbackQuery):
-    lang = await get_user_language(query.from_user.id)
+    lang = get_user_language(query.from_user.id)
 
     text = get_message(lang, "choose_language") or "🌐 **Select your language**\n\nChoose the language you prefer."
 
