@@ -1,7 +1,12 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
-from database.mongo import warns_col
+from motor.motor_asyncio import AsyncIOMotorClient
+from config import MONGO_URL
+
+client = AsyncIOMotorClient(MONGO_URL)
+db = client["BioLinkRemover"]
+warns_col = db["warns"]
 
 async def add_warn(user_id: int, chat_id: int, reason: str = "Violation"):
     await warns_col.insert_one({
