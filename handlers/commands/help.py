@@ -12,19 +12,19 @@ from config import LOG_CHANNEL, START_IMG
 @app.on_message(filters.command("help"))
 async def help_command(client, message: Message):
     user_id = message.from_user.id
-    lang = get_user_language(user_id)
+    lang = await get_user_language(user_id)  # ✅ FIXED
     help_text = get_message(lang, "help_message")
 
     try:
         await message.reply_photo(
             photo=START_IMG,
             caption=help_text,
-            reply_markup=commands_buttons(user_id)
+            reply_markup=await commands_buttons(user_id)  # ✅ FIXED
         )
     except:
         await message.reply(
             text=help_text,
-            reply_markup=commands_buttons(user_id)
+            reply_markup=await commands_buttons(user_id)  # ✅ FIXED
         )
 
     await app.send_message(
