@@ -36,19 +36,22 @@ async def set_language(client, query: CallbackQuery):
     lang_code = query.data.split("_")[-1]
     user_id = query.from_user.id
 
-    await set_user_language(user_id, lang_code)  # ✅ await async function
+    # Save the new language to DB
+    await set_user_language(user_id, lang_code)
 
+    # Instant user feedback
     await query.answer(f"✅ Language set to `{lang_code}`.", show_alert=True)
 
+    # Load message in selected language
     welcome = get_message(lang_code, "welcome_message").format(user=query.from_user.mention)
 
     try:
         await query.message.edit_media(
             media=InputMediaPhoto(media=START_IMG, caption=welcome),
-            reply_markup=await start_buttons(user_id)
+            reply_markup=await start_buttons(user_id, lang_code=lang_code)  # ✅ Pass lang directly
         )
     except:
         await query.message.edit_text(
             text=welcome,
-            reply_markup=await start_buttons(user_id)
+            reply_markup=await start_buttons(user_id, lang_code=lang_code)  # ✅ Pass lang directly
         )
