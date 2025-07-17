@@ -1,44 +1,30 @@
-welcome_message: |
-  Bem-vindo ao BioLinkRemoverBot!
-  Aqui você pode interagir com o bot, ver estatísticas e gerenciar usuários.
+WELCOME: "👋 **Olá {user}, bem-vindo ao BioLinkRemoverBot!**\n\n🛡️ Estou aqui para proteger seus grupos de links suspeitos ou maliciosos de forma automática e inteligente.\n\n🚀 Use os botões abaixo para explorar os recursos ou me adicionar ao seu grupo."
+welcome_message: "👋 **Olá {user}, bem-vindo ao BioLinkRemoverBot!**\n\n🚫 Gerencie e remova links perigosos dos seus grupos com facilidade.\n\n📲 Toque em um botão abaixo para começar."
+help_message: "📚 **Painel de comandos disponíveis**\n\n🔍 Veja todos os comandos organizados por categorias.\n📌 Toque em uma categoria para ver detalhes."
+choose_language: "🌐 **Selecione seu idioma**\n\n🗣️ Escolha o idioma com o qual deseja interagir com o bot."
+BACK_TO_HELP: "🔙 Voltar à Ajuda"
+ADD: "➕ Adicionar ao Grupo"
+DEVELOPER: "👨‍💻 Desenvolvedor"
+HELP_MENU: "📚 Menu de Ajuda"
+SUPPORT: "💬 Suporte"
+UPDATES: "📢 Atualizações"
+LANGUAGE: "🌐 Idioma"
+ALLOW_CMD: "📌 Básico"
+WARN_CMD: "⚠️ Usuário"
+MUTE_CMD: "🔇 Admin"
+BAN_CMD: "💻 Dev"
+BACK: "🔙 Voltar"
 
-about_me: |
-  Sobre o BioLinkRemoverBot:
-  Sou um bot projetado para ajudar a gerenciar grupos, detectar spam e alertar usuários.
+help_panel: "📚 Menu de Ajuda"
+main_menu: "🏠 Voltar ao Menu Principal"
+language_panel: "🌐 Configurações de Idioma"
 
-donate_info: |
-  Apoie o bot para mantê-lo funcionando!
-  Doe via UPI: itxnikhil@ptyes
+help_warn: "⚠️ /warn [usuário] [motivo]\n\n👤 Use este comando para advertir usuários.\n🔁 Após várias advertências, ações automáticas podem ser aplicadas."
+help_allow: "📌 /allow [domínio ou usuário]\n\n✅ Permite que domínios confiáveis passem pelo filtro de links."
+help_mute: "🔇 /mute [usuário] [duração]\n\n🕒 Silencia um usuário temporariamente."
+help_ban: "💻 /ban [usuário] [motivo]\n\n🔨 Bane permanentemente um usuário do grupo.\n⚠️ Ação irreversível pelo bot."
 
-commands_category: |
-  Escolha uma categoria de comandos:
-
-bot_commands: |
-  Comandos do bot:
-  - /start
-  - /ping
-  - /alive
-  - /stats
-
-user_commands: |
-  Comandos do usuário:
-  - /addauth
-  - /removeauth
-  - /warn
-  - /profile
-
-moderation_commands: |
-  Comandos de moderação:
-  - /ban
-  - /mute
-  - /unmute
-  - /spam
-
-admin_commands: |
-  Comandos administrativos:
-  - /admincache
-  - /clearcache
-
-help_message: |
-  Seção de Ajuda:
-  Selecione uma categoria para ver os comandos.
+PING: "🌾 Testando..."
+PING_FINAL: "🟢 **Bot está ativo!**\n\n⏱️ **Tempo de atividade:** {uptime}\n📶 **Ping:** {ping} ms"
+ALIVE: "📱 Verificando status..."
+ALIVE_FINAL: "✅ **BioLinkRemoverBot está funcionando corretamente!**\n\n⏱️ **Tempo de atividade:** {uptime}\n📶 **Ping:** {ping} ms"
