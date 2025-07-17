@@ -7,7 +7,7 @@ from database.violations import log_violation, get_user_violations, clear_violat
 from database.whitelist import is_user_whitelisted
 from utils.language import get_message
 from config import OWNER_ID
-from pyrogram.enums import ChatMemberStatus
+from pyrogram.types import ChatMemberStatus
 import re
 
 SPAM_PATTERNS = [r"http[s]?://", r"@[\w]+", r"\.com", r"t\.me/", r"promo"]
