@@ -1,6 +1,3 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
-
 from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
@@ -12,7 +9,7 @@ from pyrogram.enums import ChatMemberStatus
 
 @app.on_message(filters.command("addauth") & filters.group)
 async def add_auth(client, message: Message):
-    lang = get_user_language(message.from_user.id)
+    lang = await get_user_language(message.from_user.id)
 
     if not message.reply_to_message:
         return await message.reply(get_message(lang, "reply_to_user"))
@@ -24,14 +21,14 @@ async def add_auth(client, message: Message):
     if member.status not in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
         return await message.reply(get_message(lang, "admin_only"))
 
-    add_auth_user(chat_id, user.id)
-    reset_warns(chat_id, user.id)
+    await add_auth_user(chat_id, user.id)
+    await reset_warns(chat_id, user.id)
 
     await message.reply(get_message(lang, "auth_added").format(user=user.mention))
 
 @app.on_message(filters.command("rmauth") & filters.group)
 async def remove_auth(client, message: Message):
-    lang = get_user_language(message.from_user.id)
+    lang = await get_user_language(message.from_user.id)
 
     if not message.reply_to_message:
         return await message.reply(get_message(lang, "reply_to_user"))
@@ -43,15 +40,15 @@ async def remove_auth(client, message: Message):
     if member.status not in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
         return await message.reply(get_message(lang, "admin_only"))
 
-    remove_auth_user(chat_id, user.id)
+    await remove_auth_user(chat_id, user.id)
     await message.reply(get_message(lang, "auth_removed").format(user=user.mention))
 
 @app.on_message(filters.command("authusers") & filters.group)
 async def list_auth_users(client, message: Message):
-    lang = get_user_language(message.from_user.id)
+    lang = await get_user_language(message.from_user.id)
     chat_id = message.chat.id
 
-    auth_users = get_auth_users(chat_id)
+    auth_users = await get_auth_users(chat_id)
     if not auth_users:
         return await message.reply(get_message(lang, "no_auth_users"))
 
