@@ -8,10 +8,11 @@ from utils.inline_buttons import commands_buttons
 @app.on_callback_query(filters.regex("help_panel"))
 async def help_panel_cb(client, callback_query: CallbackQuery):
     user_id = callback_query.from_user.id
-    lang = await get_user_language(user_id)
-    help_text = get_message(lang, "help_message")
+    lang = await get_user_language(user_id)  # ✅ Await async DB function
+    help_text = get_message(lang, "help_message")  # ✅ Load localized message
 
     await callback_query.message.edit_text(
         text=help_text,
-        reply_markup=await commands_buttons(user_id)
+        reply_markup=await commands_buttons(user_id),  # ✅ Await inline markup generator
+        disable_web_page_preview=True  # (optional) avoid preview in help panel
     )
