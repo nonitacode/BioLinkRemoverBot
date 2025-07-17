@@ -1,7 +1,14 @@
+# BioLinkRemoverBot - All rights reserved
+# © Graybots™. All rights reserved.
+
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.enums import ChatMemberStatus
-from database.whitelist import add_to_whitelist, remove_from_whitelist, get_whitelisted_users
+from database.whitelist import (
+    add_to_whitelist,
+    remove_from_whitelist,
+    get_whitelisted_users
+)
 from database.violations import clear_violations
 
 @Client.on_message(filters.command("addauth") & filters.group)
@@ -14,8 +21,8 @@ async def add_authorized(client, message: Message):
         return await message.reply("❌ Only admins can use this command.")
 
     user = message.reply_to_message.from_user
-    add_to_whitelist(message.chat.id, user.id)
-    clear_violations(message.chat.id, user.id)
+    await add_to_whitelist(message.chat.id, user.id)
+    await clear_violations(message.chat.id, user.id)
 
     await message.reply(f"✅ {user.mention} has been authorized. Previous violations reset.")
 
@@ -29,15 +36,18 @@ async def remove_authorized(client, message: Message):
         return await message.reply("❌ Only admins can use this command.")
 
     user = message.reply_to_message.from_user
-    remove_from_whitelist(message.chat.id, user.id)
+    await remove_from_whitelist(message.chat.id, user.id)
 
     await message.reply(f"❌ {user.mention} removed from whitelist.")
 
 @Client.on_message(filters.command("authusers") & filters.group)
 async def show_auth_users(client, message: Message):
-    users = get_whitelisted_users(message.chat.id)
+    users = await get_whitelisted_users(message.chat.id)
     if not users:
         return await message.reply("⚠️ No users are whitelisted in this group.")
     
     lines = [f"🔹 [{uid}](tg://user?id={uid})" for uid in users]
-    await message.reply("**✅ Authorized Users:**\n\n" + "\n".join(lines), disable_web_page_preview=True)
+    await message.reply(
+        "**✅ Authorized Users:**\n\n" + "\n".join(lines),
+        disable_web_page_preview=True
+    )
