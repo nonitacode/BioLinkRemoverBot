@@ -1,17 +1,18 @@
+# Async MongoDB handler for bioscan toggles
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_URL
 
 client = AsyncIOMotorClient(MONGO_URL)
 db = client["BioLinkRemover"]
-scan_col = db["bioscan"]
+bioscan_settings = db["bioscan_settings"]
 
-async def set_bio_scan(chat_id: int, status: bool):
-    await scan_col.update_one(
+async def set_bioscan_status(chat_id: int, enabled: bool):
+    await bioscan_settings.update_one(
         {"chat_id": chat_id},
-        {"$set": {"enabled": status}},
+        {"$set": {"enabled": enabled}},
         upsert=True
     )
 
-async def get_bio_scan(chat_id: int) -> bool:
-    data = await scan_col.find_one({"chat_id": chat_id})
-    return data.get("enabled", True) if data else True
+async def get_bioscan_status(chat_id: int) -> bool:
+    doc = await bioscan_settings.find_one({"chat_id": chat_id})
+    return doc.get("enabled", False) if doc else False
