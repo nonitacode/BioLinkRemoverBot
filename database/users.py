@@ -28,3 +28,6 @@ async def set_user_language(user_id: int, language_code: str):
 def get_user_language(user_id: int) -> str:
     lang = user_language_col.find_one({"user_id": user_id})
     return lang["language_code"] if lang and "language_code" in lang else "en"
+
+def get_users_count() -> int:
+    return users_col.count_documents({})
