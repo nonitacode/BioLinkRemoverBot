@@ -1,6 +1,3 @@
-# BioLinkRemoverBot - All rights reserved
-# © Graybots™. All rights reserved.
-
 from bot.bot import app
 from pyrogram import filters
 from pyrogram.types import CallbackQuery, InputMediaPhoto
@@ -12,7 +9,7 @@ from utils.inline_buttons import start_buttons
 @app.on_callback_query(filters.regex("main_menu"))
 async def main_menu_cb(client, query: CallbackQuery):
     user = query.from_user
-    lang = get_user_language(user.id)
+    lang = await get_user_language(user.id)  # ✅ await added
     welcome_message = get_message(lang, "welcome_message").format(user=user.mention)
 
     try:
