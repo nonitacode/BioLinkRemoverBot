@@ -1,3 +1,6 @@
+# BioLinkRemoverBot - All rights reserved
+# © Graybots™. All rights reserved.
+
 from bot.bot import app
 from pyrogram import filters
 from pyrogram.types import CallbackQuery
@@ -45,4 +48,7 @@ async def back_to_help(client, query: CallbackQuery):
 async def help_allow_cb(client, query: CallbackQuery):
     lang = await get_user_language(query.from_user.id)
     msg = get_message(lang, "help_allow")
-    await query.message.edit_text(msg, reply_markup=await back_to_help_button
+    await query.message.edit_text(
+        msg,
+        reply_markup=await back_to_help_button()
+    )
