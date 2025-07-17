@@ -18,7 +18,10 @@ async def main_menu_cb(client, query: CallbackQuery):
     try:
         await query.message.edit_media(
             media=InputMediaPhoto(media=START_IMG, caption=welcome_message),
-            reply_markup=start_buttons()
+            reply_markup=await start_buttons(user.id)
         )
     except:
-        await query.message.edit_text(welcome_message, reply_markup=start_buttons())
+        await query.message.edit_text(
+            text=welcome_message,
+            reply_markup=await start_buttons(user.id)
+        )
