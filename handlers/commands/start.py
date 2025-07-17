@@ -27,12 +27,12 @@ async def start_command(client, message: Message):
         await message.reply_photo(
             photo=START_IMG,
             caption=welcome_message,
-            reply_markup=await start_buttons(user.id)
+            reply_markup=start_buttons(user.id)
         )
     except:
         await message.reply(
             text=welcome_message,
-            reply_markup=await start_buttons(user.id)
+            reply_markup=start_buttons(user.id)
         )
 
     await app.send_message(
