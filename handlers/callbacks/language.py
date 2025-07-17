@@ -20,6 +20,14 @@ async def language_panel_cb(client, query: CallbackQuery):
             InlineKeyboardButton("🇬🇧 English", callback_data="set_lang_en"),
             InlineKeyboardButton("🇮🇳 Hindi", callback_data="set_lang_hi")
         ],
+        [
+            InlineKeyboardButton("🇪🇸 Español", callback_data="set_lang_es"),
+            InlineKeyboardButton("🇵🇹 Português", callback_data="set_lang_pt")
+        ],
+        [
+            InlineKeyboardButton("🇷🇺 Русский", callback_data="set_lang_ru"),
+            InlineKeyboardButton("🇸🇦 العربية", callback_data="set_lang_ar")
+        ],
         [InlineKeyboardButton(get_message(lang, "BACK") or "🔙 Back", callback_data="main_menu")]
     ])
 
