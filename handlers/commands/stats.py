@@ -1,15 +1,54 @@
 # BioLinkRemoverBot - All rights reserved
 # © Graybots™. All rights reserved.
 
+import time
+from datetime import timedelta
 from pyrogram import filters
 from pyrogram.types import Message
 from bot.bot import app
-from database.users import get_users_count
-from database.groups import get_groups_count
+from utils.language import get_message
 
-@app.on_message(filters.command("stats"))
-async def stats_command(client, message: Message):
-    users = await get_users_count()   # ✅ Await required
-    groups = await get_groups_count() # ✅ Await required
+BOT_START_TIME = time.time()
 
-    await message.reply(f"📊 **Bot Stats:**\n\n👤 Users: `{users}`\n👥 Groups: `{groups}`")
+def get_readable_time(seconds: int) -> str:
+    return str(timedelta(seconds=int(seconds)))
+
+@app.on_message(filters.command("ping") & ~filters.channel)
+async def ping_command(client, message: Message):
+    lang = await get_user_language(message.from_user.id)
+    reply_temp = get_message(lang, "PING")
+    reply_final = get_message(lang, "PING_FINAL")
+
+    start = time.time()
+    sent = await message.reply(reply_temp)
+    end = time.time()
+
+    ping = round((end - start) * 1000, 3)
+    uptime = get_readable_time(time.time() - BOT_START_TIME)
+
+    await sent.edit_text(
+        reply_final.format(
+            uptime=uptime,
+            ping=ping
+        )
+    )
+
+@app.on_message(filters.command("alive") & ~filters.channel)
+async def alive_command(client, message: Message):
+    lang = await get_user_language(message.from_user.id)
+    reply_temp = get_message(lang, "ALIVE")
+    reply_final = get_message(lang, "ALIVE_FINAL")
+
+    start = time.time()
+    sent = await message.reply(reply_temp)
+    end = time.time()
+
+    ping = round((end - start) * 1000, 3)
+    uptime = get_readable_time(time.time() - BOT_START_TIME)
+
+    await sent.edit_text(
+        reply_final.format(
+            uptime=uptime,
+            ping=ping
+        )
+    )
