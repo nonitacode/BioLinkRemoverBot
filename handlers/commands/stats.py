@@ -53,3 +53,16 @@ async def alive_command(client, message: Message):
             ping=ping
         )
     )
+
+@app.on_message(filters.command("stats") & ~filters.channel)
+async def stats_command(client, message: Message):
+    lang = await get_user_language(message.from_user.id)
+    stats_text = get_message(lang, "BOT_STATS")
+
+    # Get user and group counts from async MongoDB
+    total_users = await users_db.count_documents({})
+    total_groups = await groups_db.count_documents({})
+
+    await message.reply(
+        stats_text.format(users=total_users, groups=total_groups)
+    )
