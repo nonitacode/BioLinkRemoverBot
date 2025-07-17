@@ -26,9 +26,13 @@ async def commands_buttons(user_id: int):
     lang_code = get_user_language(user_id)
 
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(get_message(lang_code, "ALLOW_CMD"), callback_data="help_allow")],
-        [InlineKeyboardButton(get_message(lang_code, "WARN_CMD"), callback_data="help_warn")],
-        [InlineKeyboardButton(get_message(lang_code, "MUTE_CMD"), callback_data="help_mute")],
-        [InlineKeyboardButton(get_message(lang_code, "BAN_CMD"), callback_data="help_ban")],
+    [
+            InlineKeyboardButton(get_message(lang_code, "ALLOW_CMD"), callback_data="help_allow"),
+            InlineKeyboardButton(get_message(lang_code, "WARN_CMD"), callback_data="help_warn")
+        ],
+        [
+            InlineKeyboardButton(get_message(lang_code, "MUTE_CMD"), callback_data="help_mute"),
+            InlineKeyboardButton(get_message(lang_code, "BAN_CMD"), callback_data="help_ban)
+        ],
         [InlineKeyboardButton(get_message(lang_code, "BACK"), callback_data="main_menu")]
     ])
